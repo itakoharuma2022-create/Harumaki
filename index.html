@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>位置情報・実績解除アプリ</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .phone-container {
+            width: 100%;
+            max-width: 414px;
+            height: 100vh;
+            max-height: 896px;
+            background: #ffffff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @media (min-width: 415px) {
+            .phone-container {
+                height: 85vh;
+                border-radius: 30px;
+                border: 8px solid #333;
+            }
+        }
+
+        /* ヘッダー */
+        header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 20px 16px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* メインコンテンツエリア */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 16px;
+            padding-bottom: 80px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 下部ナビゲーション */
+        .nav-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            background: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s;
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .nav-item.active {
+            color: #4f46e5;
+            font-weight: bold;
+        }
+
+        /* ボタン・カード等の汎用スタイル */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn:active {
+            background: #3730a3;
+        }
+
+        .btn-secondary {
+            background: #10b981;
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+        }
+        .btn-secondary:active {
+            background: #065f46;
+        }
+
+        .card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+
+        /* ホーム画面特有 */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        .status-success { background: #d1fae5; color: #065f46; }
+        .status-idle { background: #fee2e2; color: #991b1b; }
+
+        /* 実績画面特有 */
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .badge-item {
+            background: #f3f4f6;
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            font-size: 0.75rem;
+            filter: grayscale(100%);
+            opacity: 0.5;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .badge-item.unlocked {
+            filter: grayscale(0%);
+            opacity: 1;
+            background: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .badge-icon {
+            font-size: 2rem;
+            margin-bottom: 6px;
+        }
+
+        .badge-name {
+            font-weight: bold;
+            color: #1f2937;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* シミュレータ（仮）特有 */
+        .select-box {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            background-color: white;
+        }
+
+        /* 通知トースト */
+        .toast {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #1f2937;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+            z-index: 100;
+            text-align: center;
+            width: 80%;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-container">
+        <!-- 通知トースト -->
+        <div id="toast" class="toast">実績を解除しました！</div>
+
+        <!-- ヘッダー -->
+        <header id="app-title">ホーム</header>
+
+        <!-- メインコンテンツ -->
+        <div class="content-area">
+            
+            <!-- 1. ホームタブ -->
+            <div id="tab-home" class="tab-content active">
+                <div class="card" style="text-align: center; padding: 24px 16px;">
+                    <div style="font-size: 3rem; margin-bottom: 8px;">📍</div>
+                    <div class="card-title" style="font-size: 1.2rem;">現在地チェックイン</div>
+                    <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 16px;">
+                        今いる市町村の位置情報を取得して、実績を解放しよう！
+                    </p>
+                    <button class="btn" onclick="handleCheckIn()">GPSでチェックイン</button>
+                    <div id="location-status" class="status-badge status-idle">未チェックイン</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">現在の冒険ステータス</div>
+                    <p style="font-size: 0.95rem; margin-bottom: 6px;">🧭 解放した市町村: <strong id="stats-count">0</strong> / 8</p>
+                    <p style="font-size: 0.95rem;">🏆 解放した実績: <strong id="stats-badges">0</strong> / 6</p>
+                </div>
+            </div>
+
+            <!-- 2. 実績タブ -->
+            <div id="tab-achievements" class="tab-content">
+                <div class="card">
+                    <div class="card-title">獲得バッジ一覧</div>
+                    <p style="font-size: 0.85rem; color: #6b7280;">条件を満たすとバッジがカラーになります。</p>
+                    
+                    <div class="badge-grid" id="badge-container">
+                        <!-- JavaScriptで動的生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. 仮タブ（デバッグ用シミュレータ） -->
+            <div id="tab-temp" class="tab-content">
+                <div class="card">
+                    <div class="card-title">⚙️ 開発・テスト用シミュレータ</div>
+                    <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 12px;">
+                        GPSが使えない場所やPCでのテスト用に、特定の都市にいると仮定して擬似的に解放することができます。
+                    </p>
+                    
+                    <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">都市を選択：</label>
+                    <select id="city-selector" class="select-box">
+                        <!-- JavaScriptで動的生成 -->
+                    </select>
+
+                    <button class="btn btn-secondary" onclick="handleSimulateCheckIn()">選択した都市を擬似解放</button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">データ管理</div>
+                    <button class="btn" style="background: #ef4444; box-shadow: none;" onclick="resetAllData()">データをすべて初期化</button>
+                </div>
+            </div>
+
+            <!-- 4. プロフィールタブ -->
+            <div id="tab-profile" class="tab-content">
+                <div class="card" style="text-align: center;">
+                    <div style="width: 70px; height: 70px; background: #e0e7ff; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 12px; font-size: 2rem;">👤</div>
+                    <div class="card-title" style="margin-bottom: 2px;" id="profile-name">冒険者さん</div>
+                    <span style="background: #4f46e5; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;">LV. <span id="profile-level">1</span></span>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">解放済み都市リスト</div>
+                    <ul id="unlocked-cities-list" style="font-size: 0.9rem; padding-left: 20px; color: #4b5563;">
+                        <!-- JavaScriptで動的生成 -->
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 下部ナビゲーションバー -->
+        <nav class="nav-bar">
+            <button class="nav-item active" onclick="switchTab('home', 'ホーム')">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                ホーム
+            </button>
+            <button class="nav-item" onclick="switchTab('achievements', '実績バッジ')">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.25z"/></svg>
+                実績
+            </button>
+            <button class="nav-item" onclick="switchTab('temp', 'シミュレータ(仮)')">
+                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                仮
+            </button>
+            <button class="nav-item" onclick="switchTab('profile', 'プロフィール')">
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                プロフィール
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        // サンプル都市データ (緯度・経度はおおよその中心地)
+        const cityData = [
+            { id: "tokyo", name: "東京都千代田区", lat: 35.6812, lng: 139.7671 },
+            { id: "yokohama", name: "神奈川県横浜市", lat: 35.4437, lng: 139.6380 },
+            { id: "osaka", name: "大阪府大阪市", lat: 34.6937, lng: 135.5023 },
+            { id: "kyoto", name: "京都府京都市", lat: 35.0116, lng: 135.7681 },
+            { id: "sapporo", name: "北海道札幌市", lat: 43.0621, lng: 141.3544 },
+            { id: "sendai", name: "宮城県仙台市", lat: 38.2682, lng: 140.8694 },
+            { id: "nagoya", name: "愛知県名古屋市", lat: 35.1815, lng: 136.9066 },
+            { id: "fukuoka", name: "福岡県福岡市", lat: 33.5904, lng: 130.4017 }
+        ];
+
+        // 実績バッジ定義
+        const badgeDefinitions = [
+            { id: "first_step", name: "第一歩", icon: "👟", desc: "初めて都市を解放した" },
+            { id: "trio", name: "三都物語", icon: "🏯", desc: "3つの都市を解放した" },
+            { id: "conqueror", name: "全土踏破", icon: "👑", desc: "すべての都市(8つ)を解放した" },
+            { id: "north_trip", name: "北の大地", icon: "❄️", desc: "札幌市を解放した" },
+            { id: "south_trip", name: "南の風", icon: "🍜", desc: "福岡市を解放した" },
+            { id: "metropolis", name: "大都会", icon: "🏢", desc: "東京都千代田区を解放した" }
+        ];
+
+        // アプリの状態管理
+        let appState = {
+            unlockedCities: [], // 解放済み都市のIDリスト
+            unlockedBadges: []  // 解放済み実績のIDリスト
+        };
+
+        // 初期化処理
+        window.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            initSelectors();
+            renderBadges();
+            updateUI();
+        });
+
+        // タブ切り替え
+        function switchTab(tabId, title) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            document.getElementById('app-title').innerText = title;
+            
+            // イベントを発生させたボタンをアクティブにする
+            const navItems = document.querySelectorAll('.nav-item');
+            if(tabId === 'home') navItems[0].classList.add('active');
+            if(tabId === 'achievements') navItems[1].classList.add('active');
+            if(tabId === 'temp') navItems[2].classList.add('active');
+            if(tabId === 'profile') navItems[3].classList.add('active');
+        }
+
+        // セレクターの初期化
+        function initSelectors() {
+            const selector = document.getElementById('city-selector');
+            selector.innerHTML = '';
+            cityData.forEach(city => {
+                const opt = document.createElement('option');
+                opt.value = city.id;
+                opt.innerText = city.name;
+                selector.appendChild(opt);
+            });
+        }
+
+        // 実績の描画
+        function renderBadges() {
+            const container = document.getElementById('badge-container');
+            container.innerHTML = '';
+            
+            badgeDefinitions.forEach(badge => {
+                const isUnlocked = appState.unlockedBadges.includes(badge.id);
+                const item = document.createElement('div');
+                item.className = `badge-item ${isUnlocked ? 'unlocked' : ''}`;
+                item.title = badge.desc;
+                item.innerHTML = `
+                    <div class="badge-icon">${badge.icon}</div>
+                    <div class="badge-name">${badge.name}</div>
+                    <div style="font-size:0.6rem; color:#6b7280; margin-top:4px;">${badge.desc}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // GPSによるチェックイン処理
+        function handleCheckIn() {
+            if (!navigator.geolocation) {
+                showToast("⚠️ お使いのブラウザはGPSに対応していません。シミュレータを使用してください。");
+                return;
+            }
+
+            document.getElementById('location-status').className = "status-badge";
+            document.getElementById('location-status').innerText = "位置情報取得中...";
+            document.getElementById('location-status').style.background = "#ffe4e6";
+            document.getElementById('location-status').style.color = "#991b1b";
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    // 最も近い都市を判定（簡易的な距離計算。差が0.5度以内ならその都市にいるとみなす）
+                    let foundCity = null;
+                    let minDistance = 0.5; 
+
+                    cityData.forEach(city => {
+                        const dist = Math.sqrt(Math.pow(city.lat - lat, 2) + Math.pow(city.lng - lng, 2));
+                        if (dist < minDistance) {
+                            minDistance = dist;
+                            foundCity = city;
+                        }
+                    });
+
+                    if (foundCity) {
+                        unlockCity(foundCity.id, foundCity.name);
+                    } else {
+                        // GPSテスト用に、もし近くに対象都市がなければランダムで1つ解放する親切設計
+                        const randomCity = cityData[Math.floor(Math.random() * cityData.length)];
+                        unlockCity(randomCity.id, `現在地付近に都市がないためデモ解放: ${randomCity.name}`);
+                    }
+                },
+                (error) => {
+                    console.error(error);
+                    // エラー時も動かせるようランダム解放で救済
+                    const randomCity = cityData[Math.floor(Math.random() * cityData.length)];
+                    unlockCity(randomCity.id, `GPSエラーのためデモ解放: ${randomCity.name}`);
+                },
+                { enableHighAccuracy: true, timeout: 5000 }
+            );
+        }
+
+        // シミュレータによるチェックイン
+        function handleSimulateCheckIn() {
+            const cityId = document.getElementById('city-selector').value;
+            const city = cityData.find(c => c.id === cityId);
+            if (city) {
+                unlockCity(city.id, city.name);
+            }
+        }
+
+        // 都市の解放ロジック
+        function unlockCity(cityId, cityName) {
+            let isNew = false;
+            if (!appState.unlockedCities.includes(cityId)) {
+                appState.unlockedCities.push(cityId);
+                isNew = true;
+            }
+
+            // ステータス表示の更新
+            const statusEl = document.getElementById('location-status');
+            statusEl.className = "status-badge status-success";
+            statusEl.innerText = `${cityName} にチェックインしました！`;
+
+            // 実績の判定
+            checkAchievements();
+            saveData();
+            updateUI();
+
+            if (isNew) {
+                showToast(`🎉 新しい都市「${cityName}」を解放！`);
+            } else {
+                showToast(`📍 ${cityName} にチェックインしました（訪問済み）`);
+            }
+        }
+
+        // 実績の条件チェック
+        function checkAchievements() {
+            const count = appState.unlockedCities.length;
+            
+            const checkAndUnlock = (badgeId, conditionTrue) => {
+                if (conditionTrue && !appState.unlockedBadges.includes(badgeId)) {
+                    appState.unlockedBadges.push(badgeId);
+                    const badge = badgeDefinitions.find(b => b.id === badgeId);
+                    setTimeout(() => {
+                        showToast(`🏆 実績解除: 【${badge.name}】！`);
+                    }, 1000);
+                }
+            };
+
+            checkAndUnlock("first_step", count >= 1);
+            checkAndUnlock("trio", count >= 3);
+            checkAndUnlock("conqueror", count === cityData.length);
+            checkAndUnlock("north_trip", appState.unlockedCities.includes("sapporo"));
+            checkAndUnlock("south_trip", appState.unlockedCities.includes("fukuoka"));
+            checkAndUnlock("metropolis", appState.unlockedCities.includes("tokyo"));
+        }
+
+        // UI全体の更新
+        function updateUI() {
+            // カウント更新
+            document.getElementById('stats-count').innerText = appState.unlockedCities.length;
+            document.getElementById('stats-badges').innerText = appState.unlockedBadges.length;
+
+            // プロフィール更新
+            const level = Math.floor(appState.unlockedCities.length / 3) + 1;
+            document.getElementById('profile-level').innerText = level;
+
+            // リスト更新
+            const listEl = document.getElementById('unlocked-cities-list');
+            listEl.innerHTML = '';
+            if (appState.unlockedCities.length === 0) {
+                listEl.innerHTML = '<li>まだありません。旅に出よう！</li>';
+            } else {
+                appState.unlockedCities.forEach(cityId => {
+                    const city = cityData.find(c => c.id === cityId);
+                    if (city) {
+                        const li = document.createElement('li');
+                        li.innerText = `✅ ${city.name}`;
+                        listEl.appendChild(li);
+                    }
+                });
+            }
+
+            // 実績バッジの再描画
+            renderBadges();
+        }
+
+        // トースト通知
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ローカルストレージへの保存・読込
+        function saveData() {
+            localStorage.setItem('geo_app_state', JSON.stringify(appState));
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('geo_app_state');
+            if (saved) {
+                try {
+                    appState = JSON.parse(saved);
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+        }
+
+        // データ初期化
+        function resetAllData() {
+            if (confirm('これまでの冒険の記録をすべて消去しますか？')) {
+                appState = { unlockedCities: [], unlockedBadges: [] };
+                saveData();
+                updateUI();
+                document.getElementById('location-status').className = "status-badge status-idle";
+                document.getElementById('location-status').innerText = "未チェックイン";
+                showToast("データをリセットしました");
+            }
+        }
+    </script>
+</body>
+</html>
