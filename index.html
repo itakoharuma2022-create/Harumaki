@@ -15,16 +15,14 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
-        /* 画面いっぱいに表示するための完全全画面設定 */
         html, body {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #111216; /* 高級感のあるダーク背景 */
+            background-color: #111216;
             color: #f3f4f6;
         }
 
-        /* スマートフォン・タブレットなどあらゆる端末で画面いっぱいに広げる */
         .phone-container {
             width: 100%;
             height: 100%;
@@ -34,7 +32,6 @@
             background: #111216;
         }
 
-        /* 洗練されたダークモノトーンのヘッダー */
         header {
             background: rgba(17, 18, 22, 0.95);
             color: #ffffff;
@@ -48,12 +45,12 @@
             backdrop-filter: blur(10px);
         }
 
-        /* メインコンテンツエリア */
+        /* コンテンツエリア：ナビバーの高さ(70px)と重ならないよう下部にしっかりパディングを確保 */
         .content-area {
             flex: 1;
             position: relative;
             overflow: hidden;
-            padding-bottom: 70px; /* ナビバーの高さ */
+            padding-bottom: 75px; 
         }
 
         #tab-home {
@@ -80,7 +77,6 @@
             background-color: #111216;
         }
 
-        /* 地図を完全に白黒（モノトーン）にするCSSフィルター */
         #map {
             width: 100%;
             height: 100%;
@@ -89,10 +85,10 @@
             filter: grayscale(100%) invert(90%) hue-rotate(180deg) brightness(95%) contrast(105%);
         }
 
-        /* マップ上に浮かぶ洗練されたUIレイアウト */
+        /* 画面下部に被らないよう、bottomの位置を少し上に調整 */
         .map-overlay {
             position: absolute;
-            bottom: 24px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
@@ -104,7 +100,6 @@
             align-items: center;
         }
 
-        /* 高級感のあるボトムナビゲーションバー */
         .nav-bar {
             position: absolute;
             bottom: 0;
@@ -118,7 +113,7 @@
             align-items: center;
             z-index: 20;
             backdrop-filter: blur(10px);
-            padding-bottom: env(safe-area-inset-bottom); /* iPhoneのノッチ対応 */
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .nav-item {
@@ -153,7 +148,6 @@
             transform: translateY(-2px);
         }
 
-        /* ミニマルで洗練されたボタン */
         .btn {
             display: block;
             width: 100%;
@@ -187,7 +181,6 @@
             background: #3f4454;
         }
 
-        /* ダークモードに最適化したカードデザイン */
         .card {
             background: #181920;
             border: 1px solid #272a34;
@@ -204,7 +197,6 @@
             letter-spacing: 0.03em;
         }
 
-        /* フローティングステータス */
         .floating-status {
             background: rgba(24, 25, 32, 0.95);
             padding: 8px 18px;
@@ -221,7 +213,6 @@
             backdrop-filter: blur(8px);
         }
 
-        /* 実績グリッド */
         .badge-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -259,7 +250,6 @@
             color: #ffffff;
         }
 
-        /* セレクトボックスの洗練 */
         .select-box {
             width: 100%;
             padding: 14px;
@@ -276,7 +266,6 @@
             background-position: right 12px center;
         }
 
-        /* 通知トースト */
         .toast {
             position: absolute;
             top: 30px;
@@ -301,7 +290,6 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* リストの美化 */
         ul {
             list-style: none;
         }
@@ -316,9 +304,103 @@
         li:last-child {
             border-bottom: none;
         }
+
+        /* サイバー・ブートアニメーション用画面スタイル */
+        #boot-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0b0c10;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .boot-terminal {
+            width: 100%;
+            max-width: 340px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.85rem;
+            color: #00ff66; /* グリーンレトロPC風 */
+            text-align: left;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .boot-row {
+            opacity: 0;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .boot-row.visible {
+            opacity: 1;
+        }
+
+        .boot-success {
+            color: #ffffff;
+            font-weight: bold;
+            background: #00ff66;
+            color: #0b0c10;
+            padding: 0 6px;
+            border-radius: 3px;
+        }
+
+        .start-alert {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-align: center;
+            margin-top: 20px;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 0.05em;
+        }
+
+        .start-alert.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(0, 255, 102, 0.2);
+            border-top: 3px solid #00ff66;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+
+    <!-- 🚀 ブートアニメーション画面 -->
+    <div id="boot-screen">
+        <div id="boot-spinner" class="spinner"></div>
+        <div class="boot-terminal">
+            <div id="row1" class="boot-row"><span>> index.html loading...</span><span class="boot-success">OK</span></div>
+            <div id="row2" class="boot-row"><span>> system initialization...</span><span class="boot-success">OK</span></div>
+            <div id="row3" class="boot-row"><span>> Nihon.json data fetching...</span><span id="json-status-text">WAIT</span></div>
+            <div id="row4" class="boot-row"><span>> mapping framework ready...</span><span class="boot-success">OK</span></div>
+        </div>
+        <div id="start-msg" class="start-alert">
+            読み込み完了！<br>冒険を始めよう！
+        </div>
+    </div>
 
     <div class="phone-container">
         <!-- 通知トースト -->
@@ -330,7 +412,7 @@
             <div id="tab-home" class="tab-content active">
                 <div id="map"></div>
                 <div class="map-overlay">
-                    <div id="location-status" class="floating-status">INITIALIZING...</div>
+                    <div id="location-status" class="floating-status">READY TO EXPLORE</div>
                     <button class="btn" onclick="handleCheckIn()">📍 CHECK IN</button>
                 </div>
             </div>
@@ -419,7 +501,6 @@
     </div>
 
     <script>
-        // おおよその都道府県中心座標データ (地図の移動用)
         const prefCoordinates = {
             "01": [43.0621, 141.3544], "02": [40.8243, 140.7400], "03": [39.7036, 141.1527], "04": [38.2688, 140.8721],
             "05": [39.7186, 140.1033], "06": [38.2404, 140.3633], "07": [37.7503, 140.4676], "08": [36.3418, 140.4468],
@@ -454,11 +535,21 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initMap();
-            fetchNihonJson();
+            runBootAnimation();
         });
 
+        // 🎬 サイバーパンク風の起動ログ演出
+        function runBootAnimation() {
+            setTimeout(() => document.getElementById('row1').classList.add('visible'), 200);
+            setTimeout(() => document.getElementById('row2').classList.add('visible'), 500);
+            setTimeout(() => {
+                document.getElementById('row3').classList.add('visible');
+                fetchNihonJson(); // ここでデータの読み込みを開始
+            }, 800);
+        }
+
         async function fetchNihonJson() {
-            const statusEl = document.getElementById('location-status');
+            const statusText = document.getElementById('json-status-text');
             try {
                 const response = await fetch('Nihon.json');
                 if (!response.ok) throw new Error("JSONファイルの取得に失敗しました");
@@ -466,25 +557,47 @@
                 const rawData = await response.json();
                 nihonData = Array.isArray(rawData) ? rawData[0] : rawData;
                 
-                statusEl.innerText = "READY TO EXPLORE";
+                // ロギング画面の進捗を更新
+                statusText.innerText = "OK";
+                statusText.className = "boot-success";
                 
+                setTimeout(() => document.getElementById('row4').classList.add('visible'), 300);
+                
+                // アプリデータのロード処理
                 loadData();
                 initPrefSelector();
                 renderBadges();
                 updateUI();
                 renderMarkers();
+
+                // すべてのシステムがロードを完了した時の派手な演出
+                setTimeout(() => {
+                    document.getElementById('boot-spinner').style.display = 'none';
+                    const startMsg = document.getElementById('start-msg');
+                    startMsg.classList.add('visible');
+                    
+                    // 1.8秒間「冒険を始めよう！」を表示したのち、ホーム画面へフェードアウト
+                    setTimeout(() => {
+                        const bootScreen = document.getElementById('boot-screen');
+                        bootScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            bootScreen.style.display = 'none';
+                        }, 500);
+                    }, 1800);
+
+                }, 800);
                 
             } catch (error) {
                 console.error(error);
-                statusEl.innerText = "ERROR: NIHON.JSON NOT FOUND";
-                alert("Nihon.json の読み込みに失敗しました。リポジトリに正しく配置されているか確認してください。");
+                statusText.innerText = "ERROR";
+                statusText.style.background = "#ff3333";
+                alert("Nihon.json の読み込みに失敗しました。ファイルが正しく配置されているか確認してください。");
             }
         }
 
         function initMap() {
             map = L.map('map', { zoomControl: false }).setView([36.5, 137.5], 5);
             
-            // 白黒・ダークデザインに馴染みやすいシンプルな地図レイヤーに変更
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; OpenStreetMap &copy; CARTO'
             }).addTo(map);
@@ -496,7 +609,6 @@
             if (!markersGroup) return;
             markersGroup.clearLayers();
             appState.unlockedCities.forEach(item => {
-                // ピンもモノトーンに合うカスタムスタイル（黒丸のシンプルなマーカー）
                 const customIcon = L.divIcon({
                     className: 'custom-marker',
                     html: `<div style="width: 14px; height: 14px; background: #111216; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 0 8px rgba(0,0,0,0.5);"></div>`,
