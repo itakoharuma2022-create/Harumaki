@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>位置情報・実績解除アプリ</title>
+    <!-- Leaflet.js (地図ライブラリ) のCSSとJSを読み込み -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <style>
         * {
             box-sizing: border-box;
@@ -46,27 +49,67 @@
         header {
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
-            padding: 20px 16px;
+            padding: 16px;
             text-align: center;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 20;
         }
 
         /* メインコンテンツエリア */
         .content-area {
             flex: 1;
+            position: relative;
             overflow-y: auto;
-            padding: 20px 16px;
-            padding-bottom: 80px;
+            padding-bottom: 65px; /* ナビバーの高さ分 */
+        }
+
+        /* ホームタブのみ全画面地図にするためpaddingを消す */
+        #tab-home {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 0;
         }
 
         .tab-content {
             display: none;
+            height: 100%;
         }
 
         .tab-content.active {
             display: block;
+        }
+
+        /* 実績・仮・プロフィール用の通常パッド */
+        .scroll-content {
+            padding: 20px 16px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        /* 地図のスタイル */
+        #map {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* マップ上に浮かぶチェックインボタン */
+        .map-overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
         }
 
         /* 下部ナビゲーション */
@@ -81,7 +124,7 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            z-index: 10;
+            z-index: 20;
         }
 
         .nav-item {
@@ -110,7 +153,7 @@
             font-weight: bold;
         }
 
-        /* ボタン・カード等の汎用スタイル */
+        /* ボタン・カード */
         .btn {
             display: block;
             width: 100%;
@@ -118,25 +161,23 @@
             background: #4f46e5;
             color: white;
             border: none;
-            border-radius: 12px;
+            border-radius: 30px; /* 丸みのあるモダンな形に */
             font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
             text-align: center;
-            transition: background 0.2s;
-            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         }
 
         .btn:active {
+            transform: scale(0.98);
             background: #3730a3;
         }
 
         .btn-secondary {
             background: #10b981;
-            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
-        }
-        .btn-secondary:active {
-            background: #065f46;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
         .card {
@@ -154,19 +195,23 @@
             color: #1f2937;
         }
 
-        /* ホーム画面特有 */
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
+        /* フローティングステータス表示 */
+        .floating-status {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 6px 16px;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: bold;
-            margin-top: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            color: #4f46e5;
+            border: 1px solid #e5e7eb;
+            max-width: 90%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .status-success { background: #d1fae5; color: #065f46; }
-        .status-idle { background: #fee2e2; color: #991b1b; }
 
-        /* 実績画面特有 */
+        /* 実績グリッド */
         .badge-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -201,12 +246,8 @@
         .badge-name {
             font-weight: bold;
             color: #1f2937;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
-        /* シミュレータ（仮）特有 */
         .select-box {
             width: 100%;
             padding: 12px;
@@ -220,19 +261,20 @@
         /* 通知トースト */
         .toast {
             position: absolute;
-            top: 20px;
+            top: 80px;
             left: 50%;
-            transform: translateX(-50%) translateY(-100px);
+            transform: translateX(-50%) translateY(-120px);
             background: #1f2937;
             color: white;
             padding: 12px 24px;
             border-radius: 30px;
             font-size: 0.9rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transition: transform 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 100;
             text-align: center;
             width: 80%;
+            pointer-events: none;
         }
 
         .toast.show {
@@ -247,77 +289,88 @@
         <div id="toast" class="toast">実績を解除しました！</div>
 
         <!-- ヘッダー -->
-        <header id="app-title">ホーム</header>
+        <header id="app-title">マップ冒険</header>
 
         <!-- メインコンテンツ -->
         <div class="content-area">
             
-            <!-- 1. ホームタブ -->
+            <!-- 1. ホームタブ（マップ表示） -->
             <div id="tab-home" class="tab-content active">
-                <div class="card" style="text-align: center; padding: 24px 16px;">
-                    <div style="font-size: 3rem; margin-bottom: 8px;">📍</div>
-                    <div class="card-title" style="font-size: 1.2rem;">現在地チェックイン</div>
-                    <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 16px;">
-                        今いる市町村の位置情報を取得して、実績を解放しよう！
-                    </p>
-                    <button class="btn" onclick="handleCheckIn()">GPSでチェックイン</button>
-                    <div id="location-status" class="status-badge status-idle">未チェックイン</div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">現在の冒険ステータス</div>
-                    <p style="font-size: 0.95rem; margin-bottom: 6px;">🧭 解放した市町村: <strong id="stats-count">0</strong> / 8</p>
-                    <p style="font-size: 0.95rem;">🏆 解放した実績: <strong id="stats-badges">0</strong> / 6</p>
+                <!-- 地図を描画するコンテナ -->
+                <div id="map"></div>
+                
+                <!-- マップ上に重なるUIパーツ -->
+                <div class="map-overlay">
+                    <div id="location-status" class="floating-status">未チェックイン (現在地を解放しよう)</div>
+                    <button class="btn" onclick="handleCheckIn()">📍 現在地でチェックイン</button>
                 </div>
             </div>
 
             <!-- 2. 実績タブ -->
             <div id="tab-achievements" class="tab-content">
-                <div class="card">
-                    <div class="card-title">獲得バッジ一覧</div>
-                    <p style="font-size: 0.85rem; color: #6b7280;">条件を満たすとバッジがカラーになります。</p>
-                    
-                    <div class="badge-grid" id="badge-container">
-                        <!-- JavaScriptで動的生成 -->
+                <div class="scroll-content">
+                    <div class="card" style="margin-bottom: 12px; background: linear-gradient(135deg, #eff6ff, #dbeafe); border: none;">
+                        <div style="display:flex; justify-content:space-around; text-align:center;">
+                            <div>
+                                <div style="font-size:1.5rem; font-weight:bold; color:#1e40af;" id="stats-count">0</div>
+                                <div style="font-size:0.75rem; color:#6b7280;">解放都市</div>
+                            </div>
+                            <div style="border-left: 1px solid #bfdbfe;"></div>
+                            <div>
+                                <div style="font-size:1.5rem; font-weight:bold; color:#1e40af;" id="stats-badges">0</div>
+                                <div style="font-size:0.75rem; color:#6b7280;">獲得実績</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">獲得バッジ一覧</div>
+                        <div class="badge-grid" id="badge-container">
+                            <!-- JSで動的生成 -->
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- 3. 仮タブ（デバッグ用シミュレータ） -->
             <div id="tab-temp" class="tab-content">
-                <div class="card">
-                    <div class="card-title">⚙️ 開発・テスト用シミュレータ</div>
-                    <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 12px;">
-                        GPSが使えない場所やPCでのテスト用に、特定の都市にいると仮定して擬似的に解放することができます。
-                    </p>
-                    
-                    <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">都市を選択：</label>
-                    <select id="city-selector" class="select-box">
-                        <!-- JavaScriptで動的生成 -->
-                    </select>
+                <div class="scroll-content">
+                    <div class="card">
+                        <div class="card-title">⚙️ 開発・テスト用シミュレータ</div>
+                        <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 12px;">
+                            特定の都市に瞬間移動したと仮定して、マップ上にピンを立てて実績をテストできます。
+                        </p>
+                        
+                        <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">都市を選択：</label>
+                        <select id="city-selector" class="select-box">
+                            <!-- JSで動的生成 -->
+                        </select>
 
-                    <button class="btn btn-secondary" onclick="handleSimulateCheckIn()">選択した都市を擬似解放</button>
-                </div>
-                
-                <div class="card">
-                    <div class="card-title">データ管理</div>
-                    <button class="btn" style="background: #ef4444; box-shadow: none;" onclick="resetAllData()">データをすべて初期化</button>
+                        <button class="btn btn-secondary" onclick="handleSimulateCheckIn()">選択した都市を擬似解放</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">データ管理</div>
+                        <button class="btn" style="background: #ef4444; box-shadow: none;" onclick="resetAllData()">データをすべて初期化</button>
+                    </div>
                 </div>
             </div>
 
             <!-- 4. プロフィールタブ -->
             <div id="tab-profile" class="tab-content">
-                <div class="card" style="text-align: center;">
-                    <div style="width: 70px; height: 70px; background: #e0e7ff; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 12px; font-size: 2rem;">👤</div>
-                    <div class="card-title" style="margin-bottom: 2px;" id="profile-name">冒険者さん</div>
-                    <span style="background: #4f46e5; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;">LV. <span id="profile-level">1</span></span>
-                </div>
+                <div class="scroll-content">
+                    <div class="card" style="text-align: center;">
+                        <div style="width: 60px; height: 60px; background: #e0e7ff; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 10px; font-size: 1.8rem;">👤</div>
+                        <div class="card-title" style="margin-bottom: 2px;">冒険者さん</div>
+                        <span style="background: #4f46e5; color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;">LV. <span id="profile-level">1</span></span>
+                    </div>
 
-                <div class="card">
-                    <div class="card-title">解放済み都市リスト</div>
-                    <ul id="unlocked-cities-list" style="font-size: 0.9rem; padding-left: 20px; color: #4b5563;">
-                        <!-- JavaScriptで動的生成 -->
-                    </ul>
+                    <div class="card">
+                        <div class="card-title">🧭 解放済み都市リスト</div>
+                        <ul id="unlocked-cities-list" style="font-size: 0.9rem; padding-left: 20px; color: #4b5563; line-height: 1.6;">
+                            <!-- JSで動的生成 -->
+                        </ul>
+                    </div>
                 </div>
             </div>
 
@@ -325,7 +378,7 @@
 
         <!-- 下部ナビゲーションバー -->
         <nav class="nav-bar">
-            <button class="nav-item active" onclick="switchTab('home', 'ホーム')">
+            <button class="nav-item active" onclick="switchTab('home', 'マップ冒険')">
                 <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                 ホーム
             </button>
@@ -345,7 +398,7 @@
     </div>
 
     <script>
-        // サンプル都市データ (緯度・経度はおおよその中心地)
+        // サンプル都市データ
         const cityData = [
             { id: "tokyo", name: "東京都千代田区", lat: 35.6812, lng: 139.7671 },
             { id: "yokohama", name: "神奈川県横浜市", lat: 35.4437, lng: 139.6380 },
@@ -367,19 +420,59 @@
             { id: "metropolis", name: "大都会", icon: "🏢", desc: "東京都千代田区を解放した" }
         ];
 
-        // アプリの状態管理
+        // アプリ状態
         let appState = {
-            unlockedCities: [], // 解放済み都市のIDリスト
-            unlockedBadges: []  // 解放済み実績のIDリスト
+            unlockedCities: [],
+            unlockedBadges: []
         };
 
-        // 初期化処理
+        let map;
+        let markersGroup;
+
+        // 初期設定
         window.addEventListener('DOMContentLoaded', () => {
             loadData();
+            initMap();
             initSelectors();
             renderBadges();
             updateUI();
+            
+            // 地図上にすでに解放されているピンを置く
+            renderMarkers();
         });
+
+        // 地図の初期化
+        function initMap() {
+            // 日本全体が見える位置で初期化
+            map = L.map('map', {
+                zoomControl: false // スマホで邪魔にならないようズームボタンを非表示
+            }).setView([36.5, 137.5], 5);
+
+            // OpenStreetMapのタイルレイヤー（地図デザイン）を追加
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // マーカーをまとめるグループを作成
+            markersGroup = L.layerGroup().addTo(map);
+        }
+
+        // 解放された都市のマーカーを地図に描画
+        function renderMarkers() {
+            if (!markersGroup) return;
+            markersGroup.clearLayers(); // 一旦クリア
+
+            appState.unlockedCities.forEach(cityId => {
+                const city = cityData.find(c => c.id === cityId);
+                if (city) {
+                    // ピンを地図上に追加
+                    L.marker([city.lat, city.lng])
+                        .addTo(markersGroup)
+                        .bindPopup(`<b>🎉 解放済み!</b><br>${city.name}`)
+                        .openPopup();
+                }
+            });
+        }
 
         // タブ切り替え
         function switchTab(tabId, title) {
@@ -389,15 +482,20 @@
             document.getElementById(`tab-${tabId}`).classList.add('active');
             document.getElementById('app-title').innerText = title;
             
-            // イベントを発生させたボタンをアクティブにする
             const navItems = document.querySelectorAll('.nav-item');
-            if(tabId === 'home') navItems[0].classList.add('active');
+            if(tabId === 'home') {
+                navItems[0].classList.add('active');
+                // マップタブに戻った時に地図の描画バグを防ぐためリサイズ命令を出す
+                if(map) {
+                    setTimeout(() => map.invalidateSize(), 100);
+                }
+            }
             if(tabId === 'achievements') navItems[1].classList.add('active');
             if(tabId === 'temp') navItems[2].classList.add('active');
             if(tabId === 'profile') navItems[3].classList.add('active');
         }
 
-        // セレクターの初期化
+        // セレクター初期化
         function initSelectors() {
             const selector = document.getElementById('city-selector');
             selector.innerHTML = '';
@@ -418,7 +516,6 @@
                 const isUnlocked = appState.unlockedBadges.includes(badge.id);
                 const item = document.createElement('div');
                 item.className = `badge-item ${isUnlocked ? 'unlocked' : ''}`;
-                item.title = badge.desc;
                 item.innerHTML = `
                     <div class="badge-icon">${badge.icon}</div>
                     <div class="badge-name">${badge.name}</div>
@@ -428,24 +525,21 @@
             });
         }
 
-        // GPSによるチェックイン処理
+        // GPSチェックイン
         function handleCheckIn() {
             if (!navigator.geolocation) {
-                showToast("⚠️ お使いのブラウザはGPSに対応していません。シミュレータを使用してください。");
+                showToast("⚠️ GPSに未対応のブラウザです。");
                 return;
             }
 
-            document.getElementById('location-status').className = "status-badge";
-            document.getElementById('location-status').innerText = "位置情報取得中...";
-            document.getElementById('location-status').style.background = "#ffe4e6";
-            document.getElementById('location-status').style.color = "#991b1b";
+            const statusEl = document.getElementById('location-status');
+            statusEl.innerText = "🛰️ 位置情報を受信中...";
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
                     
-                    // 最も近い都市を判定（簡易的な距離計算。差が0.5度以内ならその都市にいるとみなす）
                     let foundCity = null;
                     let minDistance = 0.5; 
 
@@ -458,68 +552,72 @@
                     });
 
                     if (foundCity) {
-                        unlockCity(foundCity.id, foundCity.name);
+                        unlockCity(foundCity.id, foundCity.name, foundCity.lat, foundCity.lng);
                     } else {
-                        // GPSテスト用に、もし近くに対象都市がなければランダムで1つ解放する親切設計
+                        // テスト救済用
                         const randomCity = cityData[Math.floor(Math.random() * cityData.length)];
-                        unlockCity(randomCity.id, `現在地付近に都市がないためデモ解放: ${randomCity.name}`);
+                        unlockCity(randomCity.id, `デモ解放: ${randomCity.name}`, randomCity.lat, randomCity.lng);
                     }
                 },
                 (error) => {
-                    console.error(error);
-                    // エラー時も動かせるようランダム解放で救済
+                    // エラー救済用
                     const randomCity = cityData[Math.floor(Math.random() * cityData.length)];
-                    unlockCity(randomCity.id, `GPSエラーのためデモ解放: ${randomCity.name}`);
+                    unlockCity(randomCity.id, `デモ解放(GPSエラー): ${randomCity.name}`, randomCity.lat, randomCity.lng);
                 },
                 { enableHighAccuracy: true, timeout: 5000 }
             );
         }
 
-        // シミュレータによるチェックイン
+        // シミュレーターチェックイン
         function handleSimulateCheckIn() {
             const cityId = document.getElementById('city-selector').value;
             const city = cityData.find(c => c.id === cityId);
             if (city) {
-                unlockCity(city.id, city.name);
+                unlockCity(city.id, city.name, city.lat, city.lng);
+                switchTab('home', 'マップ冒険'); // マップに自動で切り替え
             }
         }
 
-        // 都市の解放ロジック
-        function unlockCity(cityId, cityName) {
+        // 都市解放コアロジック
+        function unlockCity(cityId, cityName, lat, lng) {
             let isNew = false;
             if (!appState.unlockedCities.includes(cityId)) {
                 appState.unlockedCities.push(cityId);
                 isNew = true;
             }
 
-            // ステータス表示の更新
-            const statusEl = document.getElementById('location-status');
-            statusEl.className = "status-badge status-success";
-            statusEl.innerText = `${cityName} にチェックインしました！`;
+            // ステータス表示
+            document.getElementById('location-status').innerText = `📍最終訪問: ${cityName}`;
 
-            // 実績の判定
+            // 地図をその場所へ移動させ、ピンを再描画
+            if (map) {
+                map.setView([lat, lng], 10, { animate: true, duration: 1.5 });
+                setTimeout(() => {
+                    renderMarkers();
+                }, 500);
+            }
+
             checkAchievements();
             saveData();
             updateUI();
 
             if (isNew) {
-                showToast(`🎉 新しい都市「${cityName}」を解放！`);
+                showToast(`🎉 新都市「${cityName}」を解放！`);
             } else {
-                showToast(`📍 ${cityName} にチェックインしました（訪問済み）`);
+                showToast(`📍 ${cityName} にチェックイン（訪問済み）`);
             }
         }
 
-        // 実績の条件チェック
+        // 実績チェック
         function checkAchievements() {
             const count = appState.unlockedCities.length;
-            
             const checkAndUnlock = (badgeId, conditionTrue) => {
                 if (conditionTrue && !appState.unlockedBadges.includes(badgeId)) {
                     appState.unlockedBadges.push(badgeId);
                     const badge = badgeDefinitions.find(b => b.id === badgeId);
                     setTimeout(() => {
                         showToast(`🏆 実績解除: 【${badge.name}】！`);
-                    }, 1000);
+                    }, 1200);
                 }
             };
 
@@ -531,17 +629,14 @@
             checkAndUnlock("metropolis", appState.unlockedCities.includes("tokyo"));
         }
 
-        // UI全体の更新
+        // UI更新
         function updateUI() {
-            // カウント更新
             document.getElementById('stats-count').innerText = appState.unlockedCities.length;
             document.getElementById('stats-badges').innerText = appState.unlockedBadges.length;
 
-            // プロフィール更新
             const level = Math.floor(appState.unlockedCities.length / 3) + 1;
             document.getElementById('profile-level').innerText = level;
 
-            // リスト更新
             const listEl = document.getElementById('unlocked-cities-list');
             listEl.innerHTML = '';
             if (appState.unlockedCities.length === 0) {
@@ -556,34 +651,26 @@
                     }
                 });
             }
-
-            // 実績バッジの再描画
             renderBadges();
         }
 
-        // トースト通知
+        // トースト表示
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.innerText = message;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // ローカルストレージへの保存・読込
+        // ストレージ保存・読込
         function saveData() {
-            localStorage.setItem('geo_app_state', JSON.stringify(appState));
+            localStorage.setItem('geo_map_app_state', JSON.stringify(appState));
         }
 
         function loadData() {
-            const saved = localStorage.getItem('geo_app_state');
+            const saved = localStorage.getItem('geo_map_app_state');
             if (saved) {
-                try {
-                    appState = JSON.parse(saved);
-                } catch(e) {
-                    console.error(e);
-                }
+                try { appState = JSON.parse(saved); } catch(e) { console.error(e); }
             }
         }
 
@@ -593,8 +680,9 @@
                 appState = { unlockedCities: [], unlockedBadges: [] };
                 saveData();
                 updateUI();
-                document.getElementById('location-status').className = "status-badge status-idle";
-                document.getElementById('location-status').innerText = "未チェックイン";
+                if (markersGroup) markersGroup.clearLayers();
+                if (map) map.setView([36.5, 137.5], 5);
+                document.getElementById('location-status').innerText = "未チェックイン (現在地を解放しよう)";
                 showToast("データをリセットしました");
             }
         }
