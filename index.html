@@ -71,7 +71,7 @@
         }
 
         .scroll-content {
-            padding: 24px 20px;
+            padding: 16px 14px;
             height: 100%;
             overflow-y: auto;
             background-color: #111216;
@@ -151,18 +151,18 @@
         .btn {
             display: block;
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: #ffffff;
             color: #111216;
             border: none;
-            border-radius: 14px;
-            font-size: 0.95rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
             font-weight: 700;
             letter-spacing: 0.05em;
             cursor: pointer;
             text-align: center;
             transition: all 0.2s ease;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
 
         .btn:active {
@@ -180,15 +180,15 @@
         .card {
             background: #181920;
             border: 1px solid #272a34;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 16px;
         }
 
         .card-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             color: #ffffff;
             letter-spacing: 0.03em;
         }
@@ -212,16 +212,16 @@
         .badge-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-top: 12px;
+            gap: 12px;
+            margin-top: 10px;
         }
 
         .badge-item {
             background: #1e202a;
-            border-radius: 14px;
-            padding: 16px 8px;
+            border-radius: 12px;
+            padding: 12px 6px;
             text-align: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             filter: grayscale(100%);
             opacity: 0.3;
             border: 1px solid #272a34;
@@ -235,8 +235,8 @@
         }
 
         .badge-icon {
-            font-size: 2.2rem;
-            margin-bottom: 8px;
+            font-size: 1.8rem;
+            margin-bottom: 6px;
         }
 
         .badge-name {
@@ -246,11 +246,11 @@
 
         .select-box {
             width: 100%;
-            padding: 12px;
-            border-radius: 10px;
+            padding: 10px;
+            border-radius: 8px;
             border: 1px solid #272a34;
-            font-size: 0.9rem;
-            margin-bottom: 12px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
             background-color: #1e202a;
             color: #ffffff;
             outline: none;
@@ -263,16 +263,16 @@
             transform: translateX(-50%) translateY(-120px);
             background: #ffffff;
             color: #111216;
-            padding: 14px 28px;
+            padding: 12px 24px;
             border-radius: 12px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 700;
             box-shadow: 0 15px 35px rgba(0,0,0,0.5);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 100;
             text-align: center;
             width: 85%;
-            max-width: 340px;
+            max-width: 320px;
             pointer-events: none;
         }
 
@@ -285,9 +285,9 @@
         }
 
         li {
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px solid #1e202a;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #cbd5e1;
         }
         
@@ -295,23 +295,27 @@
             border-bottom: none;
         }
 
-        /* 📅 カレンダーUI用スタイル */
+        /* 📅 カレンダーUIをコンパクトにリサイズ */
         .calendar-container {
             display: flex;
             flex-direction: column;
             background: #181920;
             border: 1px solid #272a34;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 20px;
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 14px;
+            max-width: 340px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .calendar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             color: #ffffff;
+            font-size: 0.9rem;
             font-weight: 700;
         }
 
@@ -319,36 +323,36 @@
             background: #272a34;
             color: white;
             border: none;
-            padding: 6px 12px;
+            padding: 4px 10px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
 
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
+            gap: 4px;
             text-align: center;
         }
 
         .weekday-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: #64748b;
-            padding-bottom: 6px;
+            padding-bottom: 4px;
         }
 
         .calendar-day {
             background: #1e202a;
             border: 1px solid #272a34;
-            border-radius: 8px;
+            border-radius: 6px;
             aspect-ratio: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: #cbd5e1;
             cursor: pointer;
@@ -368,25 +372,25 @@
 
         .calendar-day.has-history {
             border-color: #ff3b30;
-            background: rgba(255, 59, 48, 0.1);
+            background: rgba(255, 59, 48, 0.08);
             color: #ffffff;
         }
 
         .calendar-day.has-history::after {
             content: '';
-            width: 4px;
-            height: 4px;
+            width: 3px;
+            height: 3px;
             background: #ff3b30;
             border-radius: 50%;
             position: absolute;
-            bottom: 4px;
+            bottom: 2px;
         }
 
         .calendar-day.selected {
             background: #ff3b30 !important;
             color: #ffffff !important;
             border-color: #ff3b30 !important;
-            box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4);
+            box-shadow: 0 3px 8px rgba(255, 59, 48, 0.4);
         }
 
         .calendar-day.selected::after {
@@ -396,18 +400,18 @@
         .history-detail-card {
             background: #181920;
             border: 1px solid #272a34;
-            border-radius: 16px;
-            padding: 20px;
+            border-radius: 14px;
+            padding: 16px;
         }
 
         .history-tag {
             display: inline-block;
-            padding: 2px 8px;
+            padding: 2px 6px;
             background: #272a34;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #94a3b8;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         /* ブートアニメーション画面 */
@@ -524,16 +528,16 @@
             <!-- 2. 実績タブ -->
             <div id="tab-achievements" class="tab-content">
                 <div class="scroll-content">
-                    <div class="card" style="margin-bottom: 20px; background: #1e202a; border: 1px solid #272a34;">
+                    <div class="card" style="margin-bottom: 16px; background: #1e202a; border: 1px solid #272a34;">
                         <div style="display:flex; justify-content:space-around; text-align:center;">
                             <div>
-                                <div style="font-size:1.6rem; font-weight:800; color:#ffffff;" id="stats-count">0</div>
-                                <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">解放都市・区</div>
+                                <div style="font-size:1.4rem; font-weight:800; color:#ffffff;" id="stats-count">0</div>
+                                <div style="font-size:0.7rem; color:#94a3b8; margin-top:4px;">解放都市・区</div>
                             </div>
                             <div style="border-left: 1px solid #272a34;"></div>
                             <div>
-                                <div style="font-size:1.6rem; font-weight:800; color:#ffffff;" id="stats-badges">0</div>
-                                <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">獲得実績</div>
+                                <div style="font-size:1.4rem; font-weight:800; color:#ffffff;" id="stats-badges">0</div>
+                                <div style="font-size:0.7rem; color:#94a3b8; margin-top:4px;">獲得実績</div>
                             </div>
                         </div>
                     </div>
@@ -544,10 +548,10 @@
                 </div>
             </div>
 
-            <!-- 3. 📅 履歴タブ（カレンダー機能：旧シミュレーター兼） -->
+            <!-- 3. 📅 履歴タブ（コンパクトカレンダー搭載） -->
             <div id="tab-history" class="tab-content">
                 <div class="scroll-content">
-                    <!-- カレンダーUI -->
+                    <!-- 小さくなったカレンダーUI -->
                     <div class="calendar-container">
                         <div class="calendar-header">
                             <button onclick="changeMonth(-1)">◀</button>
@@ -560,37 +564,36 @@
                     <!-- 選択日の詳細履歴 -->
                     <div class="history-detail-card" id="history-detail-section">
                         <div class="history-tag" id="detail-date-label">日付を選択してください</div>
-                        <div class="card-title" style="margin-bottom:12px;">🕒 この日の冒険記録</div>
+                        <div class="card-title" style="font-size:0.85rem; margin-bottom:8px;">🕒 この日の冒険記録</div>
                         
-                        <div style="margin-bottom:16px;">
-                            <div style="font-size:0.8rem; color:#94a3b8; margin-bottom:6px; font-weight:700;">🔓 解放した市区町村</div>
-                            <ul id="detail-cities-list" style="padding-left:4px;">
-                                <li style="color:#64748b; font-size:0.85rem;">日付をタップすると一覧が表示されます。</li>
+                        <div style="margin-bottom:12px;">
+                            <div style="font-size:0.75rem; color:#94a3b8; margin-bottom:4px; font-weight:700;">🔓 解放した市区町村</div>
+                            <ul id="detail-cities-list" style="padding-left:2px;">
+                                <li style="color:#64748b; font-size:0.8rem;">日付をタップすると一覧が表示されます。</li>
                             </ul>
                         </div>
 
                         <div>
-                            <div style="font-size:0.8rem; color:#94a3b8; margin-bottom:6px; font-weight:700;">🏆 解除した実績</div>
-                            <ul id="detail-badges-list" style="padding-left:4px;">
-                                <li style="color:#64748b; font-size:0.85rem;">日付をタップすると一覧が表示されます。</li>
+                            <div style="font-size:0.75rem; color:#94a3b8; margin-bottom:4px; font-weight:700;">🏆 解除した実績</div>
+                            <ul id="detail-badges-list" style="padding-left:2px;">
+                                <li style="color:#64748b; font-size:0.8rem;">日付をタップすると一覧が表示されます。</li>
                             </ul>
                         </div>
                     </div>
 
-                    <!-- デバッグシミュレーター（折りたたみまたは下部に配置して機能を維持） -->
-                    <div class="card" style="margin-top:20px; opacity:0.65;">
-                        <div class="card-title" style="font-size:0.85rem;">⚙️ DEBUG SIMULATOR</div>
-                        <div style="display:flex; gap:8px; margin-bottom:10px;">
-                            <select id="pref-selector" class="select-box" style="margin-bottom:0; padding:8px;" onchange="updateCitySelector()"></select>
-                            <select id="city-selector" class="select-box" style="margin-bottom:0; padding:8px;"></select>
+                    <!-- デバッグシミュレーター -->
+                    <div class="card" style="margin-top:16px; opacity:0.65; padding:12px;">
+                        <div class="card-title" style="font-size:0.8rem; margin-bottom:6px;">⚙️ DEBUG SIMULATOR</div>
+                        <div style="display:flex; gap:6px; margin-bottom:6px;">
+                            <select id="pref-selector" class="select-box" style="margin-bottom:0; padding:6px; font-size:0.8rem;" onchange="updateCitySelector()"></select>
+                            <select id="city-selector" class="select-box" style="margin-bottom:0; padding:6px; font-size:0.8rem;"></select>
                         </div>
-                        <!-- テスト用に過去日でも追加できるよう日付シミュレート選択を追加 -->
-                        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
-                            <label style="font-size:0.75rem; color:#94a3b8; white-space:nowrap;">シミュレート日:</label>
-                            <input type="date" id="simulator-date-input" class="select-box" style="margin-bottom:0; padding:6px; font-size:0.8rem;">
+                        <div style="display:flex; gap:6px; align-items:center; margin-bottom:8px;">
+                            <label style="font-size:0.7rem; color:#94a3b8; white-space:nowrap;">シミュレート日:</label>
+                            <input type="date" id="simulator-date-input" class="select-box" style="margin-bottom:0; padding:4px; font-size:0.75rem; height:28px;">
                         </div>
-                        <button class="btn btn-secondary" style="padding:10px; font-size:0.85rem;" onclick="handleSimulateCheckIn()">選択都市を擬似解放</button>
-                        <button class="btn" style="background: #ef4444; color: white; box-shadow: none; margin-top:8px; padding:8px; font-size:0.8rem;" onclick="resetAllData()">全データ初期化</button>
+                        <button class="btn btn-secondary" style="padding:8px; font-size:0.8rem; border-radius:8px;" onclick="handleSimulateCheckIn()">選択都市を擬似解放</button>
+                        <button class="btn" style="background: #ef4444; color: white; box-shadow: none; margin-top:6px; padding:6px; font-size:0.75rem; border-radius:6px;" onclick="resetAllData()">全データ初期化</button>
                     </div>
                 </div>
             </div>
@@ -598,10 +601,10 @@
             <!-- 4. プロフィールタブ -->
             <div id="tab-profile" class="tab-content">
                 <div class="scroll-content">
-                    <div class="card" style="text-align: center; background: linear-gradient(180deg, #1e202a 0%, #181920 100%);">
-                        <div style="width: 64px; height: 64px; background: #272a34; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 12px; font-size: 1.8rem; border: 1px solid #3f4454;">👤</div>
-                        <div class="card-title" style="margin-bottom: 4px;">EXPLORER</div>
-                        <span style="background: #ffffff; color: #111216; padding: 4px 14px; border-radius: 30px; font-size: 0.75rem; font-weight: 800;">LV. <span id="profile-level">1</span></span>
+                    <div class="card" style="text-align: center; background: linear-gradient(180deg, #1e202a 0%, #181920 100%); padding: 14px;">
+                        <div style="width: 56px; height: 56px; background: #272a34; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 10px; font-size: 1.6rem; border: 1px solid #3f4454;">👤</div>
+                        <div class="card-title" style="margin-bottom: 4px; font-size:0.9rem;">EXPLORER</div>
+                        <span style="background: #ffffff; color: #111216; padding: 2px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 800;">LV. <span id="profile-level">1</span></span>
                     </div>
                     <div class="card">
                         <div class="card-title">🧭 UNLOCKED CITIES</div>
@@ -657,7 +660,7 @@
 
         let appState = {
             unlockedCities: [],
-            unlockedBadges: [] // 各要素に {id, date} の形で持たせるように内部拡張
+            unlockedBadges: []
         };
 
         let nihonData = null;
@@ -665,7 +668,6 @@
         let markersGroup;
         let polylineGroup;
 
-        // 📅 カレンダー表示制御用の状態変数
         let currentCalendarDate = new Date();
         let selectedDateStr = "";
 
@@ -711,7 +713,6 @@
                 renderBadges();
                 updateUI();
                 
-                // 初期表示として、本日日付を選択状態にしてマップ描画
                 const today = new Date();
                 selectedDateStr = formatDateKey(today);
                 renderCalendar();
@@ -754,57 +755,50 @@
             return `${dateObj.getFullYear()}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}`;
         }
 
-        // 📅 【最重要拡張】選択された特定の日付のポリラインとマーカーのみを描画する
         function renderMapForSelectedDate() {
             if (!markersGroup || !polylineGroup) return;
             markersGroup.clearLayers();
             polylineGroup.clearLayers();
 
-            // 選択された日付にマッチするチェックイン履歴を抽出
             const filteredCities = appState.unlockedCities.filter(item => item.date === selectedDateStr);
             
             if (filteredCities.length === 0) {
-                document.getElementById('location-status').innerText = `${selectedDateStr} : 冒険の記録なし`;
+                document.getElementById('location-status').innerText = `${selectedDateStr} : 記録なし`;
                 return;
             }
 
-            document.getElementById('location-status').innerText = `${selectedDateStr} のルート表示中`;
+            document.getElementById('location-status').innerText = `${selectedDateStr} のルート`;
 
-            // 1. その日の足跡マーカーを描画
             filteredCities.forEach(item => {
                 const customIcon = L.divIcon({
                     className: 'custom-marker',
-                    html: `<div style="width: 14px; height: 14px; background: #ff3b30; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 0 8px rgba(255,59,48,0.6);"></div>`,
-                    iconSize: [14, 14],
-                    iconAnchor: [7, 7]
+                    html: `<div style="width: 12px; height: 12px; background: #ff3b30; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 0 6px rgba(255,59,48,0.6);"></div>`,
+                    iconSize: [12, 12],
+                    iconAnchor: [6, 6]
                 });
 
                 L.marker([item.lat, item.lng], { icon: customIcon })
                     .addTo(markersGroup)
-                    .bindPopup(`<b style="color:#111216;">📍 当日の足跡</b><br><span style="color:#333;">${item.cityName}</span>`);
+                    .bindPopup(`<b style="color:#111216;">📍 足跡</b><br><span style="color:#333;">${item.cityName}</span>`);
             });
 
-            // 2. その日の移動ルートポリラインを描画（2箇所以上あれば接続）
             if (filteredCities.length >= 2) {
                 const coords = filteredCities.map(item => [item.lat, item.lng]);
                 L.polyline(coords, {
                     color: '#ff3b30',
-                    weight: 4,
+                    weight: 3.5,
                     opacity: 0.9,
-                    dashArray: '6, 6',
+                    dashArray: '5, 5',
                     lineJoin: 'round'
                 }).addTo(polylineGroup);
 
-                // 自動でその日のルート全体が収まるように地図の表示範囲をフィット
                 const bounds = L.latLngBounds(coords);
-                map.fitBounds(bounds, { padding: [40, 40], maxZoom: 13, animate: true });
+                map.fitBounds(bounds, { padding: [30, 30], maxZoom: 13, animate: true });
             } else if (filteredCities.length === 1) {
-                // 1箇所だけならそこへセンター移動
                 map.setView([filteredCities[0].lat, filteredCities[0].lng], 12, { animate: true });
             }
         }
 
-        // 📅 カレンダーUIの生成＆描画
         function renderCalendar() {
             const grid = document.getElementById('calendar-days-grid');
             const monthLabel = document.getElementById('calendar-month-year');
@@ -815,7 +809,6 @@
 
             monthLabel.innerText = `${year}年 ${String(month + 1).padStart(2, '0')}月`;
 
-            // 曜日ヘッダー
             const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
             weekdays.forEach(w => {
                 const lbl = document.createElement('div');
@@ -824,18 +817,15 @@
                 grid.appendChild(lbl);
             });
 
-            // 月の最初の日と総日数を計算
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
 
-            // 空白セル
             for (let i = 0; i < firstDayIndex; i++) {
                 const emptyCell = document.createElement('div');
                 emptyCell.className = 'calendar-day empty';
                 grid.appendChild(emptyCell);
             }
 
-            // 日付セル
             for (let day = 1; day <= totalDays; day++) {
                 const cell = document.createElement('div');
                 cell.className = 'calendar-day';
@@ -843,24 +833,21 @@
 
                 const dateStr = `${year}/${String(month + 1).padStart(2, '0')}/${String(day).padStart(2, '0')}`;
 
-                // この日にチェックイン履歴があるか判定
                 const hasHistory = appState.unlockedCities.some(c => c.date === dateStr);
                 if (hasHistory) {
                     cell.classList.add('has-history');
                 }
 
-                // 選択中日付スタイル
                 if (dateStr === selectedDateStr) {
                     cell.classList.add('selected');
                 }
 
-                // タップイベント
                 cell.onclick = () => {
                     selectedDateStr = dateStr;
-                    renderCalendar(); // 再描画して選択スタイルを反映
-                    renderMapForSelectedDate(); // マップを切り替え
-                    updateHistoryDetails(); // 下部の詳細ビューを更新
-                    showToast(`📅 ${dateStr} を表示中`);
+                    renderCalendar();
+                    renderMapForSelectedDate();
+                    updateHistoryDetails();
+                    showToast(`📅 ${dateStr} を選択`);
                 };
 
                 grid.appendChild(cell);
@@ -872,7 +859,6 @@
             renderCalendar();
         }
 
-        // 📅 選択された日付のテキスト詳細データを描画
         function updateHistoryDetails() {
             document.getElementById('detail-date-label').innerText = selectedDateStr;
 
@@ -882,35 +868,34 @@
             citiesList.innerHTML = '';
             badgesList.innerHTML = '';
 
-            // 当日解放された市区町村の抽出
             const filteredCities = appState.unlockedCities.filter(item => item.date === selectedDateStr);
             if (filteredCities.length === 0) {
-                citiesList.innerHTML = '<li style="color:#64748b; font-size:0.85rem;">この日の解放エリアはありません。</li>';
+                citiesList.innerHTML = '<li style="color:#64748b; font-size:0.8rem;">この日の解放エリアはありません。</li>';
             } else {
+                // 重複表示を防ぐため、同じ日に複数回立ち寄った都市も1行にまとめるか、時間軸として全て出すか。
+                // 今回はルート順を意識するため、通過順にすべて出力します。
                 filteredCities.forEach(c => {
                     const li = document.createElement('li');
-                    li.innerHTML = `🏁 <b style="color:#ffffff;">${c.cityName}</b> <span style="font-size:0.75rem; color:#64748b;">(コード: ${c.code})</span>`;
+                    li.innerHTML = `🏁 <b style="color:#ffffff;">${c.cityName}</b>`;
                     citiesList.appendChild(li);
                 });
             }
 
-            // 当日解除された実績の抽出
-            // 後方互換性のため、文字列だけの配列の場合は「実績全解除リスト」として扱い、オブジェクト型 {id, date} の場合は日付一致を検証
             const filteredBadges = appState.unlockedBadges.filter(b => {
                 if (typeof b === 'object' && b.date) {
                     return b.date === selectedDateStr;
                 }
-                return false; // 旧データ形式、またはシミュレータ等の簡易判定時は実績タブ全体で表示
+                return false;
             });
 
             if (filteredBadges.length === 0) {
-                badgesList.innerHTML = '<li style="color:#64748b; font-size:0.85rem;">この日に新規解除した実績はありません。</li>';
+                badgesList.innerHTML = '<li style="color:#64748b; font-size:0.8rem;">新規解除の実績はありません。</li>';
             } else {
                 filteredBadges.forEach(fb => {
                     const bDef = badgeDefinitions.find(b => b.id === fb.id);
                     if (bDef) {
                         const li = document.createElement('li');
-                        li.innerHTML = `<span style="font-size:1.1rem; margin-right:6px;">${bDef.icon}</span><b style="color:#00ff66;">${bDef.name}</b> - ${bDef.desc}`;
+                        li.innerHTML = `<span style="font-size:1rem; margin-right:4px;">${bDef.icon}</span><b style="color:#00ff66;">${bDef.name}</b>`;
                         badgesList.appendChild(li);
                     }
                 });
@@ -985,14 +970,13 @@
             if(!container) return;
             container.innerHTML = '';
             badgeDefinitions.forEach(badge => {
-                // 内部構造が {id, date} または単なる文字列のどちらでも判定できるようにする
                 const isUnlocked = appState.unlockedBadges.some(b => b === badge.id || b.id === badge.id);
                 const item = document.createElement('div');
                 item.className = `badge-item ${isUnlocked ? 'unlocked' : ''}`;
                 item.innerHTML = `
                     <div class="badge-icon">${badge.icon}</div>
                     <div class="badge-name">${badge.name}</div>
-                    <div style="font-size:0.6rem; color:#94a3b8; margin-top:6px;">${badge.desc}</div>
+                    <div style="font-size:0.6rem; color:#94a3b8; margin-top:4px;">${badge.desc}</div>
                 `;
                 container.appendChild(item);
             });
@@ -1008,14 +992,14 @@
                 return;
             }
 
-            document.getElementById('location-status').innerText = "📍 GPS座標を取得中...";
+            document.getElementById('location-status').innerText = "📍 GPS取得中...";
 
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
                     
-                    document.getElementById('location-status').innerText = "🔍 市区町村を特定中...";
+                    document.getElementById('location-status').innerText = "🔍 都市を特定中...";
 
                     let prefId = "13";
                     let minDist = 999;
@@ -1073,7 +1057,6 @@
             unlockCity(prefId, cityObj.city, cityObj.citycode, lat, lng);
         }
 
-        // 📅 【シミュレーター拡張】デバッグ時に、指定した過去日付で自由に足跡を作れるようにする
         function handleSimulateCheckIn() {
             if (!nihonData) return;
             const prefId = document.getElementById('pref-selector').value;
@@ -1084,26 +1067,21 @@
             const offsetLat = baseCoord[0] + (Math.random() - 0.5) * 0.15;
             const offsetLng = baseCoord[1] + (Math.random() - 0.5) * 0.15;
 
-            // シミュレーター用入力フォームから日付を取得
             const simDateValue = document.getElementById('simulator-date-input').value;
             let customDateStr = "";
             if (simDateValue) {
-                const parts = simDateValue.split('-'); // YYYY-MM-DD
+                const parts = simDateValue.split('-');
                 customDateStr = `${parts[0]}/${parts[1]}/${parts[2]}`;
             } else {
                 customDateStr = formatDateKey(new Date());
             }
 
-            // 指定した日付でロック解除処理を走らせる
-            selectedDateStr = customDateStr; // マップ表示ターゲットを切り替え
+            selectedDateStr = customDateStr;
             unlockCity(prefId, cityObj.city, cityObj.citycode, offsetLat, offsetLng, customDateStr);
-            
-            // マップ画面（HOME）へ自動遷移
             switchTab('home', 'MAP ADVENTURE');
         }
 
         function unlockCity(prefId, cityName, code, lat, lng, targetedDate = null) {
-            // 日付の決定（通常のチェックインなら今日、シミュレートならその設定日）
             const dateStr = targetedDate ? targetedDate : formatDateKey(new Date());
 
             const alreadyUnlocked = appState.unlockedCities.some(c => c.code === code);
@@ -1112,18 +1090,14 @@
                 appState.unlockedCities.push({ prefId, cityName, code, lat, lng, date: dateStr });
                 showToast(`🎉 UNLOCKED: ${cityName}`);
             } else {
-                showToast(`📍 ALREADY VISITED (ルート追加)`);
-                // 同じ都市でも、別日に訪れた場合は軌跡をつなげるために履歴レコードを許可する
+                showToast(`📍 ルート接続: ${cityName}`);
                 appState.unlockedCities.push({ prefId, cityName, code, lat, lng, date: dateStr });
             }
 
-            // 実績のチェックと獲得判定
             checkAchievements(dateStr);
-            
             saveData();
             updateUI();
 
-            // 指定された日付のマップをリフレッシュ
             selectedDateStr = dateStr;
             renderMapForSelectedDate();
         }
@@ -1132,10 +1106,8 @@
             const uniqueCount = new Set(appState.unlockedCities.map(c => c.code)).size;
             
             const checkAndUnlock = (badgeId, conditionTrue) => {
-                // 既存の獲得履歴にないかチェック
                 const alreadyHas = appState.unlockedBadges.some(b => b === badgeId || b.id === badgeId);
                 if (conditionTrue && !alreadyHas) {
-                    // 解除した日付をセットにしてオブジェクトで格納
                     appState.unlockedBadges.push({ id: badgeId, date: dateStr });
                     const b = badgeDefinitions.find(badge => badge.id === badgeId);
                     setTimeout(() => showToast(`🏆 UNLOCKED: 【${b.name}】`), 1000);
@@ -1156,7 +1128,6 @@
         }
 
         function updateUI() {
-            // ユニークな解放都市数
             const uniqueCount = new Set(appState.unlockedCities.map(c => c.code)).size;
             document.getElementById('stats-count').innerText = uniqueCount;
             document.getElementById('stats-badges').innerText = appState.unlockedBadges.length;
@@ -1170,7 +1141,6 @@
                 if (appState.unlockedCities.length === 0) {
                     listEl.innerHTML = '<li>No data. Start your adventure!</li>';
                 } else {
-                    // プロフィールタブには全体タイムラインを表示
                     [...appState.unlockedCities].reverse().forEach(item => {
                         const li = document.createElement('li');
                         li.innerText = `✓  ${item.cityName} (${item.date})`;
@@ -1198,7 +1168,6 @@
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
-                    // 互換性維持：実績が古い配列型（単なる文字列配列）だった場合は、オブジェクト型にコンバート
                     if (parsed.unlockedBadges && parsed.unlockedBadges.length > 0 && typeof parsed.unlockedBadges[0] === 'string') {
                         parsed.unlockedBadges = parsed.unlockedBadges.map(id => ({ id: id, date: formatDateKey(new Date()) }));
                     }
@@ -1210,7 +1179,7 @@
         }
 
         function resetAllData() {
-            if (confirm('すべての冒険記録（カレンダー・ポリライン履歴含む）を初期化しますか？')) {
+            if (confirm('すべての冒険記録を初期化しますか？')) {
                 appState = { unlockedCities: [], unlockedBadges: [] };
                 saveData();
                 updateUI();
