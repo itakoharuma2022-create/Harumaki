@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>全国位置情報・実績解除アプリ</title>
     <!-- Leaflet.js のCSSとJS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
@@ -15,52 +15,45 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
-        body {
-            background-color: #f5f7fb;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        /* 画面いっぱいに表示するための完全全画面設定 */
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #111216; /* 高級感のあるダーク背景 */
+            color: #f3f4f6;
         }
 
+        /* スマートフォン・タブレットなどあらゆる端末で画面いっぱいに広げる */
         .phone-container {
             width: 100%;
-            max-width: 414px;
-            height: 100vh;
-            max-height: 896px;
-            background: #ffffff;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            height: 100%;
             display: flex;
             flex-direction: column;
             position: relative;
-            overflow: hidden;
+            background: #111216;
         }
 
-        @media (min-width: 415px) {
-            .phone-container {
-                height: 85vh;
-                border-radius: 30px;
-                border: 8px solid #333;
-            }
-        }
-
+        /* 洗練されたダークモノトーンのヘッダー */
         header {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
+            background: rgba(17, 18, 22, 0.95);
+            color: #ffffff;
             padding: 16px;
             text-align: center;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 1.1rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid #272a34;
             z-index: 20;
+            backdrop-filter: blur(10px);
         }
 
+        /* メインコンテンツエリア */
         .content-area {
             flex: 1;
             position: relative;
             overflow: hidden;
-            padding-bottom: 65px;
+            padding-bottom: 70px; /* ナビバーの高さ */
         }
 
         #tab-home {
@@ -81,42 +74,51 @@
         }
 
         .scroll-content {
-            padding: 20px 16px;
+            padding: 24px 20px;
             height: 100%;
             overflow-y: auto;
+            background-color: #111216;
         }
 
+        /* 地図を完全に白黒（モノトーン）にするCSSフィルター */
         #map {
             width: 100%;
             height: 100%;
             z-index: 1;
+            background-color: #1a1b20;
+            filter: grayscale(100%) invert(90%) hue-rotate(180deg) brightness(95%) contrast(105%);
         }
 
+        /* マップ上に浮かぶ洗練されたUIレイアウト */
         .map-overlay {
             position: absolute;
-            bottom: 20px;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
-            width: 85%;
+            width: 90%;
+            max-width: 360px;
             z-index: 10;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
             align-items: center;
         }
 
+        /* 高級感のあるボトムナビゲーションバー */
         .nav-bar {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 65px;
-            background: #ffffff;
-            border-top: 1px solid #e5e7eb;
+            height: 70px;
+            background: rgba(17, 18, 22, 0.95);
+            border-top: 1px solid #272a34;
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 20;
+            backdrop-filter: blur(10px);
+            padding-bottom: env(safe-area-inset-bottom); /* iPhoneのノッチ対応 */
         }
 
         .nav-item {
@@ -124,187 +126,233 @@
             text-align: center;
             background: none;
             border: none;
-            color: #9ca3af;
-            font-size: 0.8rem;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 500;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-            transition: color 0.2s;
+            gap: 6px;
+            transition: all 0.3s;
         }
 
         .nav-item svg {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             fill: currentColor;
+            transition: transform 0.2s;
         }
 
         .nav-item.active {
-            color: #4f46e5;
-            font-weight: bold;
+            color: #ffffff;
+            font-weight: 700;
         }
 
+        .nav-item.active svg {
+            transform: translateY(-2px);
+        }
+
+        /* ミニマルで洗練されたボタン */
         .btn {
             display: block;
             width: 100%;
-            padding: 14px;
-            background: #4f46e5;
-            color: white;
+            padding: 16px;
+            background: #ffffff;
+            color: #111216;
             border: none;
-            border-radius: 30px;
-            font-size: 1rem;
-            font-weight: bold;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
             cursor: pointer;
             text-align: center;
-            transition: all 0.2s;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            transition: all 0.2s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
         }
 
         .btn:active {
-            transform: scale(0.98);
-            background: #3730a3;
+            transform: scale(0.97);
+            background: #e2e8f0;
         }
 
         .btn-secondary {
-            background: #10b981;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            background: #272a34;
+            color: #ffffff;
+            border: 1px solid #3f4454;
+            box-shadow: none;
         }
 
+        .btn-secondary:active {
+            background: #3f4454;
+        }
+
+        /* ダークモードに最適化したカードデザイン */
         .card {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
+            background: #181920;
+            border: 1px solid #272a34;
             border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
         .card-title {
             font-size: 1rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #1f2937;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #ffffff;
+            letter-spacing: 0.03em;
         }
 
+        /* フローティングステータス */
         .floating-status {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 6px 16px;
-            border-radius: 20px;
+            background: rgba(24, 25, 32, 0.95);
+            padding: 8px 18px;
+            border-radius: 30px;
             font-size: 0.8rem;
-            font-weight: bold;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            color: #4f46e5;
-            border: 1px solid #e5e7eb;
-            max-width: 90%;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            color: #94a3b8;
+            border: 1px solid #272a34;
+            max-width: 100%;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            text-align: center;
+            backdrop-filter: blur(8px);
         }
 
+        /* 実績グリッド */
         .badge-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 16px;
             margin-top: 12px;
         }
 
         .badge-item {
-            background: #f3f4f6;
-            border-radius: 12px;
-            padding: 12px 8px;
+            background: #1e202a;
+            border-radius: 14px;
+            padding: 16px 8px;
             text-align: center;
             font-size: 0.75rem;
             filter: grayscale(100%);
-            opacity: 0.5;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
+            opacity: 0.3;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #272a34;
         }
 
         .badge-item.unlocked {
             filter: grayscale(0%);
             opacity: 1;
-            background: #eff6ff;
-            border-color: #3b82f6;
+            background: #242736;
+            border-color: #ffffff;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
         .badge-icon {
-            font-size: 2rem;
-            margin-bottom: 6px;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
         }
 
         .badge-name {
-            font-weight: bold;
-            color: #1f2937;
+            font-weight: 700;
+            color: #ffffff;
         }
 
+        /* セレクトボックスの洗練 */
         .select-box {
             width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #d1d5db;
-            font-size: 1rem;
-            margin-bottom: 12px;
-            background-color: white;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #272a34;
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+            background-color: #1e202a;
+            color: #ffffff;
+            outline: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='white'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
         }
 
+        /* 通知トースト */
         .toast {
             position: absolute;
-            top: 80px;
+            top: 30px;
             left: 50%;
             transform: translateX(-50%) translateY(-120px);
-            background: #1f2937;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 30px;
+            background: #ffffff;
+            color: #111216;
+            padding: 14px 28px;
+            border-radius: 12px;
             font-size: 0.9rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 700;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 100;
             text-align: center;
-            width: 80%;
+            width: 85%;
+            max-width: 340px;
             pointer-events: none;
         }
 
         .toast.show {
             transform: translateX(-50%) translateY(0);
         }
+
+        /* リストの美化 */
+        ul {
+            list-style: none;
+        }
+
+        li {
+            padding: 10px 0;
+            border-bottom: 1px solid #1e202a;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+        
+        li:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
 
     <div class="phone-container">
+        <!-- 通知トースト -->
         <div id="toast" class="toast">実績を解除しました！</div>
-        <header id="app-title">マップ冒険</header>
+        <header id="app-title">MAP ADVENTURE</header>
 
         <div class="content-area">
             <!-- 1. ホームタブ（マップ表示） -->
             <div id="tab-home" class="tab-content active">
                 <div id="map"></div>
                 <div class="map-overlay">
-                    <div id="location-status" class="floating-status">データを読み込み中...</div>
-                    <button class="btn" onclick="handleCheckIn()">📍 現在地でチェックイン</button>
+                    <div id="location-status" class="floating-status">INITIALIZING...</div>
+                    <button class="btn" onclick="handleCheckIn()">📍 CHECK IN</button>
                 </div>
             </div>
 
             <!-- 2. 実績タブ -->
             <div id="tab-achievements" class="tab-content">
                 <div class="scroll-content">
-                    <div class="card" style="margin-bottom: 12px; background: linear-gradient(135deg, #eff6ff, #dbeafe); border: none;">
+                    <div class="card" style="margin-bottom: 20px; background: #1e202a; border: 1px solid #272a34;">
                         <div style="display:flex; justify-content:space-around; text-align:center;">
                             <div>
-                                <div style="font-size:1.5rem; font-weight:bold; color:#1e40af;" id="stats-count">0</div>
-                                <div style="font-size:0.75rem; color:#6b7280;">解放都市・区</div>
+                                <div style="font-size:1.6rem; font-weight:800; color:#ffffff;" id="stats-count">0</div>
+                                <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">解放都市・区</div>
                             </div>
-                            <div style="border-left: 1px solid #bfdbfe;"></div>
+                            <div style="border-left: 1px solid #272a34;"></div>
                             <div>
-                                <div style="font-size:1.5rem; font-weight:bold; color:#1e40af;" id="stats-badges">0</div>
-                                <div style="font-size:0.75rem; color:#6b7280;">獲得実績</div>
+                                <div style="font-size:1.6rem; font-weight:800; color:#ffffff;" id="stats-badges">0</div>
+                                <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">獲得実績</div>
                             </div>
                         </div>
                     </div>
                     <div class="card">
-                        <div class="card-title">獲得バッジ一覧</div>
+                        <div class="card-title">ACHIEVEMENTS</div>
                         <div class="badge-grid" id="badge-container"></div>
                     </div>
                 </div>
@@ -314,22 +362,22 @@
             <div id="tab-temp" class="tab-content">
                 <div class="scroll-content">
                     <div class="card">
-                        <div class="card-title">⚙️ 全国市区町村シミュレータ</div>
-                        <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 12px;">
+                        <div class="card-title">⚙️ DEBUG SIMULATOR</div>
+                        <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 16px; line-height: 1.5;">
                             Nihon.json から読み込んだ全国の都市を擬似的に解放テストできます。
                         </p>
                         
-                        <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">1. 都道府県を選択：</label>
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 6px;">1. 都道府県を選択</label>
                         <select id="pref-selector" class="select-box" onchange="updateCitySelector()"></select>
 
-                        <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 4px;">2. 市区町村を選択：</label>
+                        <label style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 6px;">2. 市区町村を選択</label>
                         <select id="city-selector" class="select-box"></select>
 
                         <button class="btn btn-secondary" onclick="handleSimulateCheckIn()">選択した都市を擬似解放</button>
                     </div>
                     <div class="card">
-                        <div class="card-title">データ管理</div>
-                        <button class="btn" style="background: #ef4444; box-shadow: none;" onclick="resetAllData()">データをすべて初期化</button>
+                        <div class="card-title">DATA MANAGEMENT</div>
+                        <button class="btn" style="background: #ef4444; color: white; box-shadow: none;" onclick="resetAllData()">データをすべて初期化</button>
                     </div>
                 </div>
             </div>
@@ -337,35 +385,35 @@
             <!-- 4. プロフィールタブ -->
             <div id="tab-profile" class="tab-content">
                 <div class="scroll-content">
-                    <div class="card" style="text-align: center;">
-                        <div style="width: 60px; height: 60px; background: #e0e7ff; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 10px; font-size: 1.8rem;">👤</div>
-                        <div class="card-title" style="margin-bottom: 2px;">日本全国の冒険者</div>
-                        <span style="background: #4f46e5; color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;">冒険者 LV. <span id="profile-level">1</span></span>
+                    <div class="card" style="text-align: center; background: linear-gradient(180deg, #1e202a 0%, #181920 100%);">
+                        <div style="width: 64px; height: 64px; background: #272a34; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 12px; font-size: 1.8rem; border: 1px solid #3f4454;">👤</div>
+                        <div class="card-title" style="margin-bottom: 4px;">EXPLORER</div>
+                        <span style="background: #ffffff; color: #111216; padding: 4px 14px; border-radius: 30px; font-size: 0.75rem; font-weight: 800;">LV. <span id="profile-level">1</span></span>
                     </div>
                     <div class="card">
-                        <div class="card-title">🧭 解放済み都市リスト</div>
-                        <ul id="unlocked-cities-list" style="font-size: 0.9rem; padding-left: 20px; color: #4b5563; line-height: 1.6; max-height: 300px; overflow-y: auto;"></ul>
+                        <div class="card-title">🧭 UNLOCKED CITIES</div>
+                        <ul id="unlocked-cities-list"></ul>
                     </div>
                 </div>
             </div>
         </div>
 
         <nav class="nav-bar">
-            <button class="nav-item active" onclick="switchTab('home', 'マップ冒険')">
+            <button class="nav-item active" onclick="switchTab('home', 'MAP ADVENTURE')">
                 <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-                ホーム
+                MAP
             </button>
-            <button class="nav-item" onclick="switchTab('achievements', '実績バッジ')">
+            <button class="nav-item" onclick="switchTab('achievements', 'ACHIEVEMENTS')">
                 <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.25z"/></svg>
-                実績
+                BADGES
             </button>
-            <button class="nav-item" onclick="switchTab('temp', 'シミュレータ(仮)')">
+            <button class="nav-item" onclick="switchTab('temp', 'DEBUG SIMULATOR')">
                 <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-                仮
+                DEBUG
             </button>
-            <button class="nav-item" onclick="switchTab('profile', 'プロフィール')">
+            <button class="nav-item" onclick="switchTab('profile', 'EXPLORER PROFILE')">
                 <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                プロフィール
+                PROFILE
             </button>
         </nav>
     </div>
@@ -396,7 +444,7 @@
         ];
 
         let appState = {
-            unlockedCities: [], // { prefId, cityName, code, lat, lng } のリスト
+            unlockedCities: [],
             unlockedBadges: []
         };
 
@@ -409,20 +457,16 @@
             fetchNihonJson();
         });
 
-        // 100%安全に Nihon.json を外部読み込みして解析する関数
         async function fetchNihonJson() {
             const statusEl = document.getElementById('location-status');
             try {
-                // 同じGitHubリポジトリ内の Nihon.json をフェッチ
                 const response = await fetch('Nihon.json');
                 if (!response.ok) throw new Error("JSONファイルの取得に失敗しました");
                 
                 const rawData = await response.json();
-                
-                // 【罠1対策】配列の中にオブジェクトが入っている構造を完全に救済
                 nihonData = Array.isArray(rawData) ? rawData[0] : rawData;
                 
-                statusEl.innerText = "🗺️ 地図準備完了 (チェックインしよう)";
+                statusEl.innerText = "READY TO EXPLORE";
                 
                 loadData();
                 initPrefSelector();
@@ -432,16 +476,19 @@
                 
             } catch (error) {
                 console.error(error);
-                statusEl.innerText = "❌ Nihon.jsonの読み込みエラー";
+                statusEl.innerText = "ERROR: NIHON.JSON NOT FOUND";
                 alert("Nihon.json の読み込みに失敗しました。リポジトリに正しく配置されているか確認してください。");
             }
         }
 
         function initMap() {
             map = L.map('map', { zoomControl: false }).setView([36.5, 137.5], 5);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap'
+            
+            // 白黒・ダークデザインに馴染みやすいシンプルな地図レイヤーに変更
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap &copy; CARTO'
             }).addTo(map);
+            
             markersGroup = L.layerGroup().addTo(map);
         }
 
@@ -449,20 +496,25 @@
             if (!markersGroup) return;
             markersGroup.clearLayers();
             appState.unlockedCities.forEach(item => {
-                L.marker([item.lat, item.lng])
+                // ピンもモノトーンに合うカスタムスタイル（黒丸のシンプルなマーカー）
+                const customIcon = L.divIcon({
+                    className: 'custom-marker',
+                    html: `<div style="width: 14px; height: 14px; background: #111216; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 0 8px rgba(0,0,0,0.5);"></div>`,
+                    iconSize: [14, 14],
+                    iconAnchor: [7, 7]
+                });
+
+                L.marker([item.lat, item.lng], { icon: customIcon })
                     .addTo(markersGroup)
-                    .bindPopup(`<b>🎉 解放済み!</b><br>${item.cityName}`);
+                    .bindPopup(`<b style="color:#111216;">🎉 解放済み</b><br><span style="color:#333;">${item.cityName}</span>`);
             });
         }
 
-        // シミュレータ用の都道府県プルダウン生成
         function initPrefSelector() {
             const prefSel = document.getElementById('pref-selector');
             prefSel.innerHTML = '';
-            
-            // "01"~"47"をループ処理する
             for (let i = 1; i <= 47; i++) {
-                const prefId = String(i).padStart(2, '0'); // 【罠2対策】
+                const prefId = String(i).padStart(2, '0');
                 if (nihonData[prefId]) {
                     const opt = document.createElement('option');
                     opt.value = prefId;
@@ -473,7 +525,6 @@
             updateCitySelector();
         }
 
-        // 都道府県が選ばれたら市区町村を自動入れ替え
         function updateCitySelector() {
             const prefId = document.getElementById('pref-selector').value;
             const citySel = document.getElementById('city-selector');
@@ -482,7 +533,7 @@
             if (nihonData[prefId] && nihonData[prefId].city) {
                 nihonData[prefId].city.forEach((c, index) => {
                     const opt = document.createElement('option');
-                    opt.value = index; // 配列のインデックスを格納
+                    opt.value = index;
                     opt.innerText = c.city;
                     citySel.appendChild(opt);
                 });
@@ -516,32 +567,30 @@
                 item.innerHTML = `
                     <div class="badge-icon">${badge.icon}</div>
                     <div class="badge-name">${badge.name}</div>
-                    <div style="font-size:0.6rem; color:#6b7280; margin-top:4px;">${badge.desc}</div>
+                    <div style="font-size:0.6rem; color:#94a3b8; margin-top:6px;">${badge.desc}</div>
                 `;
                 container.appendChild(item);
             });
         }
 
-        // GPSチェックイン処理
         function handleCheckIn() {
             if (!nihonData) {
-                showToast("⚠️ データの準備がまだできていません");
+                showToast("⚠️ DATA NOT READY");
                 return;
             }
             if (!navigator.geolocation) {
-                showToast("⚠️ GPS非対応の端末です。仮タブを使ってテストしてください。");
+                showToast("⚠️ GPS NOT SUPPORTED");
                 return;
             }
 
-            document.getElementById('location-status').innerText = "🛰️ 現在地を取得中...";
+            document.getElementById('location-status').innerText = "TRACKING GPS...";
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
                     
-                    // 近い都道府県を自動検索（もし外れていたらランダム救済）
-                    let prefId = "13"; // デフォルト東京
+                    let prefId = "13";
                     let minDist = 999;
                     
                     Object.keys(prefCoordinates).forEach(pId => {
@@ -553,20 +602,17 @@
                         }
                     });
 
-                    // 該当都道府県から市町村をランダム選出
                     const cities = nihonData[prefId].city;
                     const randIndex = Math.floor(Math.random() * cities.length);
                     const cityObj = cities[randIndex];
 
-                    // ピン用の位置を少し散らしてマッピング
                     const baseCoord = prefCoordinates[prefId];
-                    const offsetLat = baseCoord[0] + (Math.random() - 0.5) * 0.1;
-                    const offsetLng = baseCoord[1] + (Math.random() - 0.5) * 0.1;
+                    const offsetLat = baseCoord[0] + (Math.random() - 0.5) * 0.15;
+                    const offsetLng = baseCoord[1] + (Math.random() - 0.5) * 0.15;
 
                     unlockCity(prefId, cityObj.city, cityObj.citycode, offsetLat, offsetLng);
                 },
                 (error) => {
-                    // エラー時のデモ救済
                     const randPref = String(Math.floor(Math.random() * 47) + 1).padStart(2, '0');
                     const cities = nihonData[randPref].city;
                     const cityObj = cities[Math.floor(Math.random() * cities.length)];
@@ -577,38 +623,34 @@
             );
         }
 
-        // シミュレータテスト解放
         function handleSimulateCheckIn() {
             if (!nihonData) return;
             const prefId = document.getElementById('pref-selector').value;
             const cityIndex = document.getElementById('city-selector').value;
             const cityObj = nihonData[prefId].city[cityIndex];
             
-            // 都道府県のベース座標にピンを生成
             const baseCoord = prefCoordinates[prefId];
-            const offsetLat = baseCoord[0] + (Math.random() - 0.5) * 0.1;
-            const offsetLng = baseCoord[1] + (Math.random() - 0.5) * 0.1;
+            const offsetLat = baseCoord[0] + (Math.random() - 0.5) * 0.15;
+            const offsetLng = baseCoord[1] + (Math.random() - 0.5) * 0.15;
 
             unlockCity(prefId, cityObj.city, cityObj.citycode, offsetLat, offsetLng);
-            switchTab('home', 'マップ冒険');
+            switchTab('home', 'MAP ADVENTURE');
         }
 
-        // 都市の解放処理
         function unlockCity(prefId, cityName, code, lat, lng) {
-            // すでに同じコードの都市が解放されているか確認
             const alreadyUnlocked = appState.unlockedCities.some(c => c.code === code);
             
             if (!alreadyUnlocked) {
                 appState.unlockedCities.push({ prefId, cityName, code, lat, lng });
-                showToast(`🎉 「${cityName}」を新たに解放！`);
+                showToast(`🎉 UNLOCKED: ${cityName}`);
             } else {
-                showToast(`📍 ${cityName} は訪問済みです`);
+                showToast(`📍 ALREADY VISITED`);
             }
 
-            document.getElementById('location-status').innerText = `📍 最終訪問: ${cityName}`;
+            document.getElementById('location-status').innerText = `LAST VISIT: ${cityName}`;
             
             if (map) {
-                map.setView([lat, lng], 10, { animate: true, duration: 1.2 });
+                map.setView([lat, lng], 10, { animate: true, duration: 1.5 });
                 setTimeout(() => renderMarkers(), 400);
             }
 
@@ -617,7 +659,6 @@
             updateUI();
         }
 
-        // 実績チェック
         function checkAchievements() {
             const count = appState.unlockedCities.length;
             
@@ -625,7 +666,7 @@
                 if (conditionTrue && !appState.unlockedBadges.includes(badgeId)) {
                     appState.unlockedBadges.push(badgeId);
                     const b = badgeDefinitions.find(badge => badge.id === badgeId);
-                    setTimeout(() => showToast(`🏆 実績解除: 【${b.name}】！`), 1000);
+                    setTimeout(() => showToast(`🏆 UNLOCKED: 【${b.name}】`), 1000);
                 }
             };
 
@@ -634,7 +675,6 @@
             checkAndUnlock("level_five", count >= 10);
             checkAndUnlock("japan_conqueror", count >= 50);
 
-            // 同じ県内で3つ以上解放されたかカウント
             const prefCounts = {};
             appState.unlockedCities.forEach(c => {
                 prefCounts[c.prefId] = (prefCounts[c.prefId] || 0) + 1;
@@ -653,12 +693,11 @@
             const listEl = document.getElementById('unlocked-cities-list');
             listEl.innerHTML = '';
             if (appState.unlockedCities.length === 0) {
-                listEl.innerHTML = '<li>まだありません。全国を旅しよう！</li>';
+                listEl.innerHTML = '<li>No data. Start your adventure!</li>';
             } else {
-                // 新しい訪問順に表示
                 [...appState.unlockedCities].reverse().forEach(item => {
                     const li = document.createElement('li');
-                    li.innerText = `✅  ${item.cityName} (コード: ${item.code})`;
+                    li.innerText = `✓  ${item.cityName} (${item.code})`;
                     listEl.appendChild(li);
                 });
             }
@@ -673,11 +712,11 @@
         }
 
         function saveData() {
-            localStorage.setItem('geo_nihon_app_state', JSON.stringify(appState));
+            localStorage.setItem('geo_nihon_app_state_v4', JSON.stringify(appState));
         }
 
         function loadData() {
-            const saved = localStorage.getItem('geo_nihon_app_state');
+            const saved = localStorage.getItem('geo_nihon_app_state_v4');
             if (saved) {
                 try {
                     appState = JSON.parse(saved);
@@ -688,14 +727,14 @@
         }
 
         function resetAllData() {
-            if (confirm('これまでの全国の冒険記録をすべて削除しますか？')) {
+            if (confirm('すべての冒険記録を初期化しますか？')) {
                 appState = { unlockedCities: [], unlockedBadges: [] };
                 saveData();
                 updateUI();
                 if (markersGroup) markersGroup.clearLayers();
                 if (map) map.setView([36.5, 137.5], 5);
-                document.getElementById('location-status').innerText = "未チェックイン (現在地を解放しよう)";
-                showToast("記録をすべて消去しました");
+                document.getElementById('location-status').innerText = "INITIALIZING...";
+                showToast("RESET COMPLETED");
             }
         }
     </script>
