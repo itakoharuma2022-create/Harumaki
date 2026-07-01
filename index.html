@@ -151,7 +151,7 @@
         .btn {
             display: block;
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: #ffffff;
             color: #111216;
             border: none;
@@ -175,10 +175,6 @@
             color: #ffffff;
             border: 1px solid #3f4454;
             box-shadow: none;
-        }
-
-        .btn-secondary:active {
-            background: #3f4454;
         }
 
         .card {
@@ -228,7 +224,6 @@
             font-size: 0.75rem;
             filter: grayscale(100%);
             opacity: 0.3;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid #272a34;
         }
 
@@ -237,7 +232,6 @@
             opacity: 1;
             background: #242736;
             border-color: #ffffff;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
         .badge-icon {
@@ -252,18 +246,14 @@
 
         .select-box {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border-radius: 10px;
             border: 1px solid #272a34;
-            font-size: 0.95rem;
-            margin-bottom: 16px;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
             background-color: #1e202a;
             color: #ffffff;
             outline: none;
-            appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='white'><path d='M7 10l5 5 5-5z'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
         }
 
         .toast {
@@ -303,6 +293,121 @@
         
         li:last-child {
             border-bottom: none;
+        }
+
+        /* 📅 カレンダーUI用スタイル */
+        .calendar-container {
+            display: flex;
+            flex-direction: column;
+            background: #181920;
+            border: 1px solid #272a34;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .calendar-header button {
+            background: #272a34;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            text-align: center;
+        }
+
+        .weekday-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            padding-bottom: 6px;
+        }
+
+        .calendar-day {
+            background: #1e202a;
+            border: 1px solid #272a34;
+            border-radius: 8px;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .calendar-day:active {
+            transform: scale(0.95);
+        }
+
+        .calendar-day.empty {
+            background: transparent;
+            border: none;
+            cursor: default;
+        }
+
+        .calendar-day.has-history {
+            border-color: #ff3b30;
+            background: rgba(255, 59, 48, 0.1);
+            color: #ffffff;
+        }
+
+        .calendar-day.has-history::after {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: #ff3b30;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 4px;
+        }
+
+        .calendar-day.selected {
+            background: #ff3b30 !important;
+            color: #ffffff !important;
+            border-color: #ff3b30 !important;
+            box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4);
+        }
+
+        .calendar-day.selected::after {
+            background: #ffffff;
+        }
+
+        .history-detail-card {
+            background: #181920;
+            border: 1px solid #272a34;
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .history-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #272a34;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
         }
 
         /* ブートアニメーション画面 */
@@ -439,26 +544,53 @@
                 </div>
             </div>
 
-            <!-- 3. 仮タブ（デバッグ用シミュレータ） -->
-            <div id="tab-temp" class="tab-content">
+            <!-- 3. 📅 履歴タブ（カレンダー機能：旧シミュレーター兼） -->
+            <div id="tab-history" class="tab-content">
                 <div class="scroll-content">
-                    <div class="card">
-                        <div class="card-title">⚙️ DEBUG SIMULATOR</div>
-                        <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 16px; line-height: 1.5;">
-                            Nihon.json から読み込んだ全国の都市を擬似的に解放テストできます。
-                        </p>
-                        
-                        <label style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 6px;">1. 都道府県を選択</label>
-                        <select id="pref-selector" class="select-box" onchange="updateCitySelector()"></select>
-
-                        <label style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 6px;">2. 市区町村を選択</label>
-                        <select id="city-selector" class="select-box"></select>
-
-                        <button class="btn btn-secondary" onclick="handleSimulateCheckIn()">選択した都市を擬似解放</button>
+                    <!-- カレンダーUI -->
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button onclick="changeMonth(-1)">◀</button>
+                            <span id="calendar-month-year">2026年 07月</span>
+                            <button onclick="changeMonth(1)">▶</button>
+                        </div>
+                        <div class="calendar-grid" id="calendar-days-grid"></div>
                     </div>
-                    <div class="card">
-                        <div class="card-title">DATA MANAGEMENT</div>
-                        <button class="btn" style="background: #ef4444; color: white; box-shadow: none;" onclick="resetAllData()">データをすべて初期化</button>
+
+                    <!-- 選択日の詳細履歴 -->
+                    <div class="history-detail-card" id="history-detail-section">
+                        <div class="history-tag" id="detail-date-label">日付を選択してください</div>
+                        <div class="card-title" style="margin-bottom:12px;">🕒 この日の冒険記録</div>
+                        
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:0.8rem; color:#94a3b8; margin-bottom:6px; font-weight:700;">🔓 解放した市区町村</div>
+                            <ul id="detail-cities-list" style="padding-left:4px;">
+                                <li style="color:#64748b; font-size:0.85rem;">日付をタップすると一覧が表示されます。</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <div style="font-size:0.8rem; color:#94a3b8; margin-bottom:6px; font-weight:700;">🏆 解除した実績</div>
+                            <ul id="detail-badges-list" style="padding-left:4px;">
+                                <li style="color:#64748b; font-size:0.85rem;">日付をタップすると一覧が表示されます。</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- デバッグシミュレーター（折りたたみまたは下部に配置して機能を維持） -->
+                    <div class="card" style="margin-top:20px; opacity:0.65;">
+                        <div class="card-title" style="font-size:0.85rem;">⚙️ DEBUG SIMULATOR</div>
+                        <div style="display:flex; gap:8px; margin-bottom:10px;">
+                            <select id="pref-selector" class="select-box" style="margin-bottom:0; padding:8px;" onchange="updateCitySelector()"></select>
+                            <select id="city-selector" class="select-box" style="margin-bottom:0; padding:8px;"></select>
+                        </div>
+                        <!-- テスト用に過去日でも追加できるよう日付シミュレート選択を追加 -->
+                        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+                            <label style="font-size:0.75rem; color:#94a3b8; white-space:nowrap;">シミュレート日:</label>
+                            <input type="date" id="simulator-date-input" class="select-box" style="margin-bottom:0; padding:6px; font-size:0.8rem;">
+                        </div>
+                        <button class="btn btn-secondary" style="padding:10px; font-size:0.85rem;" onclick="handleSimulateCheckIn()">選択都市を擬似解放</button>
+                        <button class="btn" style="background: #ef4444; color: white; box-shadow: none; margin-top:8px; padding:8px; font-size:0.8rem;" onclick="resetAllData()">全データ初期化</button>
                     </div>
                 </div>
             </div>
@@ -488,9 +620,9 @@
                 <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.25z"/></svg>
                 BADGES
             </button>
-            <button class="nav-item" onclick="switchTab('temp', 'DEBUG SIMULATOR')">
-                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-                DEBUG
+            <button class="nav-item" onclick="switchTab('history', 'ADVENTURE HISTORY')">
+                <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v2h-5z"/></svg>
+                HISTORY
             </button>
             <button class="nav-item" onclick="switchTab('profile', 'EXPLORER PROFILE')">
                 <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -525,17 +657,31 @@
 
         let appState = {
             unlockedCities: [],
-            unlockedBadges: []
+            unlockedBadges: [] // 各要素に {id, date} の形で持たせるように内部拡張
         };
 
         let nihonData = null;
         let map;
         let markersGroup;
+        let polylineGroup;
+
+        // 📅 カレンダー表示制御用の状態変数
+        let currentCalendarDate = new Date();
+        let selectedDateStr = "";
 
         window.addEventListener('DOMContentLoaded', () => {
             initMap();
+            setDefaultSimulatorDate();
             runBootAnimation();
         });
+
+        function setDefaultSimulatorDate() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('simulator-date-input').value = `${yyyy}-${mm}-${dd}`;
+        }
 
         function runBootAnimation() {
             setTimeout(() => document.getElementById('row1').classList.add('visible'), 200);
@@ -564,7 +710,12 @@
                 initPrefSelector();
                 renderBadges();
                 updateUI();
-                renderMarkers();
+                
+                // 初期表示として、本日日付を選択状態にしてマップ描画
+                const today = new Date();
+                selectedDateStr = formatDateKey(today);
+                renderCalendar();
+                renderMapForSelectedDate();
 
                 setTimeout(() => {
                     document.getElementById('boot-spinner').style.display = 'none';
@@ -579,7 +730,6 @@
                             if (map) map.invalidateSize();
                         }, 500);
                     }, 1800);
-
                 }, 800);
                 
             } catch (error) {
@@ -592,40 +742,191 @@
 
         function initMap() {
             map = L.map('map', { zoomControl: false }).setView([36.5, 137.5], 5);
-            
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; OpenStreetMap &copy; CARTO'
             }).addTo(map);
             
             markersGroup = L.layerGroup().addTo(map);
+            polylineGroup = L.layerGroup().addTo(map);
         }
 
-        function renderMarkers() {
-            if (!markersGroup) return;
+        function formatDateKey(dateObj) {
+            return `${dateObj.getFullYear()}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}`;
+        }
+
+        // 📅 【最重要拡張】選択された特定の日付のポリラインとマーカーのみを描画する
+        function renderMapForSelectedDate() {
+            if (!markersGroup || !polylineGroup) return;
             markersGroup.clearLayers();
-            appState.unlockedCities.forEach(item => {
+            polylineGroup.clearLayers();
+
+            // 選択された日付にマッチするチェックイン履歴を抽出
+            const filteredCities = appState.unlockedCities.filter(item => item.date === selectedDateStr);
+            
+            if (filteredCities.length === 0) {
+                document.getElementById('location-status').innerText = `${selectedDateStr} : 冒険の記録なし`;
+                return;
+            }
+
+            document.getElementById('location-status').innerText = `${selectedDateStr} のルート表示中`;
+
+            // 1. その日の足跡マーカーを描画
+            filteredCities.forEach(item => {
                 const customIcon = L.divIcon({
                     className: 'custom-marker',
-                    html: `<div style="width: 14px; height: 14px; background: #111216; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 0 8px rgba(0,0,0,0.5);"></div>`,
+                    html: `<div style="width: 14px; height: 14px; background: #ff3b30; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 0 8px rgba(255,59,48,0.6);"></div>`,
                     iconSize: [14, 14],
                     iconAnchor: [7, 7]
                 });
 
                 L.marker([item.lat, item.lng], { icon: customIcon })
                     .addTo(markersGroup)
-                    .bindPopup(`<b style="color:#111216;">🎉 解放済み</b><br><span style="color:#333;">${item.cityName}</span>`);
+                    .bindPopup(`<b style="color:#111216;">📍 当日の足跡</b><br><span style="color:#333;">${item.cityName}</span>`);
             });
+
+            // 2. その日の移動ルートポリラインを描画（2箇所以上あれば接続）
+            if (filteredCities.length >= 2) {
+                const coords = filteredCities.map(item => [item.lat, item.lng]);
+                L.polyline(coords, {
+                    color: '#ff3b30',
+                    weight: 4,
+                    opacity: 0.9,
+                    dashArray: '6, 6',
+                    lineJoin: 'round'
+                }).addTo(polylineGroup);
+
+                // 自動でその日のルート全体が収まるように地図の表示範囲をフィット
+                const bounds = L.latLngBounds(coords);
+                map.fitBounds(bounds, { padding: [40, 40], maxZoom: 13, animate: true });
+            } else if (filteredCities.length === 1) {
+                // 1箇所だけならそこへセンター移動
+                map.setView([filteredCities[0].lat, filteredCities[0].lng], 12, { animate: true });
+            }
+        }
+
+        // 📅 カレンダーUIの生成＆描画
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-days-grid');
+            const monthLabel = document.getElementById('calendar-month-year');
+            grid.innerHTML = '';
+
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+
+            monthLabel.innerText = `${year}年 ${String(month + 1).padStart(2, '0')}月`;
+
+            // 曜日ヘッダー
+            const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+            weekdays.forEach(w => {
+                const lbl = document.createElement('div');
+                lbl.className = 'weekday-label';
+                lbl.innerText = w;
+                grid.appendChild(lbl);
+            });
+
+            // 月の最初の日と総日数を計算
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+
+            // 空白セル
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'calendar-day empty';
+                grid.appendChild(emptyCell);
+            }
+
+            // 日付セル
+            for (let day = 1; day <= totalDays; day++) {
+                const cell = document.createElement('div');
+                cell.className = 'calendar-day';
+                cell.innerText = day;
+
+                const dateStr = `${year}/${String(month + 1).padStart(2, '0')}/${String(day).padStart(2, '0')}`;
+
+                // この日にチェックイン履歴があるか判定
+                const hasHistory = appState.unlockedCities.some(c => c.date === dateStr);
+                if (hasHistory) {
+                    cell.classList.add('has-history');
+                }
+
+                // 選択中日付スタイル
+                if (dateStr === selectedDateStr) {
+                    cell.classList.add('selected');
+                }
+
+                // タップイベント
+                cell.onclick = () => {
+                    selectedDateStr = dateStr;
+                    renderCalendar(); // 再描画して選択スタイルを反映
+                    renderMapForSelectedDate(); // マップを切り替え
+                    updateHistoryDetails(); // 下部の詳細ビューを更新
+                    showToast(`📅 ${dateStr} を表示中`);
+                };
+
+                grid.appendChild(cell);
+            }
+        }
+
+        function changeMonth(direction) {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + direction);
+            renderCalendar();
+        }
+
+        // 📅 選択された日付のテキスト詳細データを描画
+        function updateHistoryDetails() {
+            document.getElementById('detail-date-label').innerText = selectedDateStr;
+
+            const citiesList = document.getElementById('detail-cities-list');
+            const badgesList = document.getElementById('detail-badges-list');
+            
+            citiesList.innerHTML = '';
+            badgesList.innerHTML = '';
+
+            // 当日解放された市区町村の抽出
+            const filteredCities = appState.unlockedCities.filter(item => item.date === selectedDateStr);
+            if (filteredCities.length === 0) {
+                citiesList.innerHTML = '<li style="color:#64748b; font-size:0.85rem;">この日の解放エリアはありません。</li>';
+            } else {
+                filteredCities.forEach(c => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `🏁 <b style="color:#ffffff;">${c.cityName}</b> <span style="font-size:0.75rem; color:#64748b;">(コード: ${c.code})</span>`;
+                    citiesList.appendChild(li);
+                });
+            }
+
+            // 当日解除された実績の抽出
+            // 後方互換性のため、文字列だけの配列の場合は「実績全解除リスト」として扱い、オブジェクト型 {id, date} の場合は日付一致を検証
+            const filteredBadges = appState.unlockedBadges.filter(b => {
+                if (typeof b === 'object' && b.date) {
+                    return b.date === selectedDateStr;
+                }
+                return false; // 旧データ形式、またはシミュレータ等の簡易判定時は実績タブ全体で表示
+            });
+
+            if (filteredBadges.length === 0) {
+                badgesList.innerHTML = '<li style="color:#64748b; font-size:0.85rem;">この日に新規解除した実績はありません。</li>';
+            } else {
+                filteredBadges.forEach(fb => {
+                    const bDef = badgeDefinitions.find(b => b.id === fb.id);
+                    if (bDef) {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<span style="font-size:1.1rem; margin-right:6px;">${bDef.icon}</span><b style="color:#00ff66;">${bDef.name}</b> - ${bDef.desc}`;
+                        badgesList.appendChild(li);
+                    }
+                });
+            }
         }
 
         function initPrefSelector() {
             const prefSel = document.getElementById('pref-selector');
+            if(!prefSel) return;
             prefSel.innerHTML = '';
             for (let i = 1; i <= 47; i++) {
                 const prefId = String(i).padStart(2, '0');
                 if (nihonData[prefId]) {
                     const opt = document.createElement('option');
                     opt.value = prefId;
-                    opt.innerText = `${prefId}: ${nihonData[prefId].name}`;
+                    opt.innerText = nihonData[prefId].name;
                     prefSel.appendChild(opt);
                 }
             }
@@ -635,6 +936,7 @@
         function updateCitySelector() {
             const prefId = document.getElementById('pref-selector').value;
             const citySel = document.getElementById('city-selector');
+            if(!citySel) return;
             citySel.innerHTML = '';
 
             if (nihonData[prefId] && nihonData[prefId].city) {
@@ -657,18 +959,34 @@
             const navItems = document.querySelectorAll('.nav-item');
             if(tabId === 'home') {
                 navItems[0].classList.add('active');
-                if(map) setTimeout(() => map.invalidateSize(), 100);
+                if(map) {
+                    setTimeout(() => {
+                        map.invalidateSize();
+                        renderMapForSelectedDate();
+                    }, 100);
+                }
             }
-            if(tabId === 'achievements') navItems[1].classList.add('active');
-            if(tabId === 'temp') navItems[2].classList.add('active');
-            if(tabId === 'profile') navItems[3].classList.add('active');
+            if(tabId === 'achievements') {
+                navItems[1].classList.add('active');
+                renderBadges();
+            }
+            if(tabId === 'history') {
+                navItems[2].classList.add('active');
+                renderCalendar();
+                updateHistoryDetails();
+            }
+            if(tabId === 'profile') {
+                navItems[3].classList.add('active');
+            }
         }
 
         function renderBadges() {
             const container = document.getElementById('badge-container');
+            if(!container) return;
             container.innerHTML = '';
             badgeDefinitions.forEach(badge => {
-                const isUnlocked = appState.unlockedBadges.includes(badge.id);
+                // 内部構造が {id, date} または単なる文字列のどちらでも判定できるようにする
+                const isUnlocked = appState.unlockedBadges.some(b => b === badge.id || b.id === badge.id);
                 const item = document.createElement('div');
                 item.className = `badge-item ${isUnlocked ? 'unlocked' : ''}`;
                 item.innerHTML = `
@@ -680,7 +998,6 @@
             });
         }
 
-        // 🗺️ 【超重要修正】GPS位置情報から逆ジオコーディングを行い、正確な市区町村を特定する
         async function handleCheckIn() {
             if (!nihonData) {
                 showToast("⚠️ DATA NOT READY");
@@ -700,7 +1017,6 @@
                     
                     document.getElementById('location-status').innerText = "🔍 市区町村を特定中...";
 
-                    // 近似される都道府県の特定
                     let prefId = "13";
                     let minDist = 999;
                     Object.keys(prefCoordinates).forEach(pId => {
@@ -713,40 +1029,33 @@
                     });
 
                     try {
-                        // OpenStreetMap Nominatim API を使って正確な住所を取得 (逆ジオコーディング)
                         const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=12`;
                         const res = await fetch(geoUrl, { headers: { 'Accept-Language': 'ja' } });
                         if (!res.ok) throw new Error("ジオコーディング失敗");
                         const geoData = await res.json();
                         
                         const address = geoData.address || {};
-                        // 取得した住所から市、区、町、村の名前を抽出
                         const detectedCityName = address.city || address.town || address.island || address.suburb || address.village || "";
                         
-                        // Nihon.json内から一致する市区町村オブジェクトを探索
                         const cities = nihonData[prefId].city;
                         let matchedCity = null;
 
                         if (detectedCityName) {
-                            // "鹿嶋市" や "札幌市中央区" などの部分一致をチェック
                             matchedCity = cities.find(c => detectedCityName.includes(c.city) || c.city.includes(detectedCityName));
                         }
 
                         if (matchedCity) {
-                            // 正確に判定できた都市を解放（座標は実際の現在地GPSを使用！）
                             unlockCity(prefId, matchedCity.city, matchedCity.citycode, lat, lng);
                         } else {
-                            // 部分一致が見つからなかった、または特殊な地域の場合は最寄りのランダムでフォールバック
                             fallbackRandomCheckIn(prefId, lat, lng);
                         }
 
                     } catch (err) {
-                        console.warn("逆ジオコーディング中にエラーが発生したため、フォールバックします:", err);
+                        console.warn("逆ジオコーディングフォールバック:", err);
                         fallbackRandomCheckIn(prefId, lat, lng);
                     }
                 },
                 (error) => {
-                    // 完全オフラインやGPS拒否時の完全デモフォールバック
                     const randPref = String(Math.floor(Math.random() * 47) + 1).padStart(2, '0');
                     const cities = nihonData[randPref].city;
                     const cityObj = cities[Math.floor(Math.random() * cities.length)];
@@ -757,7 +1066,6 @@
             );
         }
 
-        // 従来の「県内ランダム抽出」をエラー時・判定不能時のフォールバックとして切り出し
         function fallbackRandomCheckIn(prefId, lat, lng) {
             const cities = nihonData[prefId].city;
             const randIndex = Math.floor(Math.random() * cities.length);
@@ -765,6 +1073,7 @@
             unlockCity(prefId, cityObj.city, cityObj.citycode, lat, lng);
         }
 
+        // 📅 【シミュレーター拡張】デバッグ時に、指定した過去日付で自由に足跡を作れるようにする
         function handleSimulateCheckIn() {
             if (!nihonData) return;
             const prefId = document.getElementById('pref-selector').value;
@@ -775,47 +1084,68 @@
             const offsetLat = baseCoord[0] + (Math.random() - 0.5) * 0.15;
             const offsetLng = baseCoord[1] + (Math.random() - 0.5) * 0.15;
 
-            unlockCity(prefId, cityObj.city, cityObj.citycode, offsetLat, offsetLng);
+            // シミュレーター用入力フォームから日付を取得
+            const simDateValue = document.getElementById('simulator-date-input').value;
+            let customDateStr = "";
+            if (simDateValue) {
+                const parts = simDateValue.split('-'); // YYYY-MM-DD
+                customDateStr = `${parts[0]}/${parts[1]}/${parts[2]}`;
+            } else {
+                customDateStr = formatDateKey(new Date());
+            }
+
+            // 指定した日付でロック解除処理を走らせる
+            selectedDateStr = customDateStr; // マップ表示ターゲットを切り替え
+            unlockCity(prefId, cityObj.city, cityObj.citycode, offsetLat, offsetLng, customDateStr);
+            
+            // マップ画面（HOME）へ自動遷移
             switchTab('home', 'MAP ADVENTURE');
         }
 
-        function unlockCity(prefId, cityName, code, lat, lng) {
+        function unlockCity(prefId, cityName, code, lat, lng, targetedDate = null) {
+            // 日付の決定（通常のチェックインなら今日、シミュレートならその設定日）
+            const dateStr = targetedDate ? targetedDate : formatDateKey(new Date());
+
             const alreadyUnlocked = appState.unlockedCities.some(c => c.code === code);
             
             if (!alreadyUnlocked) {
-                appState.unlockedCities.push({ prefId, cityName, code, lat, lng });
+                appState.unlockedCities.push({ prefId, cityName, code, lat, lng, date: dateStr });
                 showToast(`🎉 UNLOCKED: ${cityName}`);
             } else {
-                showToast(`📍 ALREADY VISITED`);
+                showToast(`📍 ALREADY VISITED (ルート追加)`);
+                // 同じ都市でも、別日に訪れた場合は軌跡をつなげるために履歴レコードを許可する
+                appState.unlockedCities.push({ prefId, cityName, code, lat, lng, date: dateStr });
             }
 
-            document.getElementById('location-status').innerText = `LAST VISIT: ${cityName}`;
+            // 実績のチェックと獲得判定
+            checkAchievements(dateStr);
             
-            if (map) {
-                map.setView([lat, lng], 12, { animate: true, duration: 1.5 });
-                setTimeout(() => renderMarkers(), 400);
-            }
-
-            checkAchievements();
             saveData();
             updateUI();
+
+            // 指定された日付のマップをリフレッシュ
+            selectedDateStr = dateStr;
+            renderMapForSelectedDate();
         }
 
-        function checkAchievements() {
-            const count = appState.unlockedCities.length;
+        function checkAchievements(dateStr) {
+            const uniqueCount = new Set(appState.unlockedCities.map(c => c.code)).size;
             
             const checkAndUnlock = (badgeId, conditionTrue) => {
-                if (conditionTrue && !appState.unlockedBadges.includes(badgeId)) {
-                    appState.unlockedBadges.push(badgeId);
+                // 既存の獲得履歴にないかチェック
+                const alreadyHas = appState.unlockedBadges.some(b => b === badgeId || b.id === badgeId);
+                if (conditionTrue && !alreadyHas) {
+                    // 解除した日付をセットにしてオブジェクトで格納
+                    appState.unlockedBadges.push({ id: badgeId, date: dateStr });
                     const b = badgeDefinitions.find(badge => badge.id === badgeId);
                     setTimeout(() => showToast(`🏆 UNLOCKED: 【${b.name}】`), 1000);
                 }
             };
 
-            checkAndUnlock("first_step", count >= 1);
-            checkAndUnlock("trio", count >= 3);
-            checkAndUnlock("level_five", count >= 10);
-            checkAndUnlock("japan_conqueror", count >= 50);
+            checkAndUnlock("first_step", uniqueCount >= 1);
+            checkAndUnlock("trio", uniqueCount >= 3);
+            checkAndUnlock("level_five", uniqueCount >= 10);
+            checkAndUnlock("japan_conqueror", uniqueCount >= 50);
 
             const prefCounts = {};
             appState.unlockedCities.forEach(c => {
@@ -826,55 +1156,73 @@
         }
 
         function updateUI() {
-            document.getElementById('stats-count').innerText = appState.unlockedCities.length;
+            // ユニークな解放都市数
+            const uniqueCount = new Set(appState.unlockedCities.map(c => c.code)).size;
+            document.getElementById('stats-count').innerText = uniqueCount;
             document.getElementById('stats-badges').innerText = appState.unlockedBadges.length;
 
-            const level = Math.floor(appState.unlockedCities.length / 3) + 1;
+            const level = Math.floor(uniqueCount / 3) + 1;
             document.getElementById('profile-level').innerText = level;
 
             const listEl = document.getElementById('unlocked-cities-list');
-            listEl.innerHTML = '';
-            if (appState.unlockedCities.length === 0) {
-                listEl.innerHTML = '<li>No data. Start your adventure!</li>';
-            } else {
-                [...appState.unlockedCities].reverse().forEach(item => {
-                    const li = document.createElement('li');
-                    li.innerText = `✓  ${item.cityName} (${item.code})`;
-                    listEl.appendChild(li);
-                });
+            if(listEl) {
+                listEl.innerHTML = '';
+                if (appState.unlockedCities.length === 0) {
+                    listEl.innerHTML = '<li>No data. Start your adventure!</li>';
+                } else {
+                    // プロフィールタブには全体タイムラインを表示
+                    [...appState.unlockedCities].reverse().forEach(item => {
+                        const li = document.createElement('li');
+                        li.innerText = `✓  ${item.cityName} (${item.date})`;
+                        listEl.appendChild(li);
+                    });
+                }
             }
-            renderBadges();
         }
 
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.innerText = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            toast.className = "toast show";
+            setTimeout(() => {
+                toast.className = "toast";
+            }, 3000);
         }
 
         function saveData() {
-            localStorage.setItem('geo_nihon_app_state_v4', JSON.stringify(appState));
+            localStorage.setItem('geo_nihon_app_state_v5_calendar', JSON.stringify(appState));
         }
 
         function loadData() {
-            const saved = localStorage.getItem('geo_nihon_app_state_v4');
+            const saved = localStorage.getItem('geo_nihon_app_state_v5_calendar');
             if (saved) {
                 try {
-                    appState = JSON.parse(saved);
+                    const parsed = JSON.parse(saved);
+                    // 互換性維持：実績が古い配列型（単なる文字列配列）だった場合は、オブジェクト型にコンバート
+                    if (parsed.unlockedBadges && parsed.unlockedBadges.length > 0 && typeof parsed.unlockedBadges[0] === 'string') {
+                        parsed.unlockedBadges = parsed.unlockedBadges.map(id => ({ id: id, date: formatDateKey(new Date()) }));
+                    }
+                    appState = parsed;
                 } catch(e) {
-                    console.error(e);
+                    console.error("データロード失敗:", e);
                 }
             }
         }
 
         function resetAllData() {
-            if (confirm('すべての冒険記録を初期化しますか？')) {
+            if (confirm('すべての冒険記録（カレンダー・ポリライン履歴含む）を初期化しますか？')) {
                 appState = { unlockedCities: [], unlockedBadges: [] };
                 saveData();
                 updateUI();
                 if (markersGroup) markersGroup.clearLayers();
+                if (polylineGroup) polylineGroup.clearLayers();
                 if (map) map.setView([36.5, 137.5], 5);
+                
+                const today = new Date();
+                selectedDateStr = formatDateKey(today);
+                renderCalendar();
+                updateHistoryDetails();
+                
                 document.getElementById('location-status').innerText = "INITIALIZING...";
                 showToast("RESET COMPLETED");
             }
