@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -47,12 +46,10 @@
             flex-shrink: 0;
         }
 
-        /* 【重要修正】コンテンツエリアがナビゲーションバーを完全に避けるよう高さを制限 */
         .content-area {
             flex: 1;
             position: relative;
             overflow: hidden;
-            /* 下部の安全マージン。ナビバーの高さ(70px) + iPhone等のセーフエリア(env)を完全に確保 */
             margin-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
         }
 
@@ -88,7 +85,6 @@
             filter: grayscale(100%) invert(90%) hue-rotate(180deg) brightness(95%) contrast(105%);
         }
 
-        /* 【重要修正】マップ上のボタン位置をコンテンツエリアの最下部から少し上に配置 */
         .map-overlay {
             position: absolute;
             bottom: 20px;
@@ -103,7 +99,6 @@
             align-items: center;
         }
 
-        /* 【重要修正】ナビゲーションバーを親コンテナに対して完全固定位置に配置 */
         .nav-bar {
             position: absolute;
             bottom: 0;
@@ -685,7 +680,8 @@
             });
         }
 
-        function handleCheckIn() {
+        // 🗺️ 【超重要修正】GPS位置情報から逆ジオコーディングを行い、正確な市区町村を特定する
+        async function handleCheckIn() {
             if (!nihonData) {
                 showToast("⚠️ DATA NOT READY");
                 return;
@@ -695,44 +691,78 @@
                 return;
             }
 
-            document.getElementById('location-status').innerText = "TRACKING GPS...";
+            document.getElementById('location-status').innerText = "📍 GPS座標を取得中...";
 
             navigator.geolocation.getCurrentPosition(
-                (position) => {
+                async (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
                     
+                    document.getElementById('location-status').innerText = "🔍 市区町村を特定中...";
+
+                    // 近似される都道府県の特定
                     let prefId = "13";
                     let minDist = 999;
-                    
                     Object.keys(prefCoordinates).forEach(pId => {
                         const coord = prefCoordinates[pId];
-                        const d = Math.sqrt(Math.pow(coord[0]-lat,2) + Math.pow(coord[1]-lng,2));
+                        const d = Math.sqrt(Math.pow(coord[0]-lat, 2) + Math.pow(coord[1]-lng, 2));
                         if(d < minDist) {
                             minDist = d;
                             prefId = pId;
                         }
                     });
 
-                    const cities = nihonData[prefId].city;
-                    const randIndex = Math.floor(Math.random() * cities.length);
-                    const cityObj = cities[randIndex];
+                    try {
+                        // OpenStreetMap Nominatim API を使って正確な住所を取得 (逆ジオコーディング)
+                        const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=12`;
+                        const res = await fetch(geoUrl, { headers: { 'Accept-Language': 'ja' } });
+                        if (!res.ok) throw new Error("ジオコーディング失敗");
+                        const geoData = await res.json();
+                        
+                        const address = geoData.address || {};
+                        // 取得した住所から市、区、町、村の名前を抽出
+                        const detectedCityName = address.city || address.town || address.island || address.suburb || address.village || "";
+                        
+                        // Nihon.json内から一致する市区町村オブジェクトを探索
+                        const cities = nihonData[prefId].city;
+                        let matchedCity = null;
 
-                    const baseCoord = prefCoordinates[prefId];
-                    const offsetLat = baseCoord[0] + (Math.random() - 0.5) * 0.15;
-                    const offsetLng = baseCoord[1] + (Math.random() - 0.5) * 0.15;
+                        if (detectedCityName) {
+                            // "鹿嶋市" や "札幌市中央区" などの部分一致をチェック
+                            matchedCity = cities.find(c => detectedCityName.includes(c.city) || c.city.includes(detectedCityName));
+                        }
 
-                    unlockCity(prefId, cityObj.city, cityObj.citycode, offsetLat, offsetLng);
+                        if (matchedCity) {
+                            // 正確に判定できた都市を解放（座標は実際の現在地GPSを使用！）
+                            unlockCity(prefId, matchedCity.city, matchedCity.citycode, lat, lng);
+                        } else {
+                            // 部分一致が見つからなかった、または特殊な地域の場合は最寄りのランダムでフォールバック
+                            fallbackRandomCheckIn(prefId, lat, lng);
+                        }
+
+                    } catch (err) {
+                        console.warn("逆ジオコーディング中にエラーが発生したため、フォールバックします:", err);
+                        fallbackRandomCheckIn(prefId, lat, lng);
+                    }
                 },
                 (error) => {
+                    // 完全オフラインやGPS拒否時の完全デモフォールバック
                     const randPref = String(Math.floor(Math.random() * 47) + 1).padStart(2, '0');
                     const cities = nihonData[randPref].city;
                     const cityObj = cities[Math.floor(Math.random() * cities.length)];
                     const coord = prefCoordinates[randPref];
                     unlockCity(randPref, `デモ解放: ${cityObj.city}`, cityObj.citycode, coord[0], coord[1]);
                 },
-                { enableHighAccuracy: true, timeout: 6000 }
+                { enableHighAccuracy: true, timeout: 8000 }
             );
+        }
+
+        // 従来の「県内ランダム抽出」をエラー時・判定不能時のフォールバックとして切り出し
+        function fallbackRandomCheckIn(prefId, lat, lng) {
+            const cities = nihonData[prefId].city;
+            const randIndex = Math.floor(Math.random() * cities.length);
+            const cityObj = cities[randIndex];
+            unlockCity(prefId, cityObj.city, cityObj.citycode, lat, lng);
         }
 
         function handleSimulateCheckIn() {
@@ -762,7 +792,7 @@
             document.getElementById('location-status').innerText = `LAST VISIT: ${cityName}`;
             
             if (map) {
-                map.setView([lat, lng], 10, { animate: true, duration: 1.5 });
+                map.setView([lat, lng], 12, { animate: true, duration: 1.5 });
                 setTimeout(() => renderMarkers(), 400);
             }
 
