@@ -518,7 +518,43 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* 🎆 Easter Egg: 花火演出 */
+        .egg-rocket {
+            position: absolute;
+            font-size: 22px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9999;
+            transition: top 0.9s cubic-bezier(0.2, 0.6, 0.3, 1), left 0.9s cubic-bezier(0.2, 0.6, 0.3, 1);
+        }
+        .egg-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.9s ease-out, opacity 0.9s ease-out;
+        }
+        .egg-toast {
+            position: fixed;
+            top: 16%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111216;
+            border: 1px solid #ffffff33;
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .egg-toast.show { opacity: 1; }
     </style>
+
 </head>
 <body>
 
@@ -824,6 +860,90 @@
             
             markersGroup = L.layerGroup().addTo(map);
             polylineGroup = L.layerGroup().addTo(map);
+
+            initEasterEgg();
+        }
+
+        /* 🎆 Easter Egg: 北朝鮮タップで花火 */
+        function initEasterEgg() {
+            // 北朝鮮のおおよその範囲（バウンディングボックス）
+            const NORTH_KOREA_BOUNDS = {
+                latMin: 37.6, latMax: 43.1,
+                lngMin: 124.2, lngMax: 130.7
+            };
+
+            map.on('click', (e) => {
+                const { lat, lng } = e.latlng;
+                if (
+                    lat >= NORTH_KOREA_BOUNDS.latMin && lat <= NORTH_KOREA_BOUNDS.latMax &&
+                    lng >= NORTH_KOREA_BOUNDS.lngMin && lng <= NORTH_KOREA_BOUNDS.lngMax
+                ) {
+                    launchFireworkFromPoint(e.containerPoint.x, e.containerPoint.y);
+                }
+            });
+        }
+
+        function launchFireworkFromPoint(startX, startY) {
+            const mapEl = document.getElementById('map');
+            if (!mapEl) return;
+
+            // 🚀 打ち上げロケット
+            const rocket = document.createElement('div');
+            rocket.className = 'egg-rocket';
+            rocket.textContent = '🚀';
+            rocket.style.left = `${startX}px`;
+            rocket.style.top = `${startY}px`;
+            mapEl.appendChild(rocket);
+
+            const targetY = Math.max(startY - 140, 20);
+            requestAnimationFrame(() => {
+                rocket.style.top = `${targetY}px`;
+            });
+
+            setTimeout(() => {
+                rocket.remove();
+                spawnFireworkBurst(mapEl, startX, targetY);
+                showEggToast('🎆 Easter Egg!');
+            }, 900);
+        }
+
+        function spawnFireworkBurst(container, x, y) {
+            const colors = ['#ff3b30', '#ffd60a', '#34c759', '#5ac8fa', '#ff9f0a', '#ffffff'];
+            const particleCount = 24;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'egg-particle';
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                particle.style.background = colors[i % colors.length];
+                particle.style.boxShadow = `0 0 6px ${colors[i % colors.length]}`;
+                container.appendChild(particle);
+
+                const angle = (Math.PI * 2 * i) / particleCount;
+                const distance = 60 + Math.random() * 40;
+                const dx = Math.cos(angle) * distance;
+                const dy = Math.sin(angle) * distance;
+
+                requestAnimationFrame(() => {
+                    particle.style.transform = `translate(${dx}px, ${dy}px)`;
+                    particle.style.opacity = '0';
+                });
+
+                setTimeout(() => particle.remove(), 950);
+            }
+        }
+
+        function showEggToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'egg-toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 1600);
         }
 
         function formatDateKey(dateObj) {
