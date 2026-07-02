@@ -528,7 +528,7 @@
         <div class="boot-terminal">
             <div id="row1" class="boot-row"><span>> index.html loading...</span><span class="boot-success">OK</span></div>
             <div id="row2" class="boot-row"><span>> system initialization...</span><span class="boot-success">OK</span></div>
-            <div id="row3" class="boot-row"><span>> Nihon.json data fetching...</span><span id="json-status-text">WAIT</span></div>
+            <div id="row3" class="boot-row"><span>> Nihon.json / badges.json fetching...</span><span id="json-status-text">WAIT</span></div>
             <div id="row4" class="boot-row"><span>> mapping framework ready...</span><span class="boot-success">OK</span></div>
         </div>
         <div id="start-msg" class="start-alert">
@@ -676,16 +676,8 @@
             "45": [31.9111, 131.4239], "46": [31.5602, 130.5581], "47": [26.2124, 127.6809]
         };
 
-        const badgeDefinitions = [
-            { id: "first_step", name: "第一歩", icon: "👟", desc: "初めて市区町村を解放した" },
-            { id: "trio", name: "三都物語", icon: "🏯", desc: "3つの市区町村を解放した" },
-            { id: "level_five", name: "中堅旅人", icon: "🎒", desc: "10個の市区町村を解放した" },
-            { id: "prefecture_master", name: "県内通", icon: "🗺️", desc: "同じ都道府県内で3つ以上解放した" },
-            { id: "japan_conqueror", name: "天下統一", icon: "👑", desc: "50個以上の市区町村を解放した" },
-            { id: "night_walker", name: "ナイトウォーカー", icon: "🌙", desc: "夜間（20時〜朝5時）にチェックインした" },
-            { id: "speed_star", name: "スピードスター", icon: "⚡", desc: "1日のうちに3つ以上の都市を解放した" },
-            { id: "regional_expedition", name: "地方遠征", icon: "✈️", desc: "2つ以上の異なる都道府県を探索した" }
-        ];
+        // badgeDefinitions は起動時に badges.json から読み込まれます（下部 fetchAppData 参照）
+        let badgeDefinitions = [];
 
         let appState = {
             unlockedCities: [],
@@ -719,18 +711,24 @@
             setTimeout(() => document.getElementById('row2').classList.add('visible'), 500);
             setTimeout(() => {
                 document.getElementById('row3').classList.add('visible');
-                fetchNihonJson();
+                fetchAppData();
             }, 800);
         }
 
-        async function fetchNihonJson() {
+        async function fetchAppData() {
             const statusText = document.getElementById('json-status-text');
             try {
-                const response = await fetch('Nihon.json');
-                if (!response.ok) throw new Error("JSONファイルの取得に失敗しました");
-                
-                const rawData = await response.json();
+                const [nihonRes, badgesRes] = await Promise.all([
+                    fetch('Nihon.json'),
+                    fetch('badges.json')
+                ]);
+                if (!nihonRes.ok) throw new Error("Nihon.json の取得に失敗しました");
+                if (!badgesRes.ok) throw new Error("badges.json の取得に失敗しました");
+
+                const rawData = await nihonRes.json();
                 nihonData = Array.isArray(rawData) ? rawData[0] : rawData;
+
+                badgeDefinitions = await badgesRes.json();
 
                 // データ取得に成功したのでフェイルセーフのタイマーは解除する
                 if (window.__bootFailSafeId) clearTimeout(window.__bootFailSafeId);
@@ -770,7 +768,7 @@
                 if (window.__bootFailSafeId) clearTimeout(window.__bootFailSafeId);
                 statusText.innerText = "ERROR";
                 statusText.style.background = "#ff3333";
-                alert("Nihon.json の読み込みに失敗しました。");
+                alert("データファイル（Nihon.json / badges.json）の読み込みに失敗しました。");
             }
         }
 
