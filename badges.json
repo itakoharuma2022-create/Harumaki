@@ -1,0 +1,1829 @@
+[
+  {
+    "id": "national_1",
+    "name": "全国制覇 1",
+    "icon": "🏅",
+    "desc": "全国で1個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_3",
+    "name": "全国制覇 3",
+    "icon": "🏅",
+    "desc": "全国で3個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_5",
+    "name": "全国制覇 5",
+    "icon": "🏅",
+    "desc": "全国で5個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_10",
+    "name": "全国制覇 10",
+    "icon": "🏅",
+    "desc": "全国で10個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_15",
+    "name": "全国制覇 15",
+    "icon": "🏅",
+    "desc": "全国で15個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_20",
+    "name": "全国制覇 20",
+    "icon": "🏅",
+    "desc": "全国で20個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_30",
+    "name": "全国制覇 30",
+    "icon": "🏅",
+    "desc": "全国で30個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_40",
+    "name": "全国制覇 40",
+    "icon": "🏅",
+    "desc": "全国で40個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_50",
+    "name": "全国制覇 50",
+    "icon": "🏅",
+    "desc": "全国で50個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_75",
+    "name": "全国制覇 75",
+    "icon": "🏅",
+    "desc": "全国で75個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_100",
+    "name": "全国制覇 100",
+    "icon": "🏅",
+    "desc": "全国で100個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_150",
+    "name": "全国制覇 150",
+    "icon": "🏅",
+    "desc": "全国で150個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_200",
+    "name": "全国制覇 200",
+    "icon": "🏅",
+    "desc": "全国で200個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_250",
+    "name": "全国制覇 250",
+    "icon": "🏅",
+    "desc": "全国で250個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_300",
+    "name": "全国制覇 300",
+    "icon": "🏅",
+    "desc": "全国で300個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_400",
+    "name": "全国制覇 400",
+    "icon": "🏅",
+    "desc": "全国で400個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_500",
+    "name": "全国制覇 500",
+    "icon": "🏅",
+    "desc": "全国で500個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_600",
+    "name": "全国制覇 600",
+    "icon": "🏅",
+    "desc": "全国で600個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_700",
+    "name": "全国制覇 700",
+    "icon": "🏅",
+    "desc": "全国で700個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_800",
+    "name": "全国制覇 800",
+    "icon": "🏅",
+    "desc": "全国で800個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_900",
+    "name": "全国制覇 900",
+    "icon": "🏅",
+    "desc": "全国で900個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_1000",
+    "name": "全国制覇 1000",
+    "icon": "🏅",
+    "desc": "全国で1000個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_1100",
+    "name": "全国制覇 1100",
+    "icon": "🏅",
+    "desc": "全国で1100個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_1200",
+    "name": "全国制覇 1200",
+    "icon": "🏅",
+    "desc": "全国で1200個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_1300",
+    "name": "全国制覇 1300",
+    "icon": "🏅",
+    "desc": "全国で1300個の市区町村を解放した",
+    "category": "national"
+  },
+  {
+    "id": "national_1342",
+    "name": "全国制覇 1342",
+    "icon": "🏆",
+    "desc": "全国1342市区町村をすべて解放した（完全制覇）",
+    "category": "national"
+  },
+  {
+    "id": "pref_01_25",
+    "name": "北海道 25%制覇",
+    "icon": "🥉",
+    "desc": "北海道内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_01_50",
+    "name": "北海道 50%制覇",
+    "icon": "🥈",
+    "desc": "北海道内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_01_75",
+    "name": "北海道 75%制覇",
+    "icon": "🥇",
+    "desc": "北海道内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_01_100",
+    "name": "北海道 完全制覇",
+    "icon": "👑",
+    "desc": "北海道内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_02_25",
+    "name": "青森県 25%制覇",
+    "icon": "🥉",
+    "desc": "青森県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_02_50",
+    "name": "青森県 50%制覇",
+    "icon": "🥈",
+    "desc": "青森県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_02_75",
+    "name": "青森県 75%制覇",
+    "icon": "🥇",
+    "desc": "青森県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_02_100",
+    "name": "青森県 完全制覇",
+    "icon": "👑",
+    "desc": "青森県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_03_25",
+    "name": "岩手県 25%制覇",
+    "icon": "🥉",
+    "desc": "岩手県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_03_50",
+    "name": "岩手県 50%制覇",
+    "icon": "🥈",
+    "desc": "岩手県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_03_75",
+    "name": "岩手県 75%制覇",
+    "icon": "🥇",
+    "desc": "岩手県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_03_100",
+    "name": "岩手県 完全制覇",
+    "icon": "👑",
+    "desc": "岩手県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_04_25",
+    "name": "宮城県 25%制覇",
+    "icon": "🥉",
+    "desc": "宮城県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_04_50",
+    "name": "宮城県 50%制覇",
+    "icon": "🥈",
+    "desc": "宮城県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_04_75",
+    "name": "宮城県 75%制覇",
+    "icon": "🥇",
+    "desc": "宮城県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_04_100",
+    "name": "宮城県 完全制覇",
+    "icon": "👑",
+    "desc": "宮城県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_05_25",
+    "name": "秋田県 25%制覇",
+    "icon": "🥉",
+    "desc": "秋田県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_05_50",
+    "name": "秋田県 50%制覇",
+    "icon": "🥈",
+    "desc": "秋田県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_05_75",
+    "name": "秋田県 75%制覇",
+    "icon": "🥇",
+    "desc": "秋田県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_05_100",
+    "name": "秋田県 完全制覇",
+    "icon": "👑",
+    "desc": "秋田県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_06_25",
+    "name": "山形県 25%制覇",
+    "icon": "🥉",
+    "desc": "山形県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_06_50",
+    "name": "山形県 50%制覇",
+    "icon": "🥈",
+    "desc": "山形県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_06_75",
+    "name": "山形県 75%制覇",
+    "icon": "🥇",
+    "desc": "山形県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_06_100",
+    "name": "山形県 完全制覇",
+    "icon": "👑",
+    "desc": "山形県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_07_25",
+    "name": "福島県 25%制覇",
+    "icon": "🥉",
+    "desc": "福島県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_07_50",
+    "name": "福島県 50%制覇",
+    "icon": "🥈",
+    "desc": "福島県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_07_75",
+    "name": "福島県 75%制覇",
+    "icon": "🥇",
+    "desc": "福島県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_07_100",
+    "name": "福島県 完全制覇",
+    "icon": "👑",
+    "desc": "福島県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_08_25",
+    "name": "茨城県 25%制覇",
+    "icon": "🥉",
+    "desc": "茨城県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_08_50",
+    "name": "茨城県 50%制覇",
+    "icon": "🥈",
+    "desc": "茨城県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_08_75",
+    "name": "茨城県 75%制覇",
+    "icon": "🥇",
+    "desc": "茨城県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_08_100",
+    "name": "茨城県 完全制覇",
+    "icon": "👑",
+    "desc": "茨城県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_09_25",
+    "name": "栃木県 25%制覇",
+    "icon": "🥉",
+    "desc": "栃木県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_09_50",
+    "name": "栃木県 50%制覇",
+    "icon": "🥈",
+    "desc": "栃木県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_09_75",
+    "name": "栃木県 75%制覇",
+    "icon": "🥇",
+    "desc": "栃木県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_09_100",
+    "name": "栃木県 完全制覇",
+    "icon": "👑",
+    "desc": "栃木県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_10_25",
+    "name": "群馬県 25%制覇",
+    "icon": "🥉",
+    "desc": "群馬県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_10_50",
+    "name": "群馬県 50%制覇",
+    "icon": "🥈",
+    "desc": "群馬県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_10_75",
+    "name": "群馬県 75%制覇",
+    "icon": "🥇",
+    "desc": "群馬県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_10_100",
+    "name": "群馬県 完全制覇",
+    "icon": "👑",
+    "desc": "群馬県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_11_25",
+    "name": "埼玉県 25%制覇",
+    "icon": "🥉",
+    "desc": "埼玉県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_11_50",
+    "name": "埼玉県 50%制覇",
+    "icon": "🥈",
+    "desc": "埼玉県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_11_75",
+    "name": "埼玉県 75%制覇",
+    "icon": "🥇",
+    "desc": "埼玉県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_11_100",
+    "name": "埼玉県 完全制覇",
+    "icon": "👑",
+    "desc": "埼玉県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_12_25",
+    "name": "千葉県 25%制覇",
+    "icon": "🥉",
+    "desc": "千葉県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_12_50",
+    "name": "千葉県 50%制覇",
+    "icon": "🥈",
+    "desc": "千葉県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_12_75",
+    "name": "千葉県 75%制覇",
+    "icon": "🥇",
+    "desc": "千葉県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_12_100",
+    "name": "千葉県 完全制覇",
+    "icon": "👑",
+    "desc": "千葉県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_13_25",
+    "name": "東京都 25%制覇",
+    "icon": "🥉",
+    "desc": "東京都内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_13_50",
+    "name": "東京都 50%制覇",
+    "icon": "🥈",
+    "desc": "東京都内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_13_75",
+    "name": "東京都 75%制覇",
+    "icon": "🥇",
+    "desc": "東京都内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_13_100",
+    "name": "東京都 完全制覇",
+    "icon": "👑",
+    "desc": "東京都内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_14_25",
+    "name": "神奈川県 25%制覇",
+    "icon": "🥉",
+    "desc": "神奈川県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_14_50",
+    "name": "神奈川県 50%制覇",
+    "icon": "🥈",
+    "desc": "神奈川県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_14_75",
+    "name": "神奈川県 75%制覇",
+    "icon": "🥇",
+    "desc": "神奈川県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_14_100",
+    "name": "神奈川県 完全制覇",
+    "icon": "👑",
+    "desc": "神奈川県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_15_25",
+    "name": "新潟県 25%制覇",
+    "icon": "🥉",
+    "desc": "新潟県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_15_50",
+    "name": "新潟県 50%制覇",
+    "icon": "🥈",
+    "desc": "新潟県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_15_75",
+    "name": "新潟県 75%制覇",
+    "icon": "🥇",
+    "desc": "新潟県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_15_100",
+    "name": "新潟県 完全制覇",
+    "icon": "👑",
+    "desc": "新潟県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_16_25",
+    "name": "富山県 25%制覇",
+    "icon": "🥉",
+    "desc": "富山県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_16_50",
+    "name": "富山県 50%制覇",
+    "icon": "🥈",
+    "desc": "富山県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_16_75",
+    "name": "富山県 75%制覇",
+    "icon": "🥇",
+    "desc": "富山県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_16_100",
+    "name": "富山県 完全制覇",
+    "icon": "👑",
+    "desc": "富山県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_17_25",
+    "name": "石川県 25%制覇",
+    "icon": "🥉",
+    "desc": "石川県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_17_50",
+    "name": "石川県 50%制覇",
+    "icon": "🥈",
+    "desc": "石川県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_17_75",
+    "name": "石川県 75%制覇",
+    "icon": "🥇",
+    "desc": "石川県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_17_100",
+    "name": "石川県 完全制覇",
+    "icon": "👑",
+    "desc": "石川県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_18_25",
+    "name": "福井県 25%制覇",
+    "icon": "🥉",
+    "desc": "福井県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_18_50",
+    "name": "福井県 50%制覇",
+    "icon": "🥈",
+    "desc": "福井県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_18_75",
+    "name": "福井県 75%制覇",
+    "icon": "🥇",
+    "desc": "福井県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_18_100",
+    "name": "福井県 完全制覇",
+    "icon": "👑",
+    "desc": "福井県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_19_25",
+    "name": "山梨県 25%制覇",
+    "icon": "🥉",
+    "desc": "山梨県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_19_50",
+    "name": "山梨県 50%制覇",
+    "icon": "🥈",
+    "desc": "山梨県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_19_75",
+    "name": "山梨県 75%制覇",
+    "icon": "🥇",
+    "desc": "山梨県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_19_100",
+    "name": "山梨県 完全制覇",
+    "icon": "👑",
+    "desc": "山梨県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_20_25",
+    "name": "長野県 25%制覇",
+    "icon": "🥉",
+    "desc": "長野県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_20_50",
+    "name": "長野県 50%制覇",
+    "icon": "🥈",
+    "desc": "長野県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_20_75",
+    "name": "長野県 75%制覇",
+    "icon": "🥇",
+    "desc": "長野県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_20_100",
+    "name": "長野県 完全制覇",
+    "icon": "👑",
+    "desc": "長野県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_21_25",
+    "name": "岐阜県 25%制覇",
+    "icon": "🥉",
+    "desc": "岐阜県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_21_50",
+    "name": "岐阜県 50%制覇",
+    "icon": "🥈",
+    "desc": "岐阜県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_21_75",
+    "name": "岐阜県 75%制覇",
+    "icon": "🥇",
+    "desc": "岐阜県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_21_100",
+    "name": "岐阜県 完全制覇",
+    "icon": "👑",
+    "desc": "岐阜県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_22_25",
+    "name": "静岡県 25%制覇",
+    "icon": "🥉",
+    "desc": "静岡県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_22_50",
+    "name": "静岡県 50%制覇",
+    "icon": "🥈",
+    "desc": "静岡県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_22_75",
+    "name": "静岡県 75%制覇",
+    "icon": "🥇",
+    "desc": "静岡県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_22_100",
+    "name": "静岡県 完全制覇",
+    "icon": "👑",
+    "desc": "静岡県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_23_25",
+    "name": "愛知県 25%制覇",
+    "icon": "🥉",
+    "desc": "愛知県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_23_50",
+    "name": "愛知県 50%制覇",
+    "icon": "🥈",
+    "desc": "愛知県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_23_75",
+    "name": "愛知県 75%制覇",
+    "icon": "🥇",
+    "desc": "愛知県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_23_100",
+    "name": "愛知県 完全制覇",
+    "icon": "👑",
+    "desc": "愛知県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_24_25",
+    "name": "三重県 25%制覇",
+    "icon": "🥉",
+    "desc": "三重県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_24_50",
+    "name": "三重県 50%制覇",
+    "icon": "🥈",
+    "desc": "三重県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_24_75",
+    "name": "三重県 75%制覇",
+    "icon": "🥇",
+    "desc": "三重県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_24_100",
+    "name": "三重県 完全制覇",
+    "icon": "👑",
+    "desc": "三重県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_25_25",
+    "name": "滋賀県 25%制覇",
+    "icon": "🥉",
+    "desc": "滋賀県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_25_50",
+    "name": "滋賀県 50%制覇",
+    "icon": "🥈",
+    "desc": "滋賀県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_25_75",
+    "name": "滋賀県 75%制覇",
+    "icon": "🥇",
+    "desc": "滋賀県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_25_100",
+    "name": "滋賀県 完全制覇",
+    "icon": "👑",
+    "desc": "滋賀県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_26_25",
+    "name": "京都府 25%制覇",
+    "icon": "🥉",
+    "desc": "京都府内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_26_50",
+    "name": "京都府 50%制覇",
+    "icon": "🥈",
+    "desc": "京都府内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_26_75",
+    "name": "京都府 75%制覇",
+    "icon": "🥇",
+    "desc": "京都府内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_26_100",
+    "name": "京都府 完全制覇",
+    "icon": "👑",
+    "desc": "京都府内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_27_25",
+    "name": "大阪府 25%制覇",
+    "icon": "🥉",
+    "desc": "大阪府内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_27_50",
+    "name": "大阪府 50%制覇",
+    "icon": "🥈",
+    "desc": "大阪府内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_27_75",
+    "name": "大阪府 75%制覇",
+    "icon": "🥇",
+    "desc": "大阪府内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_27_100",
+    "name": "大阪府 完全制覇",
+    "icon": "👑",
+    "desc": "大阪府内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_28_25",
+    "name": "兵庫県 25%制覇",
+    "icon": "🥉",
+    "desc": "兵庫県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_28_50",
+    "name": "兵庫県 50%制覇",
+    "icon": "🥈",
+    "desc": "兵庫県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_28_75",
+    "name": "兵庫県 75%制覇",
+    "icon": "🥇",
+    "desc": "兵庫県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_28_100",
+    "name": "兵庫県 完全制覇",
+    "icon": "👑",
+    "desc": "兵庫県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_29_25",
+    "name": "奈良県 25%制覇",
+    "icon": "🥉",
+    "desc": "奈良県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_29_50",
+    "name": "奈良県 50%制覇",
+    "icon": "🥈",
+    "desc": "奈良県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_29_75",
+    "name": "奈良県 75%制覇",
+    "icon": "🥇",
+    "desc": "奈良県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_29_100",
+    "name": "奈良県 完全制覇",
+    "icon": "👑",
+    "desc": "奈良県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_30_25",
+    "name": "和歌山県 25%制覇",
+    "icon": "🥉",
+    "desc": "和歌山県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_30_50",
+    "name": "和歌山県 50%制覇",
+    "icon": "🥈",
+    "desc": "和歌山県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_30_75",
+    "name": "和歌山県 75%制覇",
+    "icon": "🥇",
+    "desc": "和歌山県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_30_100",
+    "name": "和歌山県 完全制覇",
+    "icon": "👑",
+    "desc": "和歌山県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_31_25",
+    "name": "鳥取県 25%制覇",
+    "icon": "🥉",
+    "desc": "鳥取県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_31_50",
+    "name": "鳥取県 50%制覇",
+    "icon": "🥈",
+    "desc": "鳥取県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_31_75",
+    "name": "鳥取県 75%制覇",
+    "icon": "🥇",
+    "desc": "鳥取県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_31_100",
+    "name": "鳥取県 完全制覇",
+    "icon": "👑",
+    "desc": "鳥取県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_32_25",
+    "name": "島根県 25%制覇",
+    "icon": "🥉",
+    "desc": "島根県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_32_50",
+    "name": "島根県 50%制覇",
+    "icon": "🥈",
+    "desc": "島根県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_32_75",
+    "name": "島根県 75%制覇",
+    "icon": "🥇",
+    "desc": "島根県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_32_100",
+    "name": "島根県 完全制覇",
+    "icon": "👑",
+    "desc": "島根県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_33_25",
+    "name": "岡山県 25%制覇",
+    "icon": "🥉",
+    "desc": "岡山県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_33_50",
+    "name": "岡山県 50%制覇",
+    "icon": "🥈",
+    "desc": "岡山県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_33_75",
+    "name": "岡山県 75%制覇",
+    "icon": "🥇",
+    "desc": "岡山県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_33_100",
+    "name": "岡山県 完全制覇",
+    "icon": "👑",
+    "desc": "岡山県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_34_25",
+    "name": "広島県 25%制覇",
+    "icon": "🥉",
+    "desc": "広島県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_34_50",
+    "name": "広島県 50%制覇",
+    "icon": "🥈",
+    "desc": "広島県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_34_75",
+    "name": "広島県 75%制覇",
+    "icon": "🥇",
+    "desc": "広島県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_34_100",
+    "name": "広島県 完全制覇",
+    "icon": "👑",
+    "desc": "広島県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_35_25",
+    "name": "山口県 25%制覇",
+    "icon": "🥉",
+    "desc": "山口県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_35_50",
+    "name": "山口県 50%制覇",
+    "icon": "🥈",
+    "desc": "山口県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_35_75",
+    "name": "山口県 75%制覇",
+    "icon": "🥇",
+    "desc": "山口県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_35_100",
+    "name": "山口県 完全制覇",
+    "icon": "👑",
+    "desc": "山口県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_36_25",
+    "name": "徳島県 25%制覇",
+    "icon": "🥉",
+    "desc": "徳島県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_36_50",
+    "name": "徳島県 50%制覇",
+    "icon": "🥈",
+    "desc": "徳島県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_36_75",
+    "name": "徳島県 75%制覇",
+    "icon": "🥇",
+    "desc": "徳島県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_36_100",
+    "name": "徳島県 完全制覇",
+    "icon": "👑",
+    "desc": "徳島県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_37_25",
+    "name": "香川県 25%制覇",
+    "icon": "🥉",
+    "desc": "香川県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_37_50",
+    "name": "香川県 50%制覇",
+    "icon": "🥈",
+    "desc": "香川県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_37_75",
+    "name": "香川県 75%制覇",
+    "icon": "🥇",
+    "desc": "香川県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_37_100",
+    "name": "香川県 完全制覇",
+    "icon": "👑",
+    "desc": "香川県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_38_25",
+    "name": "愛媛県 25%制覇",
+    "icon": "🥉",
+    "desc": "愛媛県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_38_50",
+    "name": "愛媛県 50%制覇",
+    "icon": "🥈",
+    "desc": "愛媛県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_38_75",
+    "name": "愛媛県 75%制覇",
+    "icon": "🥇",
+    "desc": "愛媛県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_38_100",
+    "name": "愛媛県 完全制覇",
+    "icon": "👑",
+    "desc": "愛媛県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_39_25",
+    "name": "高知県 25%制覇",
+    "icon": "🥉",
+    "desc": "高知県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_39_50",
+    "name": "高知県 50%制覇",
+    "icon": "🥈",
+    "desc": "高知県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_39_75",
+    "name": "高知県 75%制覇",
+    "icon": "🥇",
+    "desc": "高知県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_39_100",
+    "name": "高知県 完全制覇",
+    "icon": "👑",
+    "desc": "高知県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_40_25",
+    "name": "福岡県 25%制覇",
+    "icon": "🥉",
+    "desc": "福岡県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_40_50",
+    "name": "福岡県 50%制覇",
+    "icon": "🥈",
+    "desc": "福岡県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_40_75",
+    "name": "福岡県 75%制覇",
+    "icon": "🥇",
+    "desc": "福岡県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_40_100",
+    "name": "福岡県 完全制覇",
+    "icon": "👑",
+    "desc": "福岡県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_41_25",
+    "name": "佐賀県 25%制覇",
+    "icon": "🥉",
+    "desc": "佐賀県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_41_50",
+    "name": "佐賀県 50%制覇",
+    "icon": "🥈",
+    "desc": "佐賀県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_41_75",
+    "name": "佐賀県 75%制覇",
+    "icon": "🥇",
+    "desc": "佐賀県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_41_100",
+    "name": "佐賀県 完全制覇",
+    "icon": "👑",
+    "desc": "佐賀県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_42_25",
+    "name": "長崎県 25%制覇",
+    "icon": "🥉",
+    "desc": "長崎県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_42_50",
+    "name": "長崎県 50%制覇",
+    "icon": "🥈",
+    "desc": "長崎県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_42_75",
+    "name": "長崎県 75%制覇",
+    "icon": "🥇",
+    "desc": "長崎県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_42_100",
+    "name": "長崎県 完全制覇",
+    "icon": "👑",
+    "desc": "長崎県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_43_25",
+    "name": "熊本県 25%制覇",
+    "icon": "🥉",
+    "desc": "熊本県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_43_50",
+    "name": "熊本県 50%制覇",
+    "icon": "🥈",
+    "desc": "熊本県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_43_75",
+    "name": "熊本県 75%制覇",
+    "icon": "🥇",
+    "desc": "熊本県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_43_100",
+    "name": "熊本県 完全制覇",
+    "icon": "👑",
+    "desc": "熊本県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_44_25",
+    "name": "大分県 25%制覇",
+    "icon": "🥉",
+    "desc": "大分県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_44_50",
+    "name": "大分県 50%制覇",
+    "icon": "🥈",
+    "desc": "大分県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_44_75",
+    "name": "大分県 75%制覇",
+    "icon": "🥇",
+    "desc": "大分県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_44_100",
+    "name": "大分県 完全制覇",
+    "icon": "👑",
+    "desc": "大分県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_45_25",
+    "name": "宮崎県 25%制覇",
+    "icon": "🥉",
+    "desc": "宮崎県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_45_50",
+    "name": "宮崎県 50%制覇",
+    "icon": "🥈",
+    "desc": "宮崎県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_45_75",
+    "name": "宮崎県 75%制覇",
+    "icon": "🥇",
+    "desc": "宮崎県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_45_100",
+    "name": "宮崎県 完全制覇",
+    "icon": "👑",
+    "desc": "宮崎県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_46_25",
+    "name": "鹿児島県 25%制覇",
+    "icon": "🥉",
+    "desc": "鹿児島県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_46_50",
+    "name": "鹿児島県 50%制覇",
+    "icon": "🥈",
+    "desc": "鹿児島県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_46_75",
+    "name": "鹿児島県 75%制覇",
+    "icon": "🥇",
+    "desc": "鹿児島県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_46_100",
+    "name": "鹿児島県 完全制覇",
+    "icon": "👑",
+    "desc": "鹿児島県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_47_25",
+    "name": "沖縄県 25%制覇",
+    "icon": "🥉",
+    "desc": "沖縄県内の市区町村を25%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_47_50",
+    "name": "沖縄県 50%制覇",
+    "icon": "🥈",
+    "desc": "沖縄県内の市区町村を50%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_47_75",
+    "name": "沖縄県 75%制覇",
+    "icon": "🥇",
+    "desc": "沖縄県内の市区町村を75%以上解放した",
+    "category": "prefecture"
+  },
+  {
+    "id": "pref_47_100",
+    "name": "沖縄県 完全制覇",
+    "icon": "👑",
+    "desc": "沖縄県内の市区町村を完全制覇した",
+    "category": "prefecture"
+  },
+  {
+    "id": "region_hokkaido_25",
+    "name": "北海道地方 25%制覇",
+    "icon": "🌱",
+    "desc": "北海道地方の市区町村を25%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_hokkaido_50",
+    "name": "北海道地方 50%制覇",
+    "icon": "🌿",
+    "desc": "北海道地方の市区町村を50%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_hokkaido_75",
+    "name": "北海道地方 75%制覇",
+    "icon": "🌳",
+    "desc": "北海道地方の市区町村を75%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_hokkaido_100",
+    "name": "北海道地方 完全制覇",
+    "icon": "🌏",
+    "desc": "北海道地方を完全制覇した",
+    "category": "region"
+  },
+  {
+    "id": "region_tohoku_25",
+    "name": "東北地方 25%制覇",
+    "icon": "🌱",
+    "desc": "東北地方の市区町村を25%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_tohoku_50",
+    "name": "東北地方 50%制覇",
+    "icon": "🌿",
+    "desc": "東北地方の市区町村を50%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_tohoku_75",
+    "name": "東北地方 75%制覇",
+    "icon": "🌳",
+    "desc": "東北地方の市区町村を75%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_tohoku_100",
+    "name": "東北地方 完全制覇",
+    "icon": "🌏",
+    "desc": "東北地方を完全制覇した",
+    "category": "region"
+  },
+  {
+    "id": "region_kanto_25",
+    "name": "関東地方 25%制覇",
+    "icon": "🌱",
+    "desc": "関東地方の市区町村を25%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_kanto_50",
+    "name": "関東地方 50%制覇",
+    "icon": "🌿",
+    "desc": "関東地方の市区町村を50%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_kanto_75",
+    "name": "関東地方 75%制覇",
+    "icon": "🌳",
+    "desc": "関東地方の市区町村を75%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_kanto_100",
+    "name": "関東地方 完全制覇",
+    "icon": "🌏",
+    "desc": "関東地方を完全制覇した",
+    "category": "region"
+  },
+  {
+    "id": "region_chubu_25",
+    "name": "中部地方 25%制覇",
+    "icon": "🌱",
+    "desc": "中部地方の市区町村を25%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_chubu_50",
+    "name": "中部地方 50%制覇",
+    "icon": "🌿",
+    "desc": "中部地方の市区町村を50%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_chubu_75",
+    "name": "中部地方 75%制覇",
+    "icon": "🌳",
+    "desc": "中部地方の市区町村を75%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_chubu_100",
+    "name": "中部地方 完全制覇",
+    "icon": "🌏",
+    "desc": "中部地方を完全制覇した",
+    "category": "region"
+  },
+  {
+    "id": "region_kinki_25",
+    "name": "近畿地方 25%制覇",
+    "icon": "🌱",
+    "desc": "近畿地方の市区町村を25%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_kinki_50",
+    "name": "近畿地方 50%制覇",
+    "icon": "🌿",
+    "desc": "近畿地方の市区町村を50%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_kinki_75",
+    "name": "近畿地方 75%制覇",
+    "icon": "🌳",
+    "desc": "近畿地方の市区町村を75%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_kinki_100",
+    "name": "近畿地方 完全制覇",
+    "icon": "🌏",
+    "desc": "近畿地方を完全制覇した",
+    "category": "region"
+  },
+  {
+    "id": "region_chugoku_25",
+    "name": "中国地方 25%制覇",
+    "icon": "🌱",
+    "desc": "中国地方の市区町村を25%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_chugoku_50",
+    "name": "中国地方 50%制覇",
+    "icon": "🌿",
+    "desc": "中国地方の市区町村を50%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_chugoku_75",
+    "name": "中国地方 75%制覇",
+    "icon": "🌳",
+    "desc": "中国地方の市区町村を75%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_chugoku_100",
+    "name": "中国地方 完全制覇",
+    "icon": "🌏",
+    "desc": "中国地方を完全制覇した",
+    "category": "region"
+  },
+  {
+    "id": "region_shikoku_25",
+    "name": "四国地方 25%制覇",
+    "icon": "🌱",
+    "desc": "四国地方の市区町村を25%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_shikoku_50",
+    "name": "四国地方 50%制覇",
+    "icon": "🌿",
+    "desc": "四国地方の市区町村を50%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_shikoku_75",
+    "name": "四国地方 75%制覇",
+    "icon": "🌳",
+    "desc": "四国地方の市区町村を75%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_shikoku_100",
+    "name": "四国地方 完全制覇",
+    "icon": "🌏",
+    "desc": "四国地方を完全制覇した",
+    "category": "region"
+  },
+  {
+    "id": "region_kyushu_25",
+    "name": "九州・沖縄地方 25%制覇",
+    "icon": "🌱",
+    "desc": "九州・沖縄地方の市区町村を25%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_kyushu_50",
+    "name": "九州・沖縄地方 50%制覇",
+    "icon": "🌿",
+    "desc": "九州・沖縄地方の市区町村を50%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_kyushu_75",
+    "name": "九州・沖縄地方 75%制覇",
+    "icon": "🌳",
+    "desc": "九州・沖縄地方の市区町村を75%以上解放した",
+    "category": "region"
+  },
+  {
+    "id": "region_kyushu_100",
+    "name": "九州・沖縄地方 完全制覇",
+    "icon": "🌏",
+    "desc": "九州・沖縄地方を完全制覇した",
+    "category": "region"
+  },
+  {
+    "id": "first_step",
+    "name": "第一歩",
+    "icon": "👟",
+    "desc": "初めて市区町村を解放した",
+    "category": "special"
+  },
+  {
+    "id": "trio",
+    "name": "三都物語",
+    "icon": "🏯",
+    "desc": "3つの市区町村を解放した",
+    "category": "special"
+  },
+  {
+    "id": "level_five",
+    "name": "中堅旅人",
+    "icon": "🎒",
+    "desc": "10個の市区町村を解放した",
+    "category": "special"
+  },
+  {
+    "id": "prefecture_master",
+    "name": "県内通",
+    "icon": "🗺️",
+    "desc": "同じ都道府県内で3つ以上解放した",
+    "category": "special"
+  },
+  {
+    "id": "japan_conqueror",
+    "name": "天下統一",
+    "icon": "👑",
+    "desc": "50個以上の市区町村を解放した",
+    "category": "special"
+  },
+  {
+    "id": "night_walker",
+    "name": "ナイトウォーカー",
+    "icon": "🌙",
+    "desc": "夜間（20時〜朝5時）にチェックインした",
+    "category": "special"
+  },
+  {
+    "id": "speed_star",
+    "name": "スピードスター",
+    "icon": "⚡",
+    "desc": "1日のうちに3つ以上の都市を解放した",
+    "category": "special"
+  },
+  {
+    "id": "regional_expedition",
+    "name": "地方遠征",
+    "icon": "✈️",
+    "desc": "2つ以上の異なる都道府県を探索した",
+    "category": "special"
+  },
+  {
+    "id": "all_regions",
+    "name": "八方美人",
+    "icon": "🧭",
+    "desc": "8つの地方すべてで1つ以上解放した",
+    "category": "special"
+  },
+  {
+    "id": "weekend_explorer",
+    "name": "週末旅人",
+    "icon": "🎡",
+    "desc": "土日にチェックインした",
+    "category": "special"
+  },
+  {
+    "id": "new_year_checkin",
+    "name": "初詣",
+    "icon": "🎍",
+    "desc": "1月1日にチェックインした",
+    "category": "special"
+  },
+  {
+    "id": "early_bird",
+    "name": "早起き探検家",
+    "icon": "🌅",
+    "desc": "朝5時〜7時にチェックインした",
+    "category": "special"
+  },
+  {
+    "id": "week_streak",
+    "name": "7日連続冒険",
+    "icon": "🔥",
+    "desc": "7日連続でチェックインした",
+    "category": "special"
+  },
+  {
+    "id": "month_streak",
+    "name": "30日連続冒険",
+    "icon": "🔥",
+    "desc": "30日連続でチェックインした",
+    "category": "special"
+  },
+  {
+    "id": "island_hopper",
+    "name": "離島探訪",
+    "icon": "🏝️",
+    "desc": "沖縄県内の市区町村を解放した",
+    "category": "special"
+  }
+]
