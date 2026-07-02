@@ -1238,60 +1238,98 @@
                     
                     document.getElementById('location-status').innerText = "🔍 都市を特定中...";
 
-                    let prefId = "13";
+                    // 直線距離による都道府県の暫定推定（Nominatim失敗時のフォールバック用）
+                    let fallbackPrefId = "13";
                     let minDist = 999;
                     Object.keys(prefCoordinates).forEach(pId => {
                         const coord = prefCoordinates[pId];
                         const d = Math.sqrt(Math.pow(coord[0]-lat, 2) + Math.pow(coord[1]-lng, 2));
                         if(d < minDist) {
                             minDist = d;
-                            prefId = pId;
+                            fallbackPrefId = pId;
                         }
                     });
 
                     try {
-                        const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=12`;
-                        const res = await fetch(geoUrl, { headers: { 'Accept-Language': 'ja' } });
+                        const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`;
+                        const res = await fetch(geoUrl, {
+                            headers: { 'Accept-Language': 'ja' }
+                        });
                         if (!res.ok) throw new Error("ジオコーディング失敗");
                         const geoData = await res.json();
                         
                         const address = geoData.address || {};
-                        const detectedCityName = address.city || address.town || address.island || address.suburb || address.village || "";
-                        
-                        const cities = nihonData[prefId].city;
+
+                        // ① 都道府県は Nominatim の address.state（例:「東京都」「北海道」）と
+                        //    Nihon.json のマスタ名を突き合わせて特定する（直線距離より高精度）
+                        const detectedPrefName = address.state || "";
+                        let prefId = matchPrefIdByName(detectedPrefName) || fallbackPrefId;
+
+                        // ② 市区町村名候補を優先順位付きで収集
+                        //    政令指定都市の「区」は suburb / city_district に入ることが多いため、
+                        //    区名候補を city 候補より先に評価する
+                        const wardCandidate = address.suburb || address.city_district || "";
+                        const cityCandidate = address.city || address.town || address.village || address.island || "";
+
+                        const cities = nihonData[prefId] ? nihonData[prefId].city : [];
                         let matchedCity = null;
 
-                        if (detectedCityName) {
-                            matchedCity = cities.find(c => detectedCityName.includes(c.city) || c.city.includes(detectedCityName));
+                        // 区名 + 市名の組み合わせ（例: 札幌市 + 中央区 → 札幌市中央区）を最優先で照合
+                        if (wardCandidate && cityCandidate) {
+                            const combined = `${cityCandidate}${wardCandidate}`;
+                            matchedCity = cities.find(c => c.city === combined || c.city.includes(combined));
+                        }
+                        // 区名のみでの完全一致（例: 中央区 単体で北区等と誤爆しないよう完全一致優先）
+                        if (!matchedCity && wardCandidate) {
+                            matchedCity = cities.find(c => c.city === wardCandidate);
+                        }
+                        // 市区町村名の完全一致を優先し、なければ部分一致にフォールバック
+                        if (!matchedCity && cityCandidate) {
+                            matchedCity = cities.find(c => c.city === cityCandidate)
+                                || cities.find(c => c.city.includes(cityCandidate) || cityCandidate.includes(c.city));
                         }
 
                         if (matchedCity) {
                             unlockCity(prefId, matchedCity.city, matchedCity.citycode, lat, lng);
                         } else {
-                            fallbackRandomCheckIn(prefId, lat, lng);
+                            // 市区町村を特定できなかった場合はランダム解放せず、正直に失敗を伝える
+                            document.getElementById('location-status').innerText = "⚠️ 現在地の市区町村を特定できませんでした";
+                            showToast("⚠️ 市区町村を特定できませんでした。もう一度お試しください");
                         }
 
                     } catch (err) {
-                        console.warn("逆ジオコーディングフォールバック:", err);
-                        fallbackRandomCheckIn(prefId, lat, lng);
+                        console.warn("逆ジオコーディング失敗:", err);
+                        document.getElementById('location-status').innerText = "⚠️ 通信エラー：もう一度お試しください";
+                        showToast("⚠️ ジオコーディングに失敗しました");
                     }
                 },
                 (error) => {
-                    const randPref = String(Math.floor(Math.random() * 47) + 1).padStart(2, '0');
-                    const cities = nihonData[randPref].city;
-                    const cityObj = cities[Math.floor(Math.random() * cities.length)];
-                    const coord = prefCoordinates[randPref];
-                    unlockCity(randPref, `デモ解放: ${cityObj.city}`, cityObj.citycode, coord[0], coord[1]);
+                    // GPS取得自体が失敗/拒否された場合はランダム解放せず、原因を明示する
+                    let msg = "⚠️ 位置情報を取得できませんでした";
+                    if (error && error.code === error.PERMISSION_DENIED) {
+                        msg = "⚠️ 位置情報の利用が許可されていません（設定をご確認ください）";
+                    } else if (error && error.code === error.TIMEOUT) {
+                        msg = "⚠️ 位置情報の取得がタイムアウトしました";
+                    }
+                    document.getElementById('location-status').innerText = msg;
+                    showToast(msg);
                 },
                 { enableHighAccuracy: true, timeout: 8000 }
             );
         }
 
-        function fallbackRandomCheckIn(prefId, lat, lng) {
-            const cities = nihonData[prefId].city;
-            const randIndex = Math.floor(Math.random() * cities.length);
-            const cityObj = cities[randIndex];
-            unlockCity(prefId, cityObj.city, cityObj.citycode, lat, lng);
+        // Nominatim の都道府県名（例:「東京都」「北海道」「大阪府」「京都府」）を
+        // Nihon.json の name / short と突き合わせて prefId を返す
+        function matchPrefIdByName(detectedPrefName) {
+            if (!detectedPrefName || !nihonData) return null;
+            for (const prefId of Object.keys(nihonData)) {
+                const pref = nihonData[prefId];
+                if (!pref) continue;
+                if (pref.name === detectedPrefName || pref.short === detectedPrefName) return prefId;
+                // 「都」「道」「府」「県」の有無ゆらぎに対応（例: 東京 と 東京都）
+                if (detectedPrefName.includes(pref.short) || pref.name.includes(detectedPrefName)) return prefId;
+            }
+            return null;
         }
 
         function handleSimulateCheckIn() {
