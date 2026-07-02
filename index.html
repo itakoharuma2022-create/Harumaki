@@ -4,9 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>全国位置情報・実績解除アプリ</title>
-    <!-- Leaflet.js のCSSとJS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- 🛟 起動フェイルセーフ: CDN等が読み込めない場合、一定時間後に再読み込みUIを表示する -->
+    <!-- このスクリプトはどの外部リソースより前に置き、パース時に即実行させる -->
+    <script>
+        window.__bootFailSafeId = setTimeout(function () {
+            var boot = document.getElementById('boot-screen');
+            if (boot && boot.style.display !== 'none') {
+                boot.innerHTML =
+                    '<div style="text-align:center;color:#fff;padding:0 20px;">' +
+                    '<p style="margin-bottom:20px;line-height:1.6;font-size:0.95rem;">読み込みに時間がかかっています。<br>' +
+                    'ネットワーク接続（Wi-Fi/モバイル回線）をご確認のうえ、<br>再読み込みしてください。</p>' +
+                    '<button onclick="location.reload()" style="padding:12px 28px;background:#fff;color:#111216;border:none;border-radius:12px;font-weight:700;font-size:0.9rem;cursor:pointer;">再読み込み</button>' +
+                    '</div>';
+            }
+        }, 12000);
+    </script>
+
+    <!-- Leaflet.js のCSSとJS（jsdelivrを優先、失敗時はunpkgへ自動フォールバック） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+    <script>
+        window.__leafletLoadFailed = function () {
+            console.warn('jsdelivrからのLeaflet読み込みに失敗。unpkgへフォールバックします。');
+            var s = document.createElement('script');
+            s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            s.defer = true;
+            document.head.appendChild(s);
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" defer onerror="window.__leafletLoadFailed()"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -650,90 +676,16 @@
             "45": [31.9111, 131.4239], "46": [31.5602, 130.5581], "47": [26.2124, 127.6809]
         };
 
-        const let badgeDefinitions = [
-            { id: "first_step", name: "第一歩", icon: "🐾", desc: "初めて市区町村を解放した" },
-            { id: "trio", name: "三都物語", icon: "☘️", desc: "3つの市区町村を解放した" },
+        const badgeDefinitions = [
+            { id: "first_step", name: "第一歩", icon: "👟", desc: "初めて市区町村を解放した" },
+            { id: "trio", name: "三都物語", icon: "🏯", desc: "3つの市区町村を解放した" },
             { id: "level_five", name: "中堅旅人", icon: "🎒", desc: "10個の市区町村を解放した" },
-            { id: "prefecture_master", name: "県内通", icon: "🧐", desc: "同じ都道府県内で3つ以上解放した" },
-            { id: "japan_conqueror", name: "天下統一(初級)", icon: "🏯", desc: "50個以上の市区町村を解放した" },
+            { id: "prefecture_master", name: "県内通", icon: "🗺️", desc: "同じ都道府県内で3つ以上解放した" },
+            { id: "japan_conqueror", name: "天下統一", icon: "👑", desc: "50個以上の市区町村を解放した" },
             { id: "night_walker", name: "ナイトウォーカー", icon: "🌙", desc: "夜間（20時〜朝5時）にチェックインした" },
             { id: "speed_star", name: "スピードスター", icon: "⚡", desc: "1日のうちに3つ以上の都市を解放した" },
-            { id: "regional_expedition", name: "地方遠征", icon: "🗺️", desc: "2つ以上の異なる都道府県を探索した" },
-
-            // --- 市区町村 解放数ステップ (14個) ---
-            { id: "cities_5", name: "近所のお散歩", icon: "🚶", desc: "5個の市区町村を解放した" },
-            { id: "cities_20", name: "街道の達人", icon: "🏃", desc: "20個の市区町村を解放した" },
-            { id: "cities_30", name: "俊足の旅人", icon: "👟", desc: "30個の市区町村を解放した" },
-            { id: "cities_40", name: "韋駄天", icon: "💨", desc: "40個の市区町村を解放した" },
-            { id: "cities_60", name: "地方の有力者", icon: "🎩", desc: "60個の市区町村を解放した" },
-            { id: "cities_70", name: "縦横無尽", icon: "🦅", desc: "70個の市区町村を解放した" },
-            { id: "cities_80", name: "名高き探索者", icon: "📜", desc: "80個の市区町村を解放した" },
-            { id: "cities_90", name: "エリアマスター", icon: "🌟", desc: "90個の市区町村を解放した" },
-            { id: "cities_100", name: "百戦錬磨", icon: "👑", desc: "100個の市区町村を解放した" },
-            { id: "cities_150", name: "千両役者", icon: "🎭", desc: "150個の市区町村を解放した" },
-            { id: "cities_200", name: "新境地開拓", icon: "⛰️", desc: "200個の市区町村を解放した" },
-            { id: "cities_300", name: "稀代の旅豪", icon: "🌏", desc: "300個の市区町村を解放した" },
-            { id: "cities_500", name: "歴史に名を刻む者", icon: "🗿", desc: "500個の市区町村を解放した" },
-            { id: "cities_1000", name: "生きる伝説", icon: "🐉", desc: "1000個の市区町村を解放した" },
-
-            // --- 都道府県 訪問数ステップ (8個) ---
-            { id: "prefs_3", name: "隣県への興味", icon: "🚗", desc: "3つの都道府県を訪れた" },
-            { id: "prefs_5", name: "旅慣れた足", icon: "🚄", desc: "5つの都道府県を訪れた" },
-            { id: "prefs_7", name: "七つの大国", icon: "🧭", desc: "7つの都道府県を訪れた" },
-            { id: "prefs_10", name: "日本半周", icon: "✈️", desc: "10の都道府県を訪れた" },
-            { id: "prefs_15", name: "東奔西走", icon: "🛸", desc: "15の都道府県を訪れた" },
-            { id: "prefs_20", name: "全土行脚", icon: "🎪", desc: "20の都道府県を訪れた" },
-            { id: "prefs_30", name: "大いなる足跡", icon: "🗺️", desc: "30の都道府県を訪れた" },
-            { id: "prefs_47_all", name: "全国制覇", icon: "🎌", desc: "47都道府県すべてを訪れた" },
-
-            // --- ライフスタイル・時間・日付 (8個) ---
-            { id: "early_bird", name: "朝活トラベラー", icon: "🌅", desc: "朝5:00〜8:00の間にチェックインした" },
-            { id: "lunch_time", name: "ランチ遠征", icon: "🍱", desc: "昼11:30〜13:30の間にチェックインした" },
-            { id: "tea_time", name: "おやつタイムの放浪", icon: "🍰", desc: "15:00〜16:00の間にチェックインした" },
-            { id: "midnight", name: "ミッドナイト・ラン", icon: "🦇", desc: "深夜0:00〜4:00の間にチェックインした" },
-            { id: "weekend_traveler", name: "週末トラベラー", icon: "🏖️", desc: "土曜日または日曜日にチェックインした" },
-            { id: "bullet_train", name: "弾丸特急", icon: "🚀", desc: "1日のうちに5つ以上の都市を解放した" },
-            { id: "god_speed", name: "神速", icon: "⚡", desc: "1日のうちに10つ以上の都市を解放した" },
-            { id: "lucky_seven", name: "ラッキーセブン", icon: "🎰", desc: "日付に『7』が含まれる日にチェックインした" },
-
-            // --- ユニーク・名前・形状検索 (5個) ---
-            { id: "name_island", name: "島巡りのロマン", icon: "🏝️", desc: "名前に『島』がつく市区町村を解放した" },
-            { id: "name_mountain", name: "山岳走破", icon: "⛰️", desc: "名前に『山』がつく市区町村を解放した" },
-            { id: "name_river", name: "清流の記憶", icon: "🌊", desc: "名前に『川』または『河』がつく市区町村を解放した" },
-            { id: "name_port", name: "港町ブルース", icon: "⚓", desc: "名前に『港』がつく市区町村を解放した" },
-            { id: "big_city", name: "都会の喧騒", icon: "🏢", desc: "名前に『区』が入る大都市エリアを解放した" },
-
-            // --- 地方エリア制覇 (7個) ---
-            { id: "area_hokkaido_tohoku", name: "北国の覇者", icon: "❄️", desc: "北海道・東北地方のすべての道県に訪問した" },
-            { id: "area_kanto", name: "関東の支配者", icon: "🗼", desc: "関東地方のすべての都県に訪問した" },
-            { id: "area_chubu", name: "中部の架け橋", icon: "🗻", desc: "中部地方のすべての県に訪問した" },
-            { id: "area_kinki", name: "近畿の語り部", icon: "🏯", desc: "近畿地方のすべての府県に訪問した" },
-            { id: "area_chugoku", name: "中国路の開拓者", icon: "🍁", desc: "中国地方のすべての県に訪問した" },
-            { id: "area_shikoku", name: "四国遍路", icon: "🌀", desc: "四国地方のすべての県に訪問した" },
-            { id: "area_kyushu_okinawa", name: "南国無双", icon: "🌺", desc: "九州・沖縄地方のすべての県に訪問した" },
-
-            // --- 究極の実績 ---
-            { id: "all_cities_complete", name: "全土統一", icon: "🏆", desc: "日本全国のすべての市区町村を完全に解放した！" }
+            { id: "regional_expedition", name: "地方遠征", icon: "✈️", desc: "2つ以上の異なる都道府県を探索した" }
         ];
-
-        // 47都道府県のご当地バッジ (47個) を自動追加
-        const prefNames = {
-            "01":"北海道","02":"青森県","03":"岩手県","04":"宮城県","05":"秋田県","06":"山形県","07":"福島県",
-            "08":"茨城県","09":"栃木県","10":"群馬県","11":"埼玉県","12":"千葉県","13":"東京都","14":"神奈川県",
-            "15":"新潟県","16":"富山県","17":"石川県","18":"福井県","19":"山梨県","20":"長野県","21":"岐阜県",
-            "22":"静岡県","23":"愛知県","24":"三重県","25":"滋賀県","26":"京都府","27":"大阪府","28":"兵庫県",
-            "29":"奈良県","30":"和歌山県","31":"鳥取県","32":"島根県","33":"岡山県","34":"広島県","35":"山口県",
-            "36":"徳島県","37":"香川県","38":"愛媛県","39":"高知県","40":"福岡県","41":"佐賀県","42":"長崎県",
-            "43":"熊本県","44":"大分県","45":"宮崎県","46":"鹿児島県","47":"沖縄県"
-        };
-        for (let id in prefNames) {
-            badgeDefinitions.push({
-                id: `visit_pref_${id}`,
-                name: `${prefNames[id]}の風`,
-                icon: "📍",
-                desc: `${prefNames[id]}で初めてチェックインした`
-            });
-        }
 
         let appState = {
             unlockedCities: [],
@@ -779,7 +731,10 @@
                 
                 const rawData = await response.json();
                 nihonData = Array.isArray(rawData) ? rawData[0] : rawData;
-                
+
+                // データ取得に成功したのでフェイルセーフのタイマーは解除する
+                if (window.__bootFailSafeId) clearTimeout(window.__bootFailSafeId);
+
                 statusText.innerText = "OK";
                 statusText.className = "boot-success";
                 
@@ -812,6 +767,7 @@
                 
             } catch (error) {
                 console.error(error);
+                if (window.__bootFailSafeId) clearTimeout(window.__bootFailSafeId);
                 statusText.innerText = "ERROR";
                 statusText.style.background = "#ff3333";
                 alert("Nihon.json の読み込みに失敗しました。");
@@ -1180,31 +1136,23 @@
         }
 
         function checkAchievements(dateStr) {
-            if (!nihonData) return;
-
-            // 全市区町村数の計算
-            let totalCityCount = 0;
-            if (Array.isArray(nihonData)) {
-                nihonData.forEach(pObj => {
-                    for (let k in pObj) {
-                        if (pObj[k].city) totalCityCount += pObj[k].city.length;
-                    }
-                });
-            } else {
-                for (let k in nihonData) {
-                    if (nihonData[k].city) totalCityCount += nihonData[k].city.length;
-                }
-            }
-
             const uniqueCount = new Set(appState.unlockedCities.map(c => c.code)).size;
-            const now = new Date();
-            const hour = now.getHours();
-            const day = now.getDay(); 
-            const dateNum = now.getDate();
+            
+            const checkAndUnlock = (badgeId, conditionTrue) => {
+                const alreadyHas = appState.unlockedBadges.some(b => b === badgeId || b.id === badgeId);
+                if (conditionTrue && !alreadyHas) {
+                    appState.unlockedBadges.push({ id: badgeId, date: dateStr });
+                    const b = badgeDefinitions.find(badge => badge.id === badgeId);
+                    setTimeout(() => showToast(`🏆 UNLOCKED: 【${b.name}】`), 1000);
+                }
+            };
 
-            const todayCount = appState.unlockedCities.filter(c => c.date === dateStr).length;
-            const visitedPrefs = [...new Set(appState.unlockedCities.map(c => c.prefId))];
+            checkAndUnlock("first_step", uniqueCount >= 1);
+            checkAndUnlock("trio", uniqueCount >= 3);
+            checkAndUnlock("level_five", uniqueCount >= 10);
+            checkAndUnlock("japan_conqueror", uniqueCount >= 50);
 
+            // 一意な都市コードのみで都道府県内の解放数をカウントするよう修正
             const prefCounts = {};
             const seenCodes = new Set();
             appState.unlockedCities.forEach(c => {
@@ -1213,96 +1161,23 @@
                     prefCounts[c.prefId] = (prefCounts[c.prefId] || 0) + 1;
                 }
             });
-
-            const checkAndUnlock = (badgeId, conditionTrue) => {
-                const alreadyHas = appState.unlockedBadges.some(b => b === badgeId || b.id === badgeId);
-                if (conditionTrue && !alreadyHas) {
-                    appState.unlockedBadges.push({ id: badgeId, date: dateStr });
-                    const b = badgeDefinitions.find(badge => badge.id === badgeId);
-                    if (b) {
-                        setTimeout(() => showToast(`🏆 UNLOCKED: 【${b.name}】`), 1000);
-                    }
-                }
-            };
-
-            // --- 基本・既存の判定 ---
-            checkAndUnlock("first_step", uniqueCount >= 1);
-            checkAndUnlock("trio", uniqueCount >= 3);
-            checkAndUnlock("level_five", uniqueCount >= 10);
-            checkAndUnlock("japan_conqueror", uniqueCount >= 50);
-            checkAndUnlock("night_walker", hour >= 20 || hour < 5);
-            checkAndUnlock("speed_star", todayCount >= 3);
-            checkAndUnlock("regional_expedition", visitedPrefs.length >= 2);
-            
             const hasPrefMaster = Object.values(prefCounts).some(v => v >= 3);
             checkAndUnlock("prefecture_master", hasPrefMaster);
 
-            // --- 解放数ステップ判定 ---
-            checkAndUnlock("cities_5", uniqueCount >= 5);
-            checkAndUnlock("cities_20", uniqueCount >= 20);
-            checkAndUnlock("cities_30", uniqueCount >= 30);
-            checkAndUnlock("cities_40", uniqueCount >= 40);
-            checkAndUnlock("cities_60", uniqueCount >= 60);
-            checkAndUnlock("cities_70", uniqueCount >= 70);
-            checkAndUnlock("cities_80", uniqueCount >= 80);
-            checkAndUnlock("cities_90", uniqueCount >= 90);
-            checkAndUnlock("cities_100", uniqueCount >= 100);
-            checkAndUnlock("cities_150", uniqueCount >= 150);
-            checkAndUnlock("cities_200", uniqueCount >= 200);
-            checkAndUnlock("cities_300", uniqueCount >= 300);
-            checkAndUnlock("cities_500", uniqueCount >= 500);
-            checkAndUnlock("cities_1000", uniqueCount >= 1000);
+            // ① ナイトウォーカーの判定 (20:00 〜 翌05:00)
+            const currentHour = new Date().getHours();
+            const isNight = (currentHour >= 20 || currentHour < 5);
+            checkAndUnlock("night_walker", isNight);
 
-            // --- 都道府県ステップ判定 ---
-            checkAndUnlock("prefs_3", visitedPrefs.length >= 3);
-            checkAndUnlock("prefs_5", visitedPrefs.length >= 5);
-            checkAndUnlock("prefs_7", visitedPrefs.length >= 7);
-            checkAndUnlock("prefs_10", visitedPrefs.length >= 10);
-            checkAndUnlock("prefs_15", visitedPrefs.length >= 15);
-            checkAndUnlock("prefs_20", visitedPrefs.length >= 20);
-            checkAndUnlock("prefs_30", visitedPrefs.length >= 30);
-            checkAndUnlock("prefs_47_all", visitedPrefs.length >= 47);
+            // ② スピードスターの判定 (本日の日付で解放した一意な都市の数が3つ以上)
+            const todayCitiesCount = new Set(
+                appState.unlockedCities.filter(c => c.date === dateStr).map(c => c.code)
+            ).size;
+            checkAndUnlock("speed_star", todayCitiesCount >= 3);
 
-            // --- 時間帯・条件判定 ---
-            checkAndUnlock("early_bird", hour >= 5 && hour < 8);
-            checkAndUnlock("lunch_time", hour >= 11 && hour < 14);
-            checkAndUnlock("tea_time", hour === 15);
-            checkAndUnlock("midnight", hour >= 0 && hour < 4);
-            checkAndUnlock("weekend_traveler", day === 0 || day === 6);
-            checkAndUnlock("bullet_train", todayCount >= 5);
-            checkAndUnlock("god_speed", todayCount >= 10);
-            checkAndUnlock("lucky_seven", String(dateNum).includes('7'));
-
-            // --- 文字列検索・ユニーク判定 ---
-            appState.unlockedCities.forEach(c => {
-                const cityName = c.cityName || "";
-                if (cityName.includes("島")) checkAndUnlock("name_island", true);
-                if (cityName.includes("山", true)) checkAndUnlock("name_mountain", true);
-                if (cityName.includes("川") || cityName.includes("河")) checkAndUnlock("name_river", true);
-                if (cityName.includes("港")) checkAndUnlock("name_port", true);
-                if (cityName.includes("区")) checkAndUnlock("big_city", true);
-            });
-
-            // --- 地方エリア制覇判定 ---
-            const hasPref = (id) => visitedPrefs.includes(id) || visitedPrefs.includes(parseInt(id).toString().padStart(2, '0'));
-            checkAndUnlock("area_hokkaido_tohoku", ["01","02","03","04","05","06","07"].every(hasPref));
-            checkAndUnlock("area_kanto", ["08","09","10","11","12","13","14"].every(hasPref));
-            checkAndUnlock("area_chubu", ["15","16","17","18","19","20","21","22","23"].every(hasPref));
-            checkAndUnlock("area_kinki", ["24","25","26","27","28","29","30"].every(hasPref));
-            checkAndUnlock("area_chugoku", ["31","32","33","34","35"].every(hasPref));
-            checkAndUnlock("area_shikoku", ["36","37","38","39"].every(hasPref));
-            checkAndUnlock("area_kyushu_okinawa", ["40","41","42","43","44","45","46","47"].every(hasPref));
-
-            // --- 都道府県ごとの訪問判定 ---
-            visitedPrefs.forEach(prefId => {
-                const pIdStr = parseInt(prefId).toString().padStart(2, '0');
-                checkAndUnlock(`visit_pref_${pIdStr}`, true);
-            });
-
-            // --- 究極のコンプリート実績判定 ---
-            if (totalCityCount > 0 && uniqueCount >= totalCityCount) {
-                checkAndUnlock("all_cities_complete", true);
-            }
+            // ③ 地方遠征の判定 (登録されているユニークな都道府県IDの数が2つ以上)
+            const uniquePrefsCount = new Set(appState.unlockedCities.map(c => c.prefId)).size;
+            checkAndUnlock("regional_expedition", uniquePrefsCount >= 2);
         }
 
         function updateUI() {
@@ -1376,4 +1251,4 @@
         }
     </script>
 </body>
-</html>
+</html> 
