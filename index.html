@@ -219,6 +219,143 @@
             letter-spacing: 0.03em;
         }
 
+        /* --- プロフィール: アバターピッカー --- */
+        .avatar-picker {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            background: #101116;
+            border: 1px solid #272a34;
+            border-radius: 12px;
+            padding: 10px;
+            margin: 0 auto 12px;
+            max-width: 280px;
+        }
+
+        .avatar-picker.show { display: grid; }
+
+        .avatar-option {
+            font-size: 1.3rem;
+            background: #1c1e26;
+            border: 1px solid #272a34;
+            border-radius: 8px;
+            padding: 6px 0;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .avatar-option:active { transform: scale(0.92); }
+        .avatar-option.selected { background: #ffffff; }
+
+        /* --- プロフィール: 都道府県達成率グリッド --- */
+        .pref-achieve-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
+            gap: 8px;
+        }
+
+        .pref-achieve-cell {
+            background: #101116;
+            border: 1px solid #272a34;
+            border-radius: 8px;
+            padding: 8px 4px 6px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pref-achieve-cell .pref-name {
+            font-size: 0.62rem;
+            color: #cbd5e1;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pref-achieve-cell .pref-pct {
+            font-size: 0.6rem;
+            color: #64748b;
+            position: relative;
+            z-index: 1;
+            margin-top: 2px;
+        }
+
+        .pref-achieve-cell.complete .pref-pct { color: #00ff66; font-weight: 800; }
+
+        .pref-achieve-cell .pref-fill {
+            position: absolute;
+            left: 0; bottom: 0; right: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05));
+            z-index: 0;
+        }
+
+        .pref-achieve-cell.complete .pref-fill {
+            background: linear-gradient(180deg, rgba(0,255,102,0.28), rgba(0,255,102,0.08));
+        }
+
+        /* --- プロフィール: 活動タイムライン --- */
+        .timeline-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .timeline-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.78rem;
+            color: #e2e8f0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #20222b;
+        }
+
+        .timeline-list li:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .timeline-icon {
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .timeline-date {
+            display: block;
+            font-size: 0.65rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .friend-item, .friend-request-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #101116;
+            border: 1px solid #272a34;
+            border-radius: 10px;
+            padding: 8px 10px;
+        }
+
+        .friend-item .friend-avatar, .friend-request-item .friend-avatar {
+            font-size: 1.3rem;
+            width: 34px; height: 34px;
+            display: flex; align-items: center; justify-content: center;
+            background: #1c1e26;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .friend-item .friend-info { flex: 1; min-width: 0; }
+        .friend-item .friend-name { font-size: 0.8rem; font-weight: 700; color: #fff; }
+        .friend-item .friend-stats { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; }
+
+        .friend-request-item .friend-name { flex: 1; font-size: 0.78rem; color: #fff; }
+
         .floating-status {
             background: rgba(24, 25, 32, 0.95);
             padding: 8px 18px;
@@ -663,11 +800,91 @@
             <!-- 4. プロフィールタブ -->
             <div id="tab-profile" class="tab-content">
                 <div class="scroll-content">
-                    <div class="card" style="text-align: center; background: linear-gradient(180deg, #1e202a 0%, #181920 100%); padding: 14px;">
-                        <div style="width: 56px; height: 56px; background: #272a34; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 10px; font-size: 1.6rem; border: 1px solid #3f4454;">👤</div>
-                        <div class="card-title" style="margin-bottom: 4px; font-size:0.9rem;">EXPLORER</div>
+                    <!-- プロフィールヘッダー：アバター・称号・レベル -->
+                    <div class="card" style="text-align: center; background: linear-gradient(180deg, #1e202a 0%, #181920 100%); padding: 18px 14px;">
+                        <div id="profile-avatar-btn" onclick="toggleAvatarPicker()" style="width: 64px; height: 64px; background: #272a34; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 10px; font-size: 1.8rem; border: 1px solid #3f4454; cursor:pointer;">👤</div>
+                        <div id="avatar-picker" class="avatar-picker" style="display:none;"></div>
+
+                        <div class="card-title" style="margin-bottom: 2px; font-size:0.95rem;">EXPLORER</div>
+                        <div id="profile-title" style="font-size:0.75rem; color:#94a3b8; font-weight:600; margin-bottom:10px;">🔰 かけだし旅人</div>
+
                         <span style="background: #ffffff; color: #111216; padding: 2px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 800;">LV. <span id="profile-level">1</span></span>
+
+                        <div style="display:flex; justify-content:center; gap:22px; margin-top:14px;">
+                            <div>
+                                <div style="font-size:1.1rem; font-weight:800; color:#fff;" id="profile-stat-cities">0</div>
+                                <div style="font-size:0.65rem; color:#94a3b8;">CITIES</div>
+                            </div>
+                            <div>
+                                <div style="font-size:1.1rem; font-weight:800; color:#fff;" id="profile-stat-prefs">0/47</div>
+                                <div style="font-size:0.65rem; color:#94a3b8;">PREFS</div>
+                            </div>
+                            <div>
+                                <div style="font-size:1.1rem; font-weight:800; color:#fff;" id="profile-stat-badges">0</div>
+                                <div style="font-size:0.65rem; color:#94a3b8;">BADGES</div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- フレンド機能（Firebase連携） -->
+                    <div class="card" id="friends-card">
+                        <div class="card-title">👥 FRIENDS</div>
+
+                        <!-- 未ログイン時 -->
+                        <div id="auth-logged-out">
+                            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:10px;">
+                                <input id="auth-email" type="email" placeholder="メールアドレス" style="background:#101116; border:1px solid #272a34; border-radius:8px; padding:9px 10px; color:#fff; font-size:0.8rem;">
+                                <input id="auth-password" type="password" placeholder="パスワード（6文字以上）" style="background:#101116; border:1px solid #272a34; border-radius:8px; padding:9px 10px; color:#fff; font-size:0.8rem;">
+                            </div>
+                            <div style="display:flex; gap:8px; margin-bottom:8px;">
+                                <button class="btn btn-secondary" style="flex:1; font-size:0.75rem;" onclick="handleSignUp()">新規登録</button>
+                                <button class="btn btn-secondary" style="flex:1; font-size:0.75rem;" onclick="handleSignIn()">ログイン</button>
+                            </div>
+                            <button class="btn btn-secondary" style="width:100%; font-size:0.78rem;" onclick="handleGoogleSignIn()">🔴 Googleでログイン</button>
+                            <div id="auth-status-msg" style="font-size:0.7rem; color:#94a3b8; margin-top:8px; text-align:center;"></div>
+                        </div>
+
+                        <!-- ログイン済み -->
+                        <div id="auth-logged-in" style="display:none;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                <div style="font-size:0.78rem; color:#cbd5e1;">ログイン中: <span id="auth-user-email" style="color:#fff; font-weight:700;"></span></div>
+                                <button class="btn btn-secondary" style="font-size:0.68rem; padding:5px 10px;" onclick="handleSignOut()">ログアウト</button>
+                            </div>
+
+                            <div style="background:#101116; border:1px solid #272a34; border-radius:8px; padding:10px; margin-bottom:12px; text-align:center;">
+                                <div style="font-size:0.65rem; color:#94a3b8;">あなたのフレンドコード</div>
+                                <div id="my-friend-code" style="font-size:1.1rem; font-weight:800; letter-spacing:0.1em; color:#fff; margin-top:3px;">------</div>
+                                <div style="font-size:0.65rem; color:#64748b; margin-top:2px;">このコードを友達に伝えてね</div>
+                            </div>
+
+                            <div style="display:flex; gap:8px; margin-bottom:6px;">
+                                <input id="add-friend-code" type="text" placeholder="友達のコードを入力" style="flex:1; background:#101116; border:1px solid #272a34; border-radius:8px; padding:9px 10px; color:#fff; font-size:0.8rem; text-transform:uppercase;">
+                                <button class="btn btn-secondary" style="font-size:0.75rem; padding:0 14px;" onclick="handleSendFriendRequest()">申請</button>
+                            </div>
+                            <div id="friend-action-msg" style="font-size:0.7rem; color:#94a3b8; margin-bottom:10px;"></div>
+
+                            <div id="friend-requests-section" style="display:none; margin-bottom:12px;">
+                                <div style="font-size:0.72rem; color:#94a3b8; font-weight:700; margin-bottom:6px;">📨 届いているリクエスト</div>
+                                <ul id="friend-requests-list" style="list-style:none; display:flex; flex-direction:column; gap:6px;"></ul>
+                            </div>
+
+                            <div style="font-size:0.72rem; color:#94a3b8; font-weight:700; margin-bottom:6px;">フレンド一覧</div>
+                            <ul id="friends-list" style="list-style:none; display:flex; flex-direction:column; gap:8px;"></ul>
+                        </div>
+                    </div>
+
+                    <!-- 都道府県達成率マップ -->
+                    <div class="card">
+                        <div class="card-title">🗾 都道府県 制覇状況</div>
+                        <div id="pref-achievement-grid" class="pref-achieve-grid"></div>
+                    </div>
+
+                    <!-- 直近の活動タイムライン -->
+                    <div class="card">
+                        <div class="card-title">🕓 直近の活動</div>
+                        <ul id="activity-timeline-list" class="timeline-list"></ul>
+                    </div>
+
                     <div class="card">
                         <div class="card-title">🧭 UNLOCKED CITIES</div>
                         <ul id="unlocked-cities-list"></ul>
@@ -757,8 +974,35 @@
 
         let appState = {
             unlockedCities: [],
-            unlockedBadges: []
+            unlockedBadges: [],
+            avatar: "👤"
         };
+
+        // アバター候補（絵文字。将来的に画像アイコンへ差し替え可能）
+        const AVATAR_OPTIONS = ["👤", "🧑‍🚀", "🥾", "🗺️", "🏔️", "🚗", "🚲", "🏯", "⛩️", "🌸", "🍜", "🎒"];
+
+        // 実績数（ユニーク訪問市区町村数）に応じた自動称号
+        const EXPLORER_TITLES = [
+            { min: 0,    label: "🔰 かけだし旅人" },
+            { min: 1,    label: "🚶 はじめの一歩" },
+            { min: 3,    label: "🧭 駆け出しトラベラー" },
+            { min: 10,   label: "🗺️ 見知らぬ土地の探検者" },
+            { min: 30,   label: "🚄 全国行脚の旅人" },
+            { min: 50,   label: "🏔️ ベテラン旅行者" },
+            { min: 100,  label: "🌏 日本縦断チャレンジャー" },
+            { min: 200,  label: "⭐ 旅の達人" },
+            { min: 400,  label: "👑 全国制覇マイスター" },
+            { min: 700,  label: "🏆 伝説の旅人" },
+            { min: 1000, label: "🌟 日本全土グランドマスター" },
+        ];
+
+        function getExplorerTitle(uniqueCount) {
+            let current = EXPLORER_TITLES[0].label;
+            EXPLORER_TITLES.forEach(t => {
+                if (uniqueCount >= t.min) current = t.label;
+            });
+            return current;
+        }
 
         let nihonData = null;
         let map;
@@ -1512,6 +1756,138 @@
                     });
                 }
             }
+
+            updateProfileHeader(uniqueCount);
+            renderPrefAchievement();
+            renderActivityTimeline();
+        }
+
+        // --- プロフィール: ヘッダー（称号・統計・アバター） ---
+        function updateProfileHeader(uniqueCount) {
+            const avatarBtn = document.getElementById('profile-avatar-btn');
+            if (avatarBtn) avatarBtn.innerText = appState.avatar || "👤";
+
+            const titleEl = document.getElementById('profile-title');
+            if (titleEl) titleEl.innerText = getExplorerTitle(uniqueCount);
+
+            const prefsUnlocked = new Set(appState.unlockedCities.map(c => c.prefId)).size;
+
+            const cCities = document.getElementById('profile-stat-cities');
+            const cPrefs = document.getElementById('profile-stat-prefs');
+            const cBadges = document.getElementById('profile-stat-badges');
+            if (cCities) cCities.innerText = uniqueCount;
+            if (cPrefs) cPrefs.innerText = `${prefsUnlocked}/47`;
+            if (cBadges) cBadges.innerText = appState.unlockedBadges.length;
+        }
+
+        // --- プロフィール: アバター選択 ---
+        function toggleAvatarPicker() {
+            const picker = document.getElementById('avatar-picker');
+            if (!picker) return;
+            const showing = picker.classList.contains('show');
+            if (showing) {
+                picker.classList.remove('show');
+                return;
+            }
+            renderAvatarPicker();
+            picker.classList.add('show');
+        }
+
+        function renderAvatarPicker() {
+            const picker = document.getElementById('avatar-picker');
+            if (!picker) return;
+            picker.innerHTML = '';
+            AVATAR_OPTIONS.forEach(emoji => {
+                const opt = document.createElement('div');
+                opt.className = `avatar-option ${appState.avatar === emoji ? 'selected' : ''}`;
+                opt.innerText = emoji;
+                opt.onclick = () => selectAvatar(emoji);
+                picker.appendChild(opt);
+            });
+        }
+
+        function selectAvatar(emoji) {
+            appState.avatar = emoji;
+            saveData();
+            document.getElementById('profile-avatar-btn').innerText = emoji;
+            document.getElementById('avatar-picker').classList.remove('show');
+            showToast(`${emoji} アバターを変更しました`);
+        }
+
+        // --- プロフィール: 都道府県別 達成率グリッド ---
+        function renderPrefAchievement() {
+            const grid = document.getElementById('pref-achievement-grid');
+            if (!grid || !nihonData) return;
+            grid.innerHTML = '';
+
+            const unlockedCodesByPref = {};
+            appState.unlockedCities.forEach(c => {
+                if (!unlockedCodesByPref[c.prefId]) unlockedCodesByPref[c.prefId] = new Set();
+                unlockedCodesByPref[c.prefId].add(c.code);
+            });
+
+            for (let i = 1; i <= 47; i++) {
+                const prefId = String(i).padStart(2, '0');
+                const pref = nihonData[prefId];
+                if (!pref) continue;
+
+                const total = pref.city.length;
+                const unlocked = unlockedCodesByPref[prefId] ? unlockedCodesByPref[prefId].size : 0;
+                const pct = total > 0 ? Math.round((unlocked / total) * 100) : 0;
+
+                const cell = document.createElement('div');
+                cell.className = `pref-achieve-cell ${pct >= 100 ? 'complete' : ''}`;
+                cell.innerHTML = `
+                    <div class="pref-fill" style="height:${pct}%;"></div>
+                    <div class="pref-name">${pref.short || pref.name}</div>
+                    <div class="pref-pct">${pct}%</div>
+                `;
+                grid.appendChild(cell);
+            }
+        }
+
+        // --- プロフィール: 直近の活動タイムライン ---
+        function renderActivityTimeline() {
+            const listEl = document.getElementById('activity-timeline-list');
+            if (!listEl) return;
+            listEl.innerHTML = '';
+
+            const cityEvents = appState.unlockedCities.map(c => ({
+                type: 'city',
+                date: c.date,
+                text: `${c.cityName} を解放`,
+                icon: '📍'
+            }));
+
+            const badgeEvents = appState.unlockedBadges
+                .filter(b => typeof b === 'object' && b.date)
+                .map(b => {
+                    const def = badgeDefinitions.find(d => d.id === b.id);
+                    return {
+                        type: 'badge',
+                        date: b.date,
+                        text: def ? `実績解除：${def.name}` : '実績解除',
+                        icon: def ? def.icon : '🏆'
+                    };
+                });
+
+            const events = [...cityEvents, ...badgeEvents]
+                .sort((a, b) => new Date(b.date.replace(/\//g, '-')) - new Date(a.date.replace(/\//g, '-')))
+                .slice(0, 15);
+
+            if (events.length === 0) {
+                listEl.innerHTML = '<li style="color:#64748b;">まだ活動記録がありません。</li>';
+                return;
+            }
+
+            events.forEach(ev => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span class="timeline-icon">${ev.icon}</span>
+                    <span>${ev.text}<span class="timeline-date">${ev.date}</span></span>
+                `;
+                listEl.appendChild(li);
+            });
         }
 
         function showToast(message) {
@@ -1525,6 +1901,9 @@
 
         function saveData() {
             localStorage.setItem('geo_nihon_app_state_v5_calendar', JSON.stringify(appState));
+            if (typeof window.syncAppStateToFirestore === 'function') {
+                window.syncAppStateToFirestore();
+            }
         }
 
         function loadData() {
@@ -1559,6 +1938,313 @@
                 document.getElementById('location-status').innerText = "INITIALIZING...";
                 showToast("RESET COMPLETED");
             }
+        }
+    </script>
+    <!-- ===================== Firebase 連携（認証・フレンド機能） ===================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+        import {
+            getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+            GoogleAuthProvider, signInWithPopup, signOut as fbSignOut, onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+        import {
+            getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc,
+            collection, query, where, getDocs, onSnapshot, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBTBdSMfnHV5fShGJhwD_zM4IEBEDqwZwI",
+            authDomain: "infinity-travel-22f9f.firebaseapp.com",
+            projectId: "infinity-travel-22f9f",
+            storageBucket: "infinity-travel-22f9f.firebasestorage.app",
+            messagingSenderId: "570108207554",
+            appId: "1:570108207554:web:7739ebd24b31088b40b65b",
+            measurementId: "G-J4XK5FCH93"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let unsubRequests = null;
+        let unsubFriendships = null;
+
+        function genFriendCode() {
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            let code = "";
+            for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+            return code;
+        }
+
+        function setAuthMsg(text) {
+            const el = document.getElementById('auth-status-msg');
+            if (el) el.innerText = text;
+        }
+
+        function setFriendMsg(text) {
+            const el = document.getElementById('friend-action-msg');
+            if (el) el.innerText = text;
+        }
+
+        window.handleSignUp = async function () {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            if (!email || password.length < 6) {
+                setAuthMsg("⚠️ メールアドレスと6文字以上のパスワードを入力してください");
+                return;
+            }
+            try {
+                setAuthMsg("登録中...");
+                await createUserWithEmailAndPassword(auth, email, password);
+            } catch (e) {
+                setAuthMsg("⚠️ " + translateAuthError(e));
+            }
+        };
+
+        window.handleSignIn = async function () {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            if (!email || !password) {
+                setAuthMsg("⚠️ メールアドレスとパスワードを入力してください");
+                return;
+            }
+            try {
+                setAuthMsg("ログイン中...");
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (e) {
+                setAuthMsg("⚠️ " + translateAuthError(e));
+            }
+        };
+
+        window.handleGoogleSignIn = async function () {
+            try {
+                setAuthMsg("Googleログイン中...");
+                await signInWithPopup(auth, new GoogleAuthProvider());
+            } catch (e) {
+                setAuthMsg("⚠️ " + translateAuthError(e));
+            }
+        };
+
+        window.handleSignOut = async function () {
+            if (unsubRequests) unsubRequests();
+            if (unsubFriendships) unsubFriendships();
+            await fbSignOut(auth);
+        };
+
+        function translateAuthError(e) {
+            const code = e && e.code ? e.code : "";
+            if (code.includes("email-already-in-use")) return "このメールアドレスは既に登録されています";
+            if (code.includes("invalid-credential") || code.includes("wrong-password")) return "メールアドレスまたはパスワードが違います";
+            if (code.includes("user-not-found")) return "アカウントが見つかりません";
+            if (code.includes("invalid-email")) return "メールアドレスの形式が正しくありません";
+            if (code.includes("popup-closed-by-user")) return "ログインがキャンセルされました";
+            return "エラーが発生しました（" + code + "）";
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            const loggedOutEl = document.getElementById('auth-logged-out');
+            const loggedInEl = document.getElementById('auth-logged-in');
+
+            if (!user) {
+                loggedOutEl.style.display = 'block';
+                loggedInEl.style.display = 'none';
+                if (unsubRequests) { unsubRequests(); unsubRequests = null; }
+                if (unsubFriendships) { unsubFriendships(); unsubFriendships = null; }
+                return;
+            }
+
+            loggedOutEl.style.display = 'none';
+            loggedInEl.style.display = 'block';
+            document.getElementById('auth-user-email').innerText = user.email || "Googleユーザー";
+            setAuthMsg("");
+            setFriendMsg("");
+
+            await syncUserDocOnLogin(user);
+            watchFriendRequests(user.uid);
+            watchFriendships(user.uid);
+        });
+
+        // Firestoreにユーザードキュメントが無ければ端末内データ(appState)を初期値として作成。
+        // 既にあればFirestore側を正として端末側(appState)を上書きする。
+        async function syncUserDocOnLogin(user) {
+            const userRef = doc(db, "users", user.uid);
+            const snap = await getDoc(userRef);
+
+            if (!snap.exists()) {
+                const friendCode = genFriendCode();
+                await setDoc(userRef, {
+                    nickname: (user.email || "旅人").split("@")[0],
+                    avatar: appState.avatar || "👤",
+                    unlockedCities: appState.unlockedCities || [],
+                    unlockedBadges: appState.unlockedBadges || [],
+                    friendCode: friendCode,
+                    createdAt: serverTimestamp()
+                });
+                document.getElementById('my-friend-code').innerText = friendCode;
+            } else {
+                const data = snap.data();
+                appState.avatar = data.avatar || appState.avatar || "👤";
+                appState.unlockedCities = data.unlockedCities || [];
+                appState.unlockedBadges = data.unlockedBadges || [];
+                document.getElementById('my-friend-code').innerText = data.friendCode || "------";
+                localStorage.setItem('geo_nihon_app_state_v5_calendar', JSON.stringify(appState));
+                if (typeof updateUI === 'function') updateUI();
+            }
+        }
+
+        // appStateの変更をFirestoreへ反映（ログイン中のみ）。既存の saveData() から自動的に呼ばれる。
+        window.syncAppStateToFirestore = async function () {
+            if (!currentUser) return;
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    avatar: appState.avatar || "👤",
+                    unlockedCities: appState.unlockedCities || [],
+                    unlockedBadges: appState.unlockedBadges || []
+                });
+            } catch (e) {
+                console.warn("Firestore同期失敗:", e);
+            }
+        };
+
+        window.handleSendFriendRequest = async function () {
+            if (!currentUser) return;
+            const codeInput = document.getElementById('add-friend-code');
+            const code = codeInput.value.trim().toUpperCase();
+            if (!code) {
+                setFriendMsg("⚠️ フレンドコードを入力してください");
+                return;
+            }
+
+            try {
+                const q = query(collection(db, "users"), where("friendCode", "==", code));
+                const results = await getDocs(q);
+                if (results.empty) {
+                    setFriendMsg("⚠️ そのコードのユーザーが見つかりません");
+                    return;
+                }
+                const targetDoc = results.docs[0];
+                const targetUid = targetDoc.id;
+
+                if (targetUid === currentUser.uid) {
+                    setFriendMsg("⚠️ 自分自身は追加できません");
+                    return;
+                }
+
+                const mySnap = await getDoc(doc(db, "users", currentUser.uid));
+                const myData = mySnap.exists() ? mySnap.data() : {};
+
+                const requestId = `${currentUser.uid}_${targetUid}`;
+                await setDoc(doc(db, "friendRequests", requestId), {
+                    fromUid: currentUser.uid,
+                    toUid: targetUid,
+                    fromNickname: myData.nickname || "旅人",
+                    fromAvatar: myData.avatar || "👤",
+                    status: "pending",
+                    createdAt: serverTimestamp()
+                });
+
+                setFriendMsg(`✅ ${targetDoc.data().nickname || "ユーザー"} に申請を送りました`);
+                codeInput.value = "";
+            } catch (e) {
+                console.warn(e);
+                setFriendMsg("⚠️ 申請の送信に失敗しました");
+            }
+        };
+
+        function watchFriendRequests(uid) {
+            const q = query(
+                collection(db, "friendRequests"),
+                where("toUid", "==", uid),
+                where("status", "==", "pending")
+            );
+            unsubRequests = onSnapshot(q, (snapshot) => {
+                const section = document.getElementById('friend-requests-section');
+                const list = document.getElementById('friend-requests-list');
+                list.innerHTML = '';
+
+                if (snapshot.empty) {
+                    section.style.display = 'none';
+                    return;
+                }
+                section.style.display = 'block';
+
+                snapshot.forEach((docSnap) => {
+                    const reqData = docSnap.data();
+                    const li = document.createElement('li');
+                    li.className = 'friend-request-item';
+                    li.innerHTML = `
+                        <span class="friend-avatar">${reqData.fromAvatar || "👤"}</span>
+                        <span class="friend-name">${reqData.fromNickname || "旅人"}</span>
+                        <button class="btn btn-secondary" style="font-size:0.68rem; padding:5px 10px;">承認</button>
+                        <button class="btn btn-secondary" style="font-size:0.68rem; padding:5px 10px; opacity:0.6;">拒否</button>
+                    `;
+                    const [acceptBtn, rejectBtn] = li.querySelectorAll('button');
+                    acceptBtn.onclick = () => acceptFriendRequest(docSnap.id, reqData);
+                    rejectBtn.onclick = () => rejectFriendRequest(docSnap.id);
+                    list.appendChild(li);
+                });
+            });
+        }
+
+        async function acceptFriendRequest(requestId, reqData) {
+            try {
+                const myUid = currentUser.uid;
+                const friendUid = reqData.fromUid;
+
+                await setDoc(doc(db, "friendships", myUid, "list", friendUid), { since: serverTimestamp() });
+                await setDoc(doc(db, "friendships", friendUid, "list", myUid), { since: serverTimestamp() });
+                await deleteDoc(doc(db, "friendRequests", requestId));
+
+                showToast(`🎉 ${reqData.fromNickname || "旅人"} とフレンドになりました`);
+            } catch (e) {
+                console.warn(e);
+                showToast("⚠️ フレンド承認に失敗しました");
+            }
+        }
+
+        async function rejectFriendRequest(requestId) {
+            try {
+                await deleteDoc(doc(db, "friendRequests", requestId));
+            } catch (e) {
+                console.warn(e);
+            }
+        }
+
+        function watchFriendships(uid) {
+            const listRef = collection(db, "friendships", uid, "list");
+            unsubFriendships = onSnapshot(listRef, async (snapshot) => {
+                const listEl = document.getElementById('friends-list');
+                listEl.innerHTML = '';
+
+                if (snapshot.empty) {
+                    listEl.innerHTML = '<li style="color:#64748b; font-size:0.75rem;">まだフレンドがいません。コードで追加してみましょう。</li>';
+                    return;
+                }
+
+                for (const friendDoc of snapshot.docs) {
+                    const friendUid = friendDoc.id;
+                    const friendSnap = await getDoc(doc(db, "users", friendUid));
+                    if (!friendSnap.exists()) continue;
+                    const fData = friendSnap.data();
+
+                    const cityCount = (fData.unlockedCities || []).length;
+                    const badgeCount = (fData.unlockedBadges || []).length;
+                    const level = Math.floor(cityCount / 3) + 1;
+
+                    const li = document.createElement('li');
+                    li.className = 'friend-item';
+                    li.innerHTML = `
+                        <span class="friend-avatar">${fData.avatar || "👤"}</span>
+                        <span class="friend-info">
+                            <span class="friend-name">${fData.nickname || "旅人"}</span>
+                            <span class="friend-stats">LV.${level} ・ 🧭${cityCount}都市 ・ 🏆${badgeCount}実績</span>
+                        </span>
+                    `;
+                    listEl.appendChild(li);
+                }
+            });
         }
     </script>
 </body>
