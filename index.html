@@ -1090,8 +1090,8 @@
                 appState.unlockedCities.push({ prefId, cityName, code, lat, lng, date: dateStr });
                 showToast(`🎉 UNLOCKED: ${cityName}`);
             } else {
-                showToast(`📍 ルート接続: ${cityName}`);
-                appState.unlockedCities.push({ prefId, cityName, code, lat, lng, date: dateStr });
+                showToast(`📍 再訪問: ${cityName}`);
+                // 重複登録を防ぐため、appState.unlockedCities.push は行いません
             }
 
             checkAchievements(dateStr);
@@ -1119,9 +1119,14 @@
             checkAndUnlock("level_five", uniqueCount >= 10);
             checkAndUnlock("japan_conqueror", uniqueCount >= 50);
 
+            // 一意な都市コードのみで都道府県内の解放数をカウントするよう修正
             const prefCounts = {};
+            const seenCodes = new Set();
             appState.unlockedCities.forEach(c => {
-                prefCounts[c.prefId] = (prefCounts[c.prefId] || 0) + 1;
+                if (!seenCodes.has(c.code)) {
+                    seenCodes.add(c.code);
+                    prefCounts[c.prefId] = (prefCounts[c.prefId] || 0) + 1;
+                }
             });
             const hasPrefMaster = Object.values(prefCounts).some(v => v >= 3);
             checkAndUnlock("prefecture_master", hasPrefMaster);
@@ -1198,4 +1203,4 @@
         }
     </script>
 </body>
-</html>
+html>
