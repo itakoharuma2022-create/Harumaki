@@ -1653,39 +1653,47 @@
                 statusText.className = "boot-success";
                 
                 setTimeout(() => document.getElementById('row4').classList.add('visible'), 300);
-                
-                loadData();
-                migrateRetroactiveCoins();
-                initPrefSelector();
-                renderBadges();
-                updateUI();
-                
-                const today = new Date();
-                selectedDateStr = formatDateKey(today);
-                renderCalendar();
-                renderMapForSelectedDate();
 
-                setTimeout(() => {
-                    document.getElementById('boot-spinner').style.display = 'none';
-                    const startMsg = document.getElementById('start-msg');
-                    startMsg.classList.add('visible');
-                    
+                // ここから先はJSON取得後の「アプリ起動処理」。
+                // ここで例外が出た場合は「JSON読み込み失敗」と紛らわしいメッセージを出さないよう、
+                // try/catchを分けて実際のエラー内容を表示する。
+                try {
+                    loadData();
+                    migrateRetroactiveCoins();
+                    initPrefSelector();
+                    renderBadges();
+                    updateUI();
+
+                    const today = new Date();
+                    selectedDateStr = formatDateKey(today);
+                    renderCalendar();
+                    renderMapForSelectedDate();
+
                     setTimeout(() => {
-                        const bootScreen = document.getElementById('boot-screen');
-                        bootScreen.style.opacity = '0';
+                        document.getElementById('boot-spinner').style.display = 'none';
+                        const startMsg = document.getElementById('start-msg');
+                        startMsg.classList.add('visible');
+
                         setTimeout(() => {
-                            bootScreen.style.display = 'none';
-                            if (map) map.invalidateSize();
-                        }, 500);
-                    }, 1800);
-                }, 800);
-                
+                            const bootScreen = document.getElementById('boot-screen');
+                            bootScreen.style.opacity = '0';
+                            setTimeout(() => {
+                                bootScreen.style.display = 'none';
+                                if (map) map.invalidateSize();
+                            }, 500);
+                        }, 1800);
+                    }, 800);
+                } catch (initError) {
+                    console.error("アプリ起動処理でエラー:", initError);
+                    alert("アプリの起動処理でエラーが発生しました：\n" + (initError && initError.stack ? initError.stack : initError));
+                }
+
             } catch (error) {
                 console.error(error);
                 if (window.__bootFailSafeId) clearTimeout(window.__bootFailSafeId);
                 statusText.innerText = "ERROR";
                 statusText.style.background = "#ff3333";
-                alert("データファイル（Nihon.json / badges.json）の読み込みに失敗しました。");
+                alert("データファイル（Nihon.json / badges.json）の読み込みに失敗しました：\n" + (error && error.message ? error.message : error));
             }
         }
 
@@ -2588,11 +2596,37 @@
                     console.error("データロード失敗:", e);
                 }
             }
+
+            // 過去バージョンのセーブデータに存在しない新フィールドを安全に補完する
+            // （これが無いと、機能追加のたびに古いデータを持つ端末でエラーになる）
+            if (!Array.isArray(appState.unlockedCities)) appState.unlockedCities = [];
+            if (!Array.isArray(appState.unlockedBadges)) appState.unlockedBadges = [];
+            if (typeof appState.avatar !== 'string') appState.avatar = "👤";
+            if (typeof appState.nickname !== 'string') appState.nickname = "";
+            if (typeof appState.coins !== 'number') appState.coins = 0;
+            if (!Array.isArray(appState.purchasedItems)) appState.purchasedItems = [];
+            if (typeof appState.equippedFrame !== 'string') appState.equippedFrame = "frame_none";
+            if (typeof appState.equippedTheme !== 'string') appState.equippedTheme = "theme_white";
+            if (typeof appState.equippedEffect !== 'string') appState.equippedEffect = "effect_none";
+            if (!Array.isArray(appState.mailbox)) appState.mailbox = [];
+            if (typeof appState.mailboxMigrated !== 'boolean') appState.mailboxMigrated = false;
         }
 
         function resetAllData() {
             if (confirm('すべての冒険記録を初期化しますか？')) {
-                appState = { unlockedCities: [], unlockedBadges: [] };
+                appState = {
+                    unlockedCities: [],
+                    unlockedBadges: [],
+                    avatar: "👤",
+                    nickname: "",
+                    coins: 0,
+                    purchasedItems: [],
+                    equippedFrame: "frame_none",
+                    equippedTheme: "theme_white",
+                    equippedEffect: "effect_none",
+                    mailbox: [],
+                    mailboxMigrated: false
+                };
                 saveData();
                 updateUI();
                 if (markersGroup) markersGroup.clearLayers();
@@ -3050,4 +3084,3 @@
     </script>
 </body>
 </html>
-　
