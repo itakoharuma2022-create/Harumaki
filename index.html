@@ -1154,6 +1154,8 @@
                     <div class="card" style="text-align: center; background: linear-gradient(180deg, #1e202a 0%, #181920 100%); padding: 18px 14px;">
                         <div id="profile-avatar-btn" onclick="toggleAvatarPicker()" style="width: 64px; height: 64px; background: #272a34; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 10px; font-size: 1.8rem; border: 1px solid #3f4454; cursor:pointer;">👤</div>
                         <div id="avatar-picker" class="avatar-picker" style="display:none;"></div>
+                        <input id="avatar-file-input" type="file" accept="image/*" style="display:none;" onchange="handleAvatarFileSelected(event)">
+                        <div id="avatar-upload-status" style="display:none; font-size:0.65rem; color:#94a3b8; margin-bottom:10px;">アップロード中...</div>
 
                         <div id="profile-nickname-display" class="card-title" style="margin-bottom: 2px; font-size:0.95rem; cursor:pointer;" onclick="toggleNicknameEdit()">EXPLORER <span style="font-size:0.7rem; color:#64748b;">✎</span></div>
                         <div id="profile-nickname-edit" style="display:none; gap:6px; justify-content:center; margin-bottom:6px;">
@@ -1408,6 +1410,7 @@
             unlockedCities: [],
             unlockedBadges: [],
             avatar: "👤",
+            avatarImageUrl: "",
             nickname: "",
             coins: 0,
             purchasedItems: [],
@@ -2454,7 +2457,7 @@
         // --- プロフィール: ヘッダー（称号・統計・アバター） ---
         function updateProfileHeader(uniqueCount) {
             const avatarBtn = document.getElementById('profile-avatar-btn');
-            if (avatarBtn) avatarBtn.innerText = appState.avatar || "👤";
+            if (avatarBtn) avatarBtn.innerHTML = avatarInnerHTML(appState);
 
             const nicknameEl = document.getElementById('profile-nickname-display');
             if (nicknameEl) {
@@ -2522,6 +2525,15 @@
             showToast('✅ 名前を保存しました');
         }
 
+        // アバター表示用の共通ヘルパー。画像が設定されていればそれを、なければ絵文字を返す。
+        // avatarLike には appState または Firestore から取得したフレンドのデータ({avatar, avatarImageUrl})を渡す。
+        function avatarInnerHTML(avatarLike) {
+            if (avatarLike && avatarLike.avatarImageUrl) {
+                return `<img src="${avatarLike.avatarImageUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+            }
+            return (avatarLike && avatarLike.avatar) ? avatarLike.avatar : "👤";
+        }
+
         function toggleAvatarPicker() {
             const picker = document.getElementById('avatar-picker');
             if (!picker) return;
@@ -2538,19 +2550,55 @@
             const picker = document.getElementById('avatar-picker');
             if (!picker) return;
             picker.innerHTML = '';
+
+            // 画像アップロード用タイル
+            const uploadTile = document.createElement('div');
+            uploadTile.className = 'avatar-option';
+            uploadTile.innerText = '📷';
+            uploadTile.title = '画像を選ぶ';
+            uploadTile.onclick = () => document.getElementById('avatar-file-input').click();
+            picker.appendChild(uploadTile);
+
             AVATAR_OPTIONS.forEach(emoji => {
                 const opt = document.createElement('div');
-                opt.className = `avatar-option ${appState.avatar === emoji ? 'selected' : ''}`;
+                opt.className = `avatar-option ${(!appState.avatarImageUrl && appState.avatar === emoji) ? 'selected' : ''}`;
                 opt.innerText = emoji;
                 opt.onclick = () => selectAvatar(emoji);
                 picker.appendChild(opt);
             });
+
+            if (appState.avatarImageUrl) {
+                const removeTile = document.createElement('div');
+                removeTile.className = 'avatar-option';
+                removeTile.innerText = '✕';
+                removeTile.title = '画像を削除';
+                removeTile.style.color = '#ff6b6b';
+                removeTile.onclick = () => selectAvatar(appState.avatar || '👤');
+                picker.appendChild(removeTile);
+            }
+        }
+
+        function handleAvatarFileSelected(event) {
+            const file = event.target.files && event.target.files[0];
+            event.target.value = ''; // 同じファイルを連続選択できるようにリセット
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                showToast('⚠️ 画像ファイルを選択してください');
+                return;
+            }
+            if (typeof window.uploadAvatarImage !== 'function') {
+                showToast('⚠️ ログインすると画像アバターを設定できます');
+                return;
+            }
+            window.uploadAvatarImage(file);
         }
 
         function selectAvatar(emoji) {
             appState.avatar = emoji;
+            appState.avatarImageUrl = ""; // 絵文字を選んだら画像アバターは解除
             saveData();
-            document.getElementById('profile-avatar-btn').innerText = emoji;
+            document.getElementById('profile-avatar-btn').innerHTML = avatarInnerHTML(appState);
             document.getElementById('avatar-picker').classList.remove('show');
             showToast(`${emoji} アバターを変更しました`);
         }
@@ -2668,6 +2716,7 @@
             if (!Array.isArray(appState.unlockedCities)) appState.unlockedCities = [];
             if (!Array.isArray(appState.unlockedBadges)) appState.unlockedBadges = [];
             if (typeof appState.avatar !== 'string') appState.avatar = "👤";
+            if (typeof appState.avatarImageUrl !== 'string') appState.avatarImageUrl = "";
             if (typeof appState.nickname !== 'string') appState.nickname = "";
             if (typeof appState.coins !== 'number') appState.coins = 0;
             if (!Array.isArray(appState.purchasedItems)) appState.purchasedItems = [];
@@ -2721,6 +2770,9 @@
             getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc,
             collection, query, where, getDocs, onSnapshot, serverTimestamp
         } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+        import {
+            getStorage, ref as storageRef, uploadBytes, getDownloadURL
+        } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBTBdSMfnHV5fShGJhwD_zM4IEBEDqwZwI",
@@ -2735,6 +2787,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
         let currentUser = null;
         let unsubRequests = null;
@@ -2849,6 +2902,7 @@
                 await setDoc(userRef, {
                     nickname: (appState.nickname && appState.nickname.trim()) || (user.email || "旅人").split("@")[0],
                     avatar: appState.avatar || "👤",
+                    avatarImageUrl: appState.avatarImageUrl || "",
                     unlockedCities: appState.unlockedCities || [],
                     unlockedBadges: appState.unlockedBadges || [],
                     coins: appState.coins || 0,
@@ -2865,6 +2919,7 @@
                 const data = snap.data();
                 appState.nickname = data.nickname || appState.nickname || "";
                 appState.avatar = data.avatar || appState.avatar || "👤";
+                appState.avatarImageUrl = data.avatarImageUrl || "";
                 appState.unlockedCities = data.unlockedCities || [];
                 appState.unlockedBadges = data.unlockedBadges || [];
                 appState.coins = data.coins || 0;
@@ -2892,6 +2947,7 @@
                 await updateDoc(doc(db, "users", currentUser.uid), {
                     nickname: appState.nickname || "",
                     avatar: appState.avatar || "👤",
+                    avatarImageUrl: appState.avatarImageUrl || "",
                     unlockedCities: appState.unlockedCities || [],
                     unlockedBadges: appState.unlockedBadges || [],
                     coins: appState.coins || 0,
@@ -3040,7 +3096,7 @@
                     li.className = 'friend-item';
                     li.style.cursor = 'pointer';
                     li.innerHTML = `
-                        <span class="friend-avatar">${fData.avatar || "👤"}</span>
+                        <span class="friend-avatar">${fData.avatarImageUrl ? `<img src="${fData.avatarImageUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : (fData.avatar || "👤")}</span>
                         <span class="friend-info">
                             <span class="friend-name">${fData.nickname || "旅人"}</span>
                             <span class="friend-stats">LV.${level} ・ 🧭${cityCount}都市 ・ 🏆${badgeCount}実績</span>
@@ -3067,6 +3123,8 @@
         // --- フレンドの位置情報監視 ---
         const friendLocationUnsubs = {};
         const friendLocationMarkers = {};
+        const friendLocationPolylines = {};
+        const friendLocationDataCache = {};
         const STALE_LOCATION_MS = 15 * 60 * 1000; // 15分より古い位置情報はマーカーを消す
 
         function watchFriendLocation(friendUid, fData) {
@@ -3086,10 +3144,39 @@
                     return;
                 }
 
+                friendLocationDataCache[friendUid] = loc;
                 placeFriendMarker(friendUid, fData, loc.lat, loc.lng);
+                placeFriendPolyline(friendUid, loc.trail);
+                refreshOpenFriendPopup(friendUid, fData);
             }, () => {
                 // 権限エラー等（フレンド関係が切れている等）は静かに無視する
             });
+        }
+
+        // フレンドの本日の移動軌跡をポリラインで描画・更新する
+        function placeFriendPolyline(friendUid, trail) {
+            if (typeof L === 'undefined' || !friendMarkersLayer) return;
+            if (!Array.isArray(trail) || trail.length < 2) return;
+
+            const latlngs = trail.map(p => [p.lat, p.lng]);
+            if (friendLocationPolylines[friendUid]) {
+                friendLocationPolylines[friendUid].setLatLngs(latlngs);
+            } else {
+                friendLocationPolylines[friendUid] = L.polyline(latlngs, {
+                    color: '#00c853',
+                    weight: 3,
+                    opacity: 0.7,
+                    dashArray: '1, 8',
+                    lineCap: 'round'
+                }).addTo(friendMarkersLayer);
+            }
+        }
+
+        function removeFriendPolyline(friendUid) {
+            if (friendLocationPolylines[friendUid]) {
+                friendMarkersLayer.removeLayer(friendLocationPolylines[friendUid]);
+                delete friendLocationPolylines[friendUid];
+            }
         }
 
         function placeFriendMarker(friendUid, fData, lat, lng) {
@@ -3098,7 +3185,7 @@
             const icon = L.divIcon({
                 className: '',
                 html: `<div style="display:flex; flex-direction:column; align-items:center;">
-                            <div class="friend-map-marker">${fData.avatar || "👤"}</div>
+                            <div class="friend-map-marker">${fData.avatarImageUrl ? `<img src="${fData.avatarImageUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : (fData.avatar || "👤")}</div>
                             <div class="friend-map-marker-label">${fData.nickname || "旅人"}</div>
                        </div>`,
                 iconSize: [70, 54],
@@ -3109,8 +3196,53 @@
                 friendLocationMarkers[friendUid].setLatLng([lat, lng]);
                 friendLocationMarkers[friendUid].setIcon(icon);
             } else {
-                friendLocationMarkers[friendUid] = L.marker([lat, lng], { icon }).addTo(friendMarkersLayer);
+                const marker = L.marker([lat, lng], { icon }).addTo(friendMarkersLayer);
+                marker.bindPopup('', { maxWidth: 240 });
+                marker.on('click', () => {
+                    marker.setPopupContent(buildFriendPopupHTML(friendUid, fData));
+                });
+                friendLocationMarkers[friendUid] = marker;
             }
+        }
+
+        // 開いているポップアップがあれば内容を最新の位置情報で更新する
+        function refreshOpenFriendPopup(friendUid, fData) {
+            const marker = friendLocationMarkers[friendUid];
+            if (marker && marker.isPopupOpen && marker.isPopupOpen()) {
+                marker.setPopupContent(buildFriendPopupHTML(friendUid, fData));
+            }
+        }
+
+        // 速度・本日の移動距離・高度・現在地の滞在時間を表示するポップアップHTMLを組み立てる
+        function buildFriendPopupHTML(friendUid, fData) {
+            const loc = friendLocationDataCache[friendUid];
+            if (!loc) return `<div style="font-size:0.75rem;">読み込み中...</div>`;
+
+            const speedKmh = typeof loc.speedKmh === 'number' ? loc.speedKmh : 0;
+            const distanceKm = typeof loc.todayDistanceKm === 'number' ? loc.todayDistanceKm : 0;
+            const altitude = typeof loc.altitude === 'number' ? loc.altitude : null;
+            const dwellMs = loc.arrivedAtMs ? (Date.now() - loc.arrivedAtMs) : 0;
+
+            const dwellText = (() => {
+                const mins = Math.floor(dwellMs / 60000);
+                if (mins < 1) return '1分未満';
+                if (mins < 60) return `${mins}分`;
+                const h = Math.floor(mins / 60);
+                const m = mins % 60;
+                return `${h}時間${m}分`;
+            })();
+
+            return `
+                <div style="font-family:inherit; min-width:190px;">
+                    <div style="font-weight:800; font-size:0.85rem; margin-bottom:8px; color:#111;">${fData.nickname || "旅人"}</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.72rem; color:#333;">
+                        <div>🚶 移動速度<br><b>${speedKmh.toFixed(1)} km/h</b></div>
+                        <div>📏 本日の移動距離<br><b>${distanceKm.toFixed(2)} km</b></div>
+                        <div>⛰️ 現在高度<br><b>${altitude !== null ? Math.round(altitude) + ' m' : '取得不可'}</b></div>
+                        <div>⏱️ この場所の滞在時間<br><b>${dwellText}</b></div>
+                    </div>
+                </div>
+            `;
         }
 
         function removeFriendMarker(friendUid) {
@@ -3118,6 +3250,8 @@
                 friendMarkersLayer.removeLayer(friendLocationMarkers[friendUid]);
                 delete friendLocationMarkers[friendUid];
             }
+            removeFriendPolyline(friendUid);
+            delete friendLocationDataCache[friendUid];
         }
 
         function clearAllFriendLocationWatchers() {
@@ -3160,19 +3294,80 @@
                     if (now - lastLocationWriteMs < LOCATION_WRITE_THROTTLE_MS) return;
                     lastLocationWriteMs = now;
 
-                    setDoc(doc(db, "liveLocations", currentUser.uid), {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                        updatedAtMs: now,
-                        updatedAt: serverTimestamp()
-                    }).catch(e => console.warn("位置情報の共有に失敗:", e));
+                    writeMyLocation(position, now).catch(e => console.warn("位置情報の共有に失敗:", e));
                 },
                 (err) => {
                     console.warn("位置情報の取得に失敗:", err);
                     showToast('⚠️ 位置情報を取得できませんでした。端末の設定をご確認ください');
                 },
-                { enableHighAccuracy: false, maximumAge: 15000, timeout: 15000 }
+                { enableHighAccuracy: true, maximumAge: 15000, timeout: 15000 }
             );
+        }
+
+        // 2地点間の距離をkmで返す（ハーバサイン公式）
+        function haversineKm(lat1, lng1, lat2, lng2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) ** 2 +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLng / 2) ** 2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        }
+
+        const DWELL_RESET_DISTANCE_KM = 0.05; // 50m以上動いたら「別の場所に移動した」とみなす
+        const TRAIL_MAX_POINTS = 400; // 1ドキュメントが肥大化しすぎないよう軌跡の保持点数に上限を設ける
+
+        async function writeMyLocation(position, now) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const altitude = (typeof position.coords.altitude === 'number') ? position.coords.altitude : null;
+
+            const docRef = doc(db, "liveLocations", currentUser.uid);
+            let prev = null;
+            try {
+                const prevSnap = await getDoc(docRef);
+                if (prevSnap.exists()) prev = prevSnap.data();
+            } catch (e) { /* 初回は存在しないので無視 */ }
+
+            const todayKey = formatDateKey(new Date());
+            let trail = (prev && prev.trailDateKey === todayKey && Array.isArray(prev.trail)) ? prev.trail.slice() : [];
+            let todayDistanceKm = (prev && prev.trailDateKey === todayKey) ? (prev.todayDistanceKm || 0) : 0;
+            let arrivedAtMs = (prev && prev.arrivedAtMs) ? prev.arrivedAtMs : now;
+
+            let segmentKm = 0;
+            if (trail.length > 0) {
+                const last = trail[trail.length - 1];
+                segmentKm = haversineKm(last.lat, last.lng, lat, lng);
+                todayDistanceKm += segmentKm;
+                arrivedAtMs = (segmentKm > DWELL_RESET_DISTANCE_KM) ? now : arrivedAtMs;
+            }
+
+            trail.push({ lat, lng, t: now });
+            if (trail.length > TRAIL_MAX_POINTS) trail = trail.slice(trail.length - TRAIL_MAX_POINTS);
+
+            // 速度: ブラウザが返すspeed（m/s）があれば優先、無ければ直近の移動距離と経過時間から概算
+            let speedKmh = null;
+            if (typeof position.coords.speed === 'number' && position.coords.speed !== null && !isNaN(position.coords.speed)) {
+                speedKmh = position.coords.speed * 3.6;
+            } else if (prev && prev.updatedAtMs && segmentKm > 0) {
+                const hours = (now - prev.updatedAtMs) / 3600000;
+                speedKmh = hours > 0 ? segmentKm / hours : 0;
+            } else {
+                speedKmh = 0;
+            }
+
+            await setDoc(docRef, {
+                lat, lng,
+                altitude,
+                speedKmh,
+                todayDistanceKm,
+                trail,
+                trailDateKey: todayKey,
+                arrivedAtMs,
+                updatedAtMs: now,
+                updatedAt: serverTimestamp()
+            });
         }
 
         function stopLocationSharing(deleteDoc_) {
@@ -3185,7 +3380,62 @@
             }
         }
 
-        // --- フレンド詳細モーダル ---
+        // --- アバター画像アップロード ---
+        window.uploadAvatarImage = async function (file) {
+            if (!currentUser) {
+                showToast('⚠️ ログインすると画像アバターを設定できます');
+                return;
+            }
+
+            const statusEl = document.getElementById('avatar-upload-status');
+            if (statusEl) statusEl.style.display = 'block';
+
+            try {
+                const blob = await compressImageToBlob(file, 256, 256, 0.85);
+                const fileRef = storageRef(storage, `avatars/${currentUser.uid}.jpg`);
+                await uploadBytes(fileRef, blob, { contentType: 'image/jpeg' });
+                const url = await getDownloadURL(fileRef);
+
+                // キャッシュ回避のためタイムスタンプを付与
+                appState.avatarImageUrl = `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`;
+                saveData();
+                updateUI();
+                document.getElementById('avatar-picker').classList.remove('show');
+                showToast('✅ アバター画像を設定しました');
+            } catch (e) {
+                console.warn(e);
+                showToast('⚠️ 画像のアップロードに失敗しました');
+            } finally {
+                if (statusEl) statusEl.style.display = 'none';
+            }
+        };
+
+        // 画像をcanvasで指定サイズ以内にリサイズ・圧縮してJPEG Blobを返す
+        function compressImageToBlob(file, maxW, maxH, quality) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                const url = URL.createObjectURL(file);
+                img.onload = () => {
+                    let { width, height } = img;
+                    const ratio = Math.min(maxW / width, maxH / height, 1);
+                    width = Math.round(width * ratio);
+                    height = Math.round(height * ratio);
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    URL.revokeObjectURL(url);
+
+                    canvas.toBlob((blob) => {
+                        if (blob) resolve(blob); else reject(new Error('画像の変換に失敗しました'));
+                    }, 'image/jpeg', quality);
+                };
+                img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('画像の読み込みに失敗しました')); };
+                img.src = url;
+            });
+        }
         window.openFriendDetail = async function (friendUid, cachedData) {
             const modal = document.getElementById('friend-detail-modal');
             const body = document.getElementById('friend-detail-body');
@@ -3212,7 +3462,7 @@
 
             body.innerHTML = `
                 <div class="friend-detail-header">
-                    <div class="friend-detail-avatar">${fData.avatar || "👤"}</div>
+                    <div class="friend-detail-avatar">${fData.avatarImageUrl ? `<img src="${fData.avatarImageUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : (fData.avatar || "👤")}</div>
                     <div style="font-size:1.05rem; font-weight:800; color:#fff;">${fData.nickname || "旅人"}</div>
                     <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">${title}</div>
                     <span style="display:inline-block; margin-top:8px; background: var(--accent-color, #fff); color:#111216; padding: 2px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 800;">LV. ${level}</span>
@@ -3255,11 +3505,13 @@
             unsubChat = onSnapshot(q, (snapshot) => {
                 const list = document.getElementById('chat-messages');
                 const msgs = [];
-                snapshot.forEach(d => msgs.push(d.data()));
+                snapshot.forEach(d => msgs.push({ id: d.id, ...d.data() }));
                 msgs.sort((a, b) => (a.createdAtMs || 0) - (b.createdAtMs || 0));
 
                 list.innerHTML = '';
                 let lastDateLabel = '';
+                const unreadIncomingIds = [];
+
                 msgs.forEach(m => {
                     const ts = m.createdAtMs ? new Date(m.createdAtMs) : null;
                     const dateLabel = ts ? formatDateKey(ts) : '';
@@ -3273,24 +3525,37 @@
                         lastDateLabel = dateLabel;
                     }
 
+                    const isMine = m.senderId === currentUser.uid;
+                    if (!isMine && m.receiverId === currentUser.uid && !m.read) {
+                        unreadIncomingIds.push(m.id);
+                    }
+
                     const wrap = document.createElement('div');
-                    wrap.style.cssText = `display:flex; flex-direction:column; ${m.senderId === currentUser.uid ? 'align-items:flex-end;' : 'align-items:flex-start;'}`;
+                    wrap.style.cssText = `display:flex; flex-direction:column; ${isMine ? 'align-items:flex-end;' : 'align-items:flex-start;'}`;
 
                     const bubble = document.createElement('div');
-                    bubble.className = `chat-bubble ${m.senderId === currentUser.uid ? 'mine' : 'theirs'}`;
+                    bubble.className = `chat-bubble ${isMine ? 'mine' : 'theirs'}`;
                     bubble.innerText = m.text;
 
                     const timeLabel = document.createElement('div');
-                    timeLabel.style.cssText = 'font-size:0.6rem; color:#64748b; margin:2px 4px;';
-                    timeLabel.innerText = ts
+                    timeLabel.style.cssText = 'font-size:0.6rem; color:#64748b; margin:2px 4px; display:flex; gap:5px; align-items:center;';
+                    const timeText = ts
                         ? `${String(ts.getHours()).padStart(2,'0')}:${String(ts.getMinutes()).padStart(2,'0')}:${String(ts.getSeconds()).padStart(2,'0')}`
                         : '';
+                    timeLabel.innerHTML = isMine
+                        ? `${m.read ? '<span style="color:#00c853; font-weight:700;">既読</span>' : ''}<span>${timeText}</span>`
+                        : `<span>${timeText}</span>`;
 
                     wrap.appendChild(bubble);
                     wrap.appendChild(timeLabel);
                     list.appendChild(wrap);
                 });
                 list.scrollTop = list.scrollHeight;
+
+                // チャットを開いている間に届いた未読メッセージを既読にする
+                unreadIncomingIds.forEach(msgId => {
+                    updateDoc(doc(db, "conversations", convId, "messages", msgId), { read: true }).catch(() => {});
+                });
             });
         };
 
@@ -3315,7 +3580,8 @@
                     receiverId: activeChatFriendUid,
                     text: text,
                     createdAtMs: Date.now(),
-                    createdAt: serverTimestamp()
+                    createdAt: serverTimestamp(),
+                    read: false
                 });
             } catch (e) {
                 console.warn(e);
