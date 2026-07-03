@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -70,6 +70,41 @@
             z-index: 20;
             backdrop-filter: blur(10px);
             flex-shrink: 0;
+            position: relative;
+        }
+
+        #mailbox-btn {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #1c1e26;
+            border: 1px solid #272a34;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        #mailbox-badge {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            background: #ff3b30;
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 800;
+            min-width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0 3px;
         }
 
         .content-area {
@@ -165,8 +200,12 @@
             transition: transform 0.2s;
         }
 
+        :root {
+            --accent-color: #ffffff;
+        }
+
         .nav-item.active {
-            color: #ffffff;
+            color: var(--accent-color);
             font-weight: 700;
         }
 
@@ -329,6 +368,262 @@
             font-size: 0.65rem;
             color: #64748b;
             margin-top: 2px;
+        }
+
+        /* --- モーダル共通 --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 5000;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal-sheet {
+            background: #14151c;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            width: 100%;
+            max-width: 720px;
+            max-height: 82vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 -8px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid #272a34;
+            flex-shrink: 0;
+        }
+
+        .modal-title { font-size: 1rem; font-weight: 800; color: #fff; }
+
+        .modal-close-btn {
+            background: #1c1e26;
+            border: 1px solid #272a34;
+            color: #cbd5e1;
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        /* --- メールボックス --- */
+        .mail-item {
+            background: #101116;
+            border: 1px solid #272a34;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .mail-item .mail-title { font-size: 0.85rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+        .mail-item .mail-body { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px; line-height: 1.5; }
+        .mail-item .mail-coin { font-size: 0.75rem; color: #ffd166; font-weight: 700; margin-bottom: 8px; }
+        .mail-item button {
+            background: #ffffff; color: #111216; border: none; border-radius: 8px;
+            padding: 7px 14px; font-size: 0.72rem; font-weight: 800; cursor: pointer;
+        }
+        .mail-item button:disabled { background: #2c2f3a; color: #6b7280; cursor: default; }
+
+        /* --- フレンド詳細 --- */
+        .friend-detail-header {
+            text-align: center;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #272a34;
+        }
+
+        .friend-detail-avatar {
+            width: 72px; height: 72px;
+            font-size: 2rem;
+            background: #272a34;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 10px;
+        }
+
+        .friend-detail-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .friend-detail-stat {
+            background: #101116;
+            border: 1px solid #272a34;
+            border-radius: 10px;
+            padding: 10px 4px;
+            text-align: center;
+        }
+
+        .friend-detail-stat .num { font-size: 1.05rem; font-weight: 800; color: #fff; }
+        .friend-detail-stat .label { font-size: 0.62rem; color: #94a3b8; margin-top: 2px; }
+
+        /* --- チャット --- */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chat-bubble {
+            max-width: 75%;
+            padding: 8px 12px;
+            border-radius: 14px;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .chat-bubble.mine {
+            align-self: flex-end;
+            background: var(--accent-color, #ffffff);
+            color: #111216;
+        }
+
+        .chat-bubble.theirs {
+            align-self: flex-start;
+            background: #272a34;
+            color: #e2e8f0;
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            border-top: 1px solid #272a34;
+            flex-shrink: 0;
+        }
+
+        .chat-input-row input {
+            flex: 1;
+            background: #101116;
+            border: 1px solid #272a34;
+            border-radius: 20px;
+            padding: 9px 14px;
+            color: #fff;
+            font-size: 0.82rem;
+        }
+
+        .chat-input-row button {
+            background: #ffffff;
+            color: #111216;
+            border: none;
+            border-radius: 20px;
+            padding: 0 18px;
+            font-weight: 800;
+            font-size: 0.78rem;
+            cursor: pointer;
+        }
+
+        /* --- ショップ --- */
+        /* --- ショップ: アバターフレーム --- */
+        #profile-avatar-btn.frame-gold { box-shadow: 0 0 0 3px #ffd166, 0 0 14px rgba(255,209,102,0.6); }
+        #profile-avatar-btn.frame-silver { box-shadow: 0 0 0 3px #c7ccd6, 0 0 14px rgba(199,204,214,0.5); }
+        #profile-avatar-btn.frame-sakura { box-shadow: 0 0 0 3px #ff8fb1, 0 0 14px rgba(255,143,177,0.55); }
+
+        /* --- ショップ: キラキラエフェクト --- */
+        #profile-title.effect-sparkle {
+            background: linear-gradient(90deg, #ffd166, #ffffff, #ffd166);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: sparkleShine 2.5s linear infinite;
+        }
+
+        @keyframes sparkleShine {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .shop-item-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(94px, 1fr));
+            gap: 10px;
+        }
+
+        .shop-item {
+            background: #101116;
+            border: 1px solid #272a34;
+            border-radius: 12px;
+            padding: 10px 8px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .shop-item .shop-item-icon {
+            font-size: 1.6rem;
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+            background: #1c1e26;
+        }
+
+        .shop-item .shop-item-name {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            line-height: 1.3;
+        }
+
+        .shop-item .shop-item-price {
+            font-size: 0.65rem;
+            color: #ffd166;
+            font-weight: 700;
+        }
+
+        .shop-item button {
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 0;
+            font-size: 0.65rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 2px;
+        }
+
+        .shop-item button.buy-btn {
+            background: #ffffff;
+            color: #111216;
+        }
+
+        .shop-item button.buy-btn:disabled {
+            background: #2c2f3a;
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+
+        .shop-item button.equip-btn {
+            background: #272a34;
+            color: #cbd5e1;
+            border: 1px solid #3f4454;
+        }
+
+        .shop-item button.equip-btn.equipped {
+            background: #00ff66;
+            color: #063a1a;
+            border-color: #00ff66;
         }
 
         .friend-item, .friend-request-item {
@@ -712,7 +1007,10 @@
     <div class="phone-container">
         <!-- 通知トースト -->
         <div id="toast" class="toast">実績を解除しました！</div>
-        <header id="app-title">MAP ADVENTURE</header>
+        <header id="app-title">
+            <button id="mailbox-btn" onclick="openMailbox()">✉️<span id="mailbox-badge">0</span></button>
+            <span id="app-title-text">MAP ADVENTURE</span>
+        </header>
 
         <div class="content-area">
             <!-- 1. ホームタブ（マップ表示） -->
@@ -805,10 +1103,14 @@
                         <div id="profile-avatar-btn" onclick="toggleAvatarPicker()" style="width: 64px; height: 64px; background: #272a34; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 10px; font-size: 1.8rem; border: 1px solid #3f4454; cursor:pointer;">👤</div>
                         <div id="avatar-picker" class="avatar-picker" style="display:none;"></div>
 
-                        <div class="card-title" style="margin-bottom: 2px; font-size:0.95rem;">EXPLORER</div>
+                        <div id="profile-nickname-display" class="card-title" style="margin-bottom: 2px; font-size:0.95rem; cursor:pointer;" onclick="toggleNicknameEdit()">EXPLORER <span style="font-size:0.7rem; color:#64748b;">✎</span></div>
+                        <div id="profile-nickname-edit" style="display:none; gap:6px; justify-content:center; margin-bottom:6px;">
+                            <input id="profile-nickname-input" type="text" maxlength="14" placeholder="名前を入力" style="background:#101116; border:1px solid #272a34; border-radius:8px; padding:6px 10px; color:#fff; font-size:0.82rem; width:150px; text-align:center;">
+                            <button class="btn btn-secondary" style="padding:6px 12px; font-size:0.72rem; width:auto;" onclick="saveNickname()">保存</button>
+                        </div>
                         <div id="profile-title" style="font-size:0.75rem; color:#94a3b8; font-weight:600; margin-bottom:10px;">🔰 かけだし旅人</div>
 
-                        <span style="background: #ffffff; color: #111216; padding: 2px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 800;">LV. <span id="profile-level">1</span></span>
+                        <span id="profile-lv-badge" style="background: var(--accent-color); color: #111216; padding: 2px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 800;">LV. <span id="profile-level">1</span></span>
 
                         <div style="display:flex; justify-content:center; gap:22px; margin-top:14px;">
                             <div>
@@ -891,6 +1193,32 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 5. ショップタブ -->
+            <div id="tab-shop" class="tab-content">
+                <div class="scroll-content">
+                    <div class="card" style="text-align:center; background: linear-gradient(180deg, #1e202a 0%, #181920 100%);">
+                        <div class="card-title" style="margin-bottom:6px;">🪙 旅コイン所持数</div>
+                        <div id="shop-coin-balance" style="font-size:1.8rem; font-weight:800; color:#ffd166;">0</div>
+                        <div style="font-size:0.68rem; color:#94a3b8; margin-top:4px;">新しい都市を解放（+10）・実績達成（+50）でコインが貯まります</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">🖼️ アバターフレーム</div>
+                        <div id="shop-frames-list" class="shop-item-list"></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">🎨 テーマカラー</div>
+                        <div id="shop-themes-list" class="shop-item-list"></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">✨ 特殊エフェクト</div>
+                        <div id="shop-effects-list" class="shop-item-list"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <nav class="nav-bar">
@@ -910,7 +1238,48 @@
                 <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                 PROFILE
             </button>
+            <button class="nav-item" onclick="switchTab('shop', 'TRAVEL SHOP')">
+                <svg viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h6v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/></svg>
+                SHOP
+            </button>
         </nav>
+    </div>
+
+    <!-- ===== メールボックス モーダル ===== -->
+    <div id="mailbox-modal" class="modal-overlay" style="display:none;" onclick="if(event.target===this) closeMailbox()">
+        <div class="modal-sheet">
+            <div class="modal-header">
+                <div class="modal-title">✉️ メールボックス</div>
+                <button class="modal-close-btn" onclick="closeMailbox()">✕</button>
+            </div>
+            <div id="mailbox-list" class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- ===== フレンド詳細 モーダル ===== -->
+    <div id="friend-detail-modal" class="modal-overlay" style="display:none;" onclick="if(event.target===this) closeFriendDetail()">
+        <div class="modal-sheet">
+            <div class="modal-header">
+                <div class="modal-title">👤 フレンドプロフィール</div>
+                <button class="modal-close-btn" onclick="closeFriendDetail()">✕</button>
+            </div>
+            <div id="friend-detail-body" class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- ===== メッセージ モーダル ===== -->
+    <div id="chat-modal" class="modal-overlay" style="display:none;" onclick="if(event.target===this) closeChat()">
+        <div class="modal-sheet" style="height: 78vh; display:flex; flex-direction:column;">
+            <div class="modal-header">
+                <div class="modal-title" id="chat-title">💬 メッセージ</div>
+                <button class="modal-close-btn" onclick="closeChat()">✕</button>
+            </div>
+            <div id="chat-messages" class="chat-messages"></div>
+            <div class="chat-input-row">
+                <input id="chat-input" type="text" placeholder="メッセージを入力..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+                <button onclick="sendChatMessage()">送信</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -975,8 +1344,231 @@
         let appState = {
             unlockedCities: [],
             unlockedBadges: [],
-            avatar: "👤"
+            avatar: "👤",
+            nickname: "",
+            coins: 0,
+            purchasedItems: [],
+            equippedFrame: "frame_none",
+            equippedTheme: "theme_white",
+            equippedEffect: "effect_none",
+            mailbox: [],
+            mailboxMigrated: false
         };
+
+        // コイン報酬テーブル
+        const COIN_REWARDS = {
+            newCity: 10,
+            newBadge: 50
+        };
+
+        function addCoins(amount, reasonText) {
+            appState.coins = (appState.coins || 0) + amount;
+            if (reasonText) {
+                setTimeout(() => showToast(`🪙 +${amount} コイン（${reasonText}）`), 1800);
+            }
+        }
+
+        // --- 既存の解放実績からコインを一度だけ遡及付与し、メールボックスに届ける ---
+        function migrateRetroactiveCoins() {
+            if (appState.mailboxMigrated) return;
+
+            const uniqueCityCount = new Set(appState.unlockedCities.map(c => c.code)).size;
+            const badgeCount = appState.unlockedBadges.length;
+            const backfillCoins = uniqueCityCount * COIN_REWARDS.newCity + badgeCount * COIN_REWARDS.newBadge;
+
+            appState.mailboxMigrated = true;
+
+            if (backfillCoins > 0) {
+                if (!appState.mailbox) appState.mailbox = [];
+                appState.mailbox.unshift({
+                    id: 'backfill_' + Date.now(),
+                    title: '🎁 これまでの旅の功績ボーナス',
+                    body: `既に解放済みの都市 ${uniqueCityCount} 件・実績 ${badgeCount} 件分のコインをまとめてお届けします。`,
+                    coins: backfillCoins,
+                    claimed: false,
+                    date: formatDateTimeSeconds(new Date())
+                });
+            }
+
+            saveData();
+        }
+
+        // --- メールボックス UI ---
+        function updateMailboxBadge() {
+            const badge = document.getElementById('mailbox-badge');
+            if (!badge) return;
+            const unclaimed = (appState.mailbox || []).filter(m => !m.claimed).length;
+            if (unclaimed > 0) {
+                badge.innerText = unclaimed;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function openMailbox() {
+            renderMailboxList();
+            document.getElementById('mailbox-modal').style.display = 'flex';
+        }
+
+        function closeMailbox() {
+            document.getElementById('mailbox-modal').style.display = 'none';
+        }
+
+        function renderMailboxList() {
+            const list = document.getElementById('mailbox-list');
+            if (!list) return;
+            list.innerHTML = '';
+
+            const mails = appState.mailbox || [];
+            if (mails.length === 0) {
+                list.innerHTML = '<div style="text-align:center; color:#64748b; font-size:0.8rem; padding:20px 0;">メールはありません</div>';
+                return;
+            }
+
+            mails.forEach(mail => {
+                const div = document.createElement('div');
+                div.className = 'mail-item';
+                div.innerHTML = `
+                    <div class="mail-title">${mail.title}</div>
+                    <div class="mail-body">${mail.body}</div>
+                    ${mail.coins ? `<div class="mail-coin">🪙 ${mail.coins} コイン</div>` : ''}
+                    <div style="font-size:0.62rem; color:#64748b; margin-bottom:8px;">${mail.date}</div>
+                    <button ${mail.claimed ? 'disabled' : ''} onclick="claimMail('${mail.id}')">${mail.claimed ? '受け取り済み' : '受け取る'}</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function claimMail(mailId) {
+            const mail = (appState.mailbox || []).find(m => m.id === mailId);
+            if (!mail || mail.claimed) return;
+            mail.claimed = true;
+            if (mail.coins) addCoins(mail.coins, mail.title);
+            saveData();
+            updateUI();
+            renderMailboxList();
+        }
+
+        // --- フレンド詳細・チャット モーダルの開閉（中身の描画は module script が担当） ---
+        function closeFriendDetail() {
+            document.getElementById('friend-detail-modal').style.display = 'none';
+        }
+
+        function closeChat() {
+            document.getElementById('chat-modal').style.display = 'none';
+        }
+
+        // --- ショップ: 商品データ ---
+        const SHOP_ITEMS = {
+            frames: [
+                { id: "frame_none",   name: "フレームなし",     icon: "⚪", price: 0,   free: true, cssClass: "" },
+                { id: "frame_silver", name: "シルバーフレーム", icon: "🥈", price: 60,  cssClass: "frame-silver" },
+                { id: "frame_sakura", name: "桜フレーム",       icon: "🌸", price: 80,  cssClass: "frame-sakura" },
+                { id: "frame_gold",   name: "ゴールドフレーム", icon: "🥇", price: 150, cssClass: "frame-gold" }
+            ],
+            themes: [
+                { id: "theme_white", name: "クラシック",     icon: "⚪", price: 0,   free: true, color: "#ffffff" },
+                { id: "theme_gold",  name: "ゴールド",       icon: "🟡", price: 120, color: "#ffd166" },
+                { id: "theme_green", name: "エメラルド",     icon: "🟢", price: 120, color: "#00ff88" },
+                { id: "theme_pink",  name: "サクラピンク",   icon: "🌸", price: 120, color: "#ff8fb1" },
+                { id: "theme_blue",  name: "オーシャン",     icon: "🔵", price: 120, color: "#4da6ff" }
+            ],
+            effects: [
+                { id: "effect_none",     name: "なし",             icon: "✖️", price: 0,   free: true },
+                { id: "effect_sparkle",  name: "称号キラキラ演出", icon: "✨", price: 100 },
+                { id: "effect_confetti", name: "解放時の紙吹雪",   icon: "🎊", price: 150 }
+            ]
+        };
+
+        function isPurchased(id) {
+            return appState.purchasedItems.includes(id);
+        }
+
+        function purchaseItem(category, id) {
+            const item = SHOP_ITEMS[category].find(i => i.id === id);
+            if (!item) return;
+            if (isPurchased(id)) { equipItem(category, id); return; }
+
+            if ((appState.coins || 0) < item.price) {
+                showToast("⚠️ コインが足りません");
+                return;
+            }
+
+            appState.coins -= item.price;
+            appState.purchasedItems.push(id);
+            equipItem(category, id);
+            showToast(`✅ ${item.name} を購入しました`);
+        }
+
+        function equipItem(category, id) {
+            const fieldMap = { frames: 'equippedFrame', themes: 'equippedTheme', effects: 'equippedEffect' };
+            appState[fieldMap[category]] = id;
+            saveData();
+            updateUI();
+            applyCosmetics();
+        }
+
+        // 装着中のフレーム・テーマ・エフェクトを実際の画面に反映
+        function applyCosmetics() {
+            const avatarBtn = document.getElementById('profile-avatar-btn');
+            if (avatarBtn) {
+                avatarBtn.classList.remove('frame-silver', 'frame-sakura', 'frame-gold');
+                const frame = SHOP_ITEMS.frames.find(f => f.id === appState.equippedFrame);
+                if (frame && frame.cssClass) avatarBtn.classList.add(frame.cssClass);
+            }
+
+            const theme = SHOP_ITEMS.themes.find(t => t.id === appState.equippedTheme);
+            if (theme) document.documentElement.style.setProperty('--accent-color', theme.color);
+
+            const titleEl = document.getElementById('profile-title');
+            if (titleEl) titleEl.classList.toggle('effect-sparkle', appState.equippedEffect === 'effect_sparkle');
+        }
+
+        // ショップタブの描画
+        function renderShop() {
+            const balanceEl = document.getElementById('shop-coin-balance');
+            if (balanceEl) balanceEl.innerText = appState.coins || 0;
+
+            renderShopCategory('frames', 'shop-frames-list');
+            renderShopCategory('themes', 'shop-themes-list');
+            renderShopCategory('effects', 'shop-effects-list');
+        }
+
+        function renderShopCategory(category, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+
+            SHOP_ITEMS[category].forEach(item => {
+                const owned = item.free || isPurchased(item.id);
+                const fieldMap = { frames: 'equippedFrame', themes: 'equippedTheme', effects: 'equippedEffect' };
+                const equipped = appState[fieldMap[category]] === item.id;
+
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+
+                let buttonHtml;
+                if (!owned) {
+                    const affordable = (appState.coins || 0) >= item.price;
+                    buttonHtml = `<button class="buy-btn" ${affordable ? '' : 'disabled'} onclick="purchaseItem('${category}','${item.id}')">🪙 ${item.price}</button>`;
+                } else {
+                    buttonHtml = `<button class="equip-btn ${equipped ? 'equipped' : ''}" onclick="equipItem('${category}','${item.id}')">${equipped ? '装着中' : '装着する'}</button>`;
+                }
+
+                const swatch = category === 'themes'
+                    ? `<div class="shop-item-icon" style="background:${item.color};">${item.icon}</div>`
+                    : `<div class="shop-item-icon">${item.icon}</div>`;
+
+                div.innerHTML = `
+                    ${swatch}
+                    <div class="shop-item-name">${item.name}</div>
+                    ${owned ? '<div class="shop-item-price">所持済み</div>' : `<div class="shop-item-price">🪙 ${item.price}</div>`}
+                    ${buttonHtml}
+                `;
+                container.appendChild(div);
+            });
+        }
 
         // アバター候補（絵文字。将来的に画像アイコンへ差し替え可能）
         const AVATAR_OPTIONS = ["👤", "🧑‍🚀", "🥾", "🗺️", "🏔️", "🚗", "🚲", "🏯", "⛩️", "🌸", "🍜", "🎒"];
@@ -1063,6 +1655,7 @@
                 setTimeout(() => document.getElementById('row4').classList.add('visible'), 300);
                 
                 loadData();
+                migrateRetroactiveCoins();
                 initPrefSelector();
                 renderBadges();
                 updateUI();
@@ -1192,6 +1785,20 @@
 
         function formatDateKey(dateObj) {
             return `${dateObj.getFullYear()}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}`;
+        }
+
+        // 秒単位まで含む表示用タイムスタンプ（例: 2026/07/03 13:04:52）
+        function formatDateTimeSeconds(dateObj) {
+            const d = formatDateKey(dateObj);
+            const h = String(dateObj.getHours()).padStart(2, '0');
+            const mi = String(dateObj.getMinutes()).padStart(2, '0');
+            const s = String(dateObj.getSeconds()).padStart(2, '0');
+            return `${d} ${h}:${mi}:${s}`;
+        }
+
+        // item.timestamp があればそれを、無ければ item.date（日付のみ）をそのまま表示する
+        function displayTimestamp(item) {
+            return item && item.timestamp ? item.timestamp : (item ? item.date : '');
         }
 
         function renderMapForSelectedDate() {
@@ -1378,7 +1985,7 @@
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             
             document.getElementById(`tab-${tabId}`).classList.add('active');
-            document.getElementById('app-title').innerText = title;
+            document.getElementById('app-title-text').innerText = title;
             
             const navItems = document.querySelectorAll('.nav-item');
             if(tabId === 'home') {
@@ -1601,19 +2208,23 @@
         }
 
         function unlockCity(prefId, cityName, code, lat, lng, targetedDate = null) {
-            const dateStr = targetedDate ? targetedDate : formatDateKey(new Date());
+            const now = new Date();
+            const dateStr = targetedDate ? targetedDate : formatDateKey(now);
+            const timestamp = targetedDate ? targetedDate : formatDateTimeSeconds(now);
 
             const alreadyUnlocked = appState.unlockedCities.some(c => c.code === code);
             
             if (!alreadyUnlocked) {
-                appState.unlockedCities.push({ prefId, cityName, code, lat, lng, date: dateStr });
+                appState.unlockedCities.push({ prefId, cityName, code, lat, lng, date: dateStr, timestamp });
+                addCoins(COIN_REWARDS.newCity, `🎉 ${cityName} を解放`);
                 showToast(`🎉 UNLOCKED: ${cityName}`);
+                if (appState.equippedEffect === 'effect_confetti') triggerConfetti();
             } else {
                 showToast(`📍 再訪問: ${cityName}`);
                 // 重複登録を防ぐため、appState.unlockedCities.push は行いません
             }
 
-            checkAchievements(dateStr, code, prefId);
+            checkAchievements(dateStr, code, prefId, timestamp);
             saveData();
             updateUI();
 
@@ -1621,15 +2232,16 @@
             renderMapForSelectedDate();
         }
 
-        function checkAchievements(dateStr, unlockedCode, unlockedPrefId) {
+        function checkAchievements(dateStr, unlockedCode, unlockedPrefId, timestamp = null) {
             const uniqueCount = new Set(appState.unlockedCities.map(c => c.code)).size;
 
             const checkAndUnlock = (badgeId, conditionTrue) => {
                 const alreadyHas = appState.unlockedBadges.some(b => b === badgeId || b.id === badgeId);
                 if (conditionTrue && !alreadyHas) {
-                    appState.unlockedBadges.push({ id: badgeId, date: dateStr });
+                    appState.unlockedBadges.push({ id: badgeId, date: dateStr, timestamp: timestamp || dateStr });
                     const b = badgeDefinitions.find(badge => badge.id === badgeId);
                     if (b) setTimeout(() => showToast(`🏆 UNLOCKED: 【${b.name}】`), 1000);
+                    addCoins(COIN_REWARDS.newBadge, b ? `🏆 実績「${b.name}」達成` : '🏆 実績達成');
                 }
             };
 
@@ -1751,7 +2363,7 @@
                 } else {
                     [...appState.unlockedCities].reverse().forEach(item => {
                         const li = document.createElement('li');
-                        li.innerText = `✓  ${item.cityName} (${item.date})`;
+                        li.innerText = `✓  ${item.cityName} (${displayTimestamp(item)})`;
                         listEl.appendChild(li);
                     });
                 }
@@ -1760,12 +2372,21 @@
             updateProfileHeader(uniqueCount);
             renderPrefAchievement();
             renderActivityTimeline();
+            renderShop();
+            applyCosmetics();
+            updateMailboxBadge();
         }
 
         // --- プロフィール: ヘッダー（称号・統計・アバター） ---
         function updateProfileHeader(uniqueCount) {
             const avatarBtn = document.getElementById('profile-avatar-btn');
             if (avatarBtn) avatarBtn.innerText = appState.avatar || "👤";
+
+            const nicknameEl = document.getElementById('profile-nickname-display');
+            if (nicknameEl) {
+                const displayName = appState.nickname && appState.nickname.trim() ? appState.nickname : 'EXPLORER';
+                nicknameEl.innerHTML = `${displayName} <span style="font-size:0.7rem; color:#64748b;">✎</span>`;
+            }
 
             const titleEl = document.getElementById('profile-title');
             if (titleEl) titleEl.innerText = getExplorerTitle(uniqueCount);
@@ -1781,6 +2402,52 @@
         }
 
         // --- プロフィール: アバター選択 ---
+        // ショップで購入できる「解放時の紙吹雪」演出
+        function triggerConfetti() {
+            const emojis = ['🎉', '🎊', '✨', '🥳'];
+            for (let i = 0; i < 18; i++) {
+                const span = document.createElement('div');
+                span.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                span.style.position = 'fixed';
+                span.style.left = `${Math.random() * 100}vw`;
+                span.style.top = '-30px';
+                span.style.fontSize = `${16 + Math.random() * 14}px`;
+                span.style.zIndex = '9999';
+                span.style.pointerEvents = 'none';
+                span.style.transition = `transform ${1.2 + Math.random()}s ease-in, opacity ${1.2 + Math.random()}s ease-in`;
+                document.body.appendChild(span);
+                requestAnimationFrame(() => {
+                    span.style.transform = `translateY(${window.innerHeight + 60}px) rotate(${Math.random() * 360}deg)`;
+                    span.style.opacity = '0';
+                });
+                setTimeout(() => span.remove(), 2500);
+            }
+        }
+
+        // --- プロフィール: ニックネーム編集 ---
+        function toggleNicknameEdit() {
+            const editEl = document.getElementById('profile-nickname-edit');
+            const input = document.getElementById('profile-nickname-input');
+            const showing = editEl.style.display === 'flex';
+            if (showing) {
+                editEl.style.display = 'none';
+            } else {
+                input.value = appState.nickname || '';
+                editEl.style.display = 'flex';
+                input.focus();
+            }
+        }
+
+        function saveNickname() {
+            const input = document.getElementById('profile-nickname-input');
+            const val = input.value.trim();
+            appState.nickname = val;
+            saveData();
+            updateUI();
+            document.getElementById('profile-nickname-edit').style.display = 'none';
+            showToast('✅ 名前を保存しました');
+        }
+
         function toggleAvatarPicker() {
             const picker = document.getElementById('avatar-picker');
             if (!picker) return;
@@ -1854,7 +2521,8 @@
 
             const cityEvents = appState.unlockedCities.map(c => ({
                 type: 'city',
-                date: c.date,
+                date: displayTimestamp(c),
+                sortKey: c.timestamp || c.date,
                 text: `${c.cityName} を解放`,
                 icon: '📍'
             }));
@@ -1865,14 +2533,15 @@
                     const def = badgeDefinitions.find(d => d.id === b.id);
                     return {
                         type: 'badge',
-                        date: b.date,
+                        date: displayTimestamp(b),
+                        sortKey: b.timestamp || b.date,
                         text: def ? `実績解除：${def.name}` : '実績解除',
                         icon: def ? def.icon : '🏆'
                     };
                 });
 
             const events = [...cityEvents, ...badgeEvents]
-                .sort((a, b) => new Date(b.date.replace(/\//g, '-')) - new Date(a.date.replace(/\//g, '-')))
+                .sort((a, b) => new Date(b.sortKey.replace(/\//g, '-').replace(' ', 'T')) - new Date(a.sortKey.replace(/\//g, '-').replace(' ', 'T')))
                 .slice(0, 15);
 
             if (events.length === 0) {
@@ -2075,19 +2744,30 @@
             if (!snap.exists()) {
                 const friendCode = genFriendCode();
                 await setDoc(userRef, {
-                    nickname: (user.email || "旅人").split("@")[0],
+                    nickname: (appState.nickname && appState.nickname.trim()) || (user.email || "旅人").split("@")[0],
                     avatar: appState.avatar || "👤",
                     unlockedCities: appState.unlockedCities || [],
                     unlockedBadges: appState.unlockedBadges || [],
+                    coins: appState.coins || 0,
+                    purchasedItems: appState.purchasedItems || [],
+                    equippedFrame: appState.equippedFrame || "frame_none",
+                    equippedTheme: appState.equippedTheme || "theme_white",
+                    equippedEffect: appState.equippedEffect || "effect_none",
                     friendCode: friendCode,
                     createdAt: serverTimestamp()
                 });
                 document.getElementById('my-friend-code').innerText = friendCode;
             } else {
                 const data = snap.data();
+                appState.nickname = data.nickname || appState.nickname || "";
                 appState.avatar = data.avatar || appState.avatar || "👤";
                 appState.unlockedCities = data.unlockedCities || [];
                 appState.unlockedBadges = data.unlockedBadges || [];
+                appState.coins = data.coins || 0;
+                appState.purchasedItems = data.purchasedItems || [];
+                appState.equippedFrame = data.equippedFrame || "frame_none";
+                appState.equippedTheme = data.equippedTheme || "theme_white";
+                appState.equippedEffect = data.equippedEffect || "effect_none";
                 document.getElementById('my-friend-code').innerText = data.friendCode || "------";
                 localStorage.setItem('geo_nihon_app_state_v5_calendar', JSON.stringify(appState));
                 if (typeof updateUI === 'function') updateUI();
@@ -2099,9 +2779,15 @@
             if (!currentUser) return;
             try {
                 await updateDoc(doc(db, "users", currentUser.uid), {
+                    nickname: appState.nickname || "",
                     avatar: appState.avatar || "👤",
                     unlockedCities: appState.unlockedCities || [],
-                    unlockedBadges: appState.unlockedBadges || []
+                    unlockedBadges: appState.unlockedBadges || [],
+                    coins: appState.coins || 0,
+                    purchasedItems: appState.purchasedItems || [],
+                    equippedFrame: appState.equippedFrame || "frame_none",
+                    equippedTheme: appState.equippedTheme || "theme_white",
+                    equippedEffect: appState.equippedEffect || "effect_none"
                 });
             } catch (e) {
                 console.warn("Firestore同期失敗:", e);
@@ -2235,6 +2921,7 @@
 
                     const li = document.createElement('li');
                     li.className = 'friend-item';
+                    li.style.cursor = 'pointer';
                     li.innerHTML = `
                         <span class="friend-avatar">${fData.avatar || "👤"}</span>
                         <span class="friend-info">
@@ -2242,10 +2929,124 @@
                             <span class="friend-stats">LV.${level} ・ 🧭${cityCount}都市 ・ 🏆${badgeCount}実績</span>
                         </span>
                     `;
+                    li.onclick = () => openFriendDetail(friendUid, fData);
                     listEl.appendChild(li);
                 }
             });
         }
+
+        // --- フレンド詳細モーダル ---
+        window.openFriendDetail = async function (friendUid, cachedData) {
+            const modal = document.getElementById('friend-detail-modal');
+            const body = document.getElementById('friend-detail-body');
+            body.innerHTML = '<div style="text-align:center; color:#64748b; padding:20px;">読み込み中...</div>';
+            modal.style.display = 'flex';
+
+            let fData = cachedData;
+            try {
+                const snap = await getDoc(doc(db, "users", friendUid));
+                if (snap.exists()) fData = snap.data();
+            } catch (e) {
+                console.warn(e);
+            }
+            if (!fData) {
+                body.innerHTML = '<div style="text-align:center; color:#64748b; padding:20px;">情報を取得できませんでした</div>';
+                return;
+            }
+
+            const cityCount = (fData.unlockedCities || []).length;
+            const badgeCount = (fData.unlockedBadges || []).length;
+            const prefCount = new Set((fData.unlockedCities || []).map(c => c.prefId)).size;
+            const level = Math.floor(cityCount / 3) + 1;
+            const title = typeof getExplorerTitle === 'function' ? getExplorerTitle(cityCount) : '';
+
+            body.innerHTML = `
+                <div class="friend-detail-header">
+                    <div class="friend-detail-avatar">${fData.avatar || "👤"}</div>
+                    <div style="font-size:1.05rem; font-weight:800; color:#fff;">${fData.nickname || "旅人"}</div>
+                    <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">${title}</div>
+                    <span style="display:inline-block; margin-top:8px; background: var(--accent-color, #fff); color:#111216; padding: 2px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 800;">LV. ${level}</span>
+                </div>
+                <div class="friend-detail-stats-grid">
+                    <div class="friend-detail-stat"><div class="num">${cityCount}</div><div class="label">CITIES</div></div>
+                    <div class="friend-detail-stat"><div class="num">${prefCount}/47</div><div class="label">PREFS</div></div>
+                    <div class="friend-detail-stat"><div class="num">${badgeCount}</div><div class="label">BADGES</div></div>
+                </div>
+                <button class="btn" style="margin-bottom:0;" onclick="openChatWith('${friendUid}', '${(fData.nickname || '旅人').replace(/'/g, "")}')">💬 メッセージを送る</button>
+            `;
+        };
+
+        window.closeFriendDetail = function () {
+            document.getElementById('friend-detail-modal').style.display = 'none';
+        };
+
+        // --- メッセージ機能 ---
+        let unsubChat = null;
+        let activeChatFriendUid = null;
+
+        function getConversationId(uidA, uidB) {
+            return [uidA, uidB].sort().join('_');
+        }
+
+        window.openChatWith = function (friendUid, friendNickname) {
+            if (!currentUser) return;
+            document.getElementById('friend-detail-modal').style.display = 'none';
+
+            activeChatFriendUid = friendUid;
+            document.getElementById('chat-title').innerText = `💬 ${friendNickname}`;
+            document.getElementById('chat-messages').innerHTML = '';
+            document.getElementById('chat-modal').style.display = 'flex';
+
+            const convId = getConversationId(currentUser.uid, friendUid);
+            const messagesRef = collection(db, "conversations", convId, "messages");
+            const q = query(messagesRef);
+
+            if (unsubChat) unsubChat();
+            unsubChat = onSnapshot(q, (snapshot) => {
+                const list = document.getElementById('chat-messages');
+                const msgs = [];
+                snapshot.forEach(d => msgs.push(d.data()));
+                msgs.sort((a, b) => (a.createdAtMs || 0) - (b.createdAtMs || 0));
+
+                list.innerHTML = '';
+                msgs.forEach(m => {
+                    const bubble = document.createElement('div');
+                    bubble.className = `chat-bubble ${m.senderId === currentUser.uid ? 'mine' : 'theirs'}`;
+                    bubble.innerText = m.text;
+                    list.appendChild(bubble);
+                });
+                list.scrollTop = list.scrollHeight;
+            });
+        };
+
+        window.closeChat = function () {
+            document.getElementById('chat-modal').style.display = 'none';
+            if (unsubChat) { unsubChat(); unsubChat = null; }
+            activeChatFriendUid = null;
+        };
+
+        window.sendChatMessage = async function () {
+            if (!currentUser || !activeChatFriendUid) return;
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+
+            const convId = getConversationId(currentUser.uid, activeChatFriendUid);
+            const messagesRef = collection(db, "conversations", convId, "messages");
+            try {
+                await setDoc(doc(messagesRef), {
+                    senderId: currentUser.uid,
+                    receiverId: activeChatFriendUid,
+                    text: text,
+                    createdAtMs: Date.now(),
+                    createdAt: serverTimestamp()
+                });
+            } catch (e) {
+                console.warn(e);
+                showToast('⚠️ メッセージの送信に失敗しました');
+            }
+        };
     </script>
 </body>
-</html> 
+</html>
