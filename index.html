@@ -1996,21 +1996,12 @@
             return item && item.timestamp ? item.timestamp : (item ? item.date : '');
         }
 
-        function renderMapForSelectedDate(autoFit = true) {
-            if (!markersGroup || !polylineGroup) return;
+        // 全期間の足跡マーカーを描画する（絶対に消えないよう、日付での絞り込みは行わない）
+        function renderAllFootprintMarkers() {
+            if (!markersGroup || typeof L === 'undefined') return;
             markersGroup.clearLayers();
-            polylineGroup.clearLayers();
 
-            const filteredCities = appState.unlockedCities.filter(item => item.date === selectedDateStr);
-            
-            if (filteredCities.length === 0) {
-                document.getElementById('location-status').innerText = `${selectedDateStr} : 記録なし`;
-                return;
-            }
-
-            document.getElementById('location-status').innerText = `${selectedDateStr} のルート`;
-
-            filteredCities.forEach(item => {
+            appState.unlockedCities.forEach(item => {
                 const customIcon = L.divIcon({
                     className: 'custom-marker',
                     html: `<div style="width: 12px; height: 12px; background: #ff3b30; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 0 6px rgba(255,59,48,0.6);"></div>`,
@@ -2020,8 +2011,23 @@
 
                 L.marker([item.lat, item.lng], { icon: customIcon })
                     .addTo(markersGroup)
-                    .bindPopup(`<b style="color:#111216;">📍 足跡</b><br><span style="color:#333;">${item.cityName}</span>`);
+                    .bindPopup(`<b style="color:#111216;">📍 足跡</b><br><span style="color:#333;">${item.cityName}</span><br><span style="color:#666; font-size:0.7em;">${item.date || ''}</span>`);
             });
+        }
+
+        // 選択した日付の「移動ルート線」だけを描画する（足跡マーカー自体は renderAllFootprintMarkers が別途常時管理する）
+        function renderMapForSelectedDate(autoFit = true) {
+            if (!polylineGroup) return;
+            polylineGroup.clearLayers();
+
+            const filteredCities = appState.unlockedCities.filter(item => item.date === selectedDateStr);
+
+            if (filteredCities.length === 0) {
+                document.getElementById('location-status').innerText = `${selectedDateStr} : 記録なし`;
+                return;
+            }
+
+            document.getElementById('location-status').innerText = `${selectedDateStr} のルート`;
 
             if (filteredCities.length >= 2) {
                 const coords = filteredCities.map(item => [item.lat, item.lng]);
@@ -2586,6 +2592,8 @@
         }
 
         function updateUI() {
+            renderAllFootprintMarkers(); // 足跡マーカーは常に全件を反映し、絶対に消えないようにする
+
             const uniqueCount = new Set(appState.unlockedCities.map(c => c.code)).size;
             document.getElementById('stats-count').innerText = uniqueCount;
             document.getElementById('stats-badges').innerText =
