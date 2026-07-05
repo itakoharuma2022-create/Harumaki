@@ -152,6 +152,13 @@
             height: 100%;
             z-index: 1;
             background-color: #1a1b20;
+        }
+
+        /* ダークモード風の地図タイル表現は「タイル層」だけに適用し、
+           マーカー（自分・フレンドのアイコンや足跡ピン）には影響させない。
+           以前は #map 全体にフィルターをかけていたため、
+           アップロードした写真アイコンまで白黒になってしまっていた。 */
+        .leaflet-tile-pane {
             filter: grayscale(100%) invert(90%) hue-rotate(180deg) brightness(95%) contrast(105%);
         }
 
@@ -193,6 +200,12 @@
 
         #recenter-btn.locating svg {
             animation: recenterSpin 1s linear infinite;
+        }
+
+        #recenter-btn.following {
+            background: #4da6ff;
+            border-color: #4da6ff;
+            color: #ffffff;
         }
 
         @keyframes recenterSpin {
@@ -1871,6 +1884,15 @@
             polylineGroup = L.layerGroup().addTo(map);
             friendMarkersLayer = L.layerGroup().addTo(map);
 
+            // ユーザーが自分で地図をドラッグしたら「現在地に追従」モードを解除する
+            map.on('dragstart', () => {
+                if (followMeEnabled) {
+                    followMeEnabled = false;
+                    const btn = document.getElementById('recenter-btn');
+                    if (btn) btn.classList.remove('following');
+                }
+            });
+
             initEasterEgg();
         }
 
@@ -2246,7 +2268,10 @@
         }
 
         // --- 現在地に地図の視点を戻す（チェックインはしない、視点移動のみ） ---
-        let myLocationDotMarker = null;
+        // 自分を示すマーカーは1つに統一する（以前は「現在地に戻る」用の固定ドットと
+        // リアルタイム共有用のアイコンが別々の2マーカーになっており、片方だけ更新されて
+        // 取り残されて見える不具合があった）。
+        let followMeEnabled = false;
 
         function recenterToMyLocation() {
             if (!navigator.geolocation) {
@@ -2255,6 +2280,8 @@
             }
             const btn = document.getElementById('recenter-btn');
             if (btn) btn.classList.add('locating');
+            followMeEnabled = true; // 以後、自分が地図を操作するまでカメラが追従する
+            if (btn) btn.classList.add('following');
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -2262,21 +2289,12 @@
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
 
-                    if (map) map.setView([lat, lng], 15, { animate: true });
+                    if (map) map.setView([lat, lng], 16, { animate: true });
 
-                    if (typeof L !== 'undefined' && markersGroup) {
-                        const dotIcon = L.divIcon({
-                            className: 'my-location-dot',
-                            html: `<div style="width:16px; height:16px; background:#4da6ff; border:3px solid #ffffff; border-radius:50%; box-shadow:0 0 0 6px rgba(77,166,255,0.25);"></div>`,
-                            iconSize: [16, 16],
-                            iconAnchor: [8, 8]
-                        });
-                        if (myLocationDotMarker) {
-                            myLocationDotMarker.setLatLng([lat, lng]);
-                            myLocationDotMarker.setIcon(dotIcon);
-                        } else {
-                            myLocationDotMarker = L.marker([lat, lng], { icon: dotIcon, zIndexOffset: 1000 }).addTo(map);
-                        }
+                    // 位置共有機能側のマーカー更新関数を呼び、常に「自分マーカーは1つだけ」にする
+                    if (typeof window.updateMyLiveMarker === 'function') {
+                        const speed = (typeof window.getMyLastKnownSpeedKmh === 'function') ? window.getMyLastKnownSpeedKmh() : 0;
+                        window.updateMyLiveMarker(lat, lng, speed);
                     }
                 },
                 (error) => {
@@ -3556,6 +3574,8 @@
             if (!currentUser || !navigator.geolocation) return;
             if (myLocationWatchId !== null) return; // 既に開始済み
 
+            initMyTrailFromExistingDoc();
+
             myLocationWatchId = navigator.geolocation.watchPosition(
                 (position) => {
                     // 自分の地図上のピンは毎回（スロットルなし）で滑らかに更新する
@@ -3564,6 +3584,7 @@
                         : lastKnownSpeedKmh;
                     lastKnownSpeedKmh = instantSpeedKmh;
                     updateMyLiveMarker(position.coords.latitude, position.coords.longitude, instantSpeedKmh);
+                    appendToMyTrail(position.coords.latitude, position.coords.longitude);
 
                     const now = Date.now();
                     if (now - lastLocationWriteMs < LOCATION_WRITE_THROTTLE_MS) return;
@@ -3603,6 +3624,69 @@
             } else {
                 myLiveMarker = L.marker([lat, lng], { icon, zIndexOffset: 2000 }).addTo(map);
             }
+
+            // 「現在地に追従」モード中は、自分が地図を操作していない限りカメラも一緒に動かす
+            if (typeof followMeEnabled !== 'undefined' && followMeEnabled) {
+                map.setView([lat, lng], map.getZoom(), { animate: true });
+            }
+        }
+        window.updateMyLiveMarker = updateMyLiveMarker;
+        window.getMyLastKnownSpeedKmh = () => lastKnownSpeedKmh;
+
+        // --- 自分自身の移動軌跡ポリライン（本日分。位置共有ON中、自分の地図にリアルタイムで表示） ---
+        let myTrailLatLngs = [];
+        let myTrailPolyline = null;
+
+        // 位置共有を開始する際、同じ日の軌跡が既にFirestoreにあれば読み込んで続きから描画する
+        async function initMyTrailFromExistingDoc() {
+            myTrailLatLngs = [];
+            if (!currentUser) return;
+            try {
+                const snap = await getDoc(doc(db, "liveLocations", currentUser.uid));
+                if (snap.exists()) {
+                    const data = snap.data();
+                    const todayKey = formatDateKey(new Date());
+                    if (data.trailDateKey === todayKey && Array.isArray(data.trail)) {
+                        myTrailLatLngs = data.trail.map(p => [p.lat, p.lng]);
+                        drawMyTrailPolyline();
+                    }
+                }
+            } catch (e) {
+                console.warn("軌跡の初期読み込みに失敗:", e);
+            }
+        }
+
+        function appendToMyTrail(lat, lng) {
+            myTrailLatLngs.push([lat, lng]);
+            if (myTrailLatLngs.length > TRAIL_MAX_POINTS) {
+                myTrailLatLngs = myTrailLatLngs.slice(myTrailLatLngs.length - TRAIL_MAX_POINTS);
+            }
+            drawMyTrailPolyline();
+        }
+
+        function drawMyTrailPolyline() {
+            if (typeof L === 'undefined' || typeof map === 'undefined' || !map) return;
+            if (myTrailLatLngs.length < 2) return;
+
+            if (myTrailPolyline) {
+                myTrailPolyline.setLatLngs(myTrailLatLngs);
+            } else {
+                myTrailPolyline = L.polyline(myTrailLatLngs, {
+                    color: '#4da6ff',
+                    weight: 3.5,
+                    opacity: 0.85,
+                    dashArray: '1, 8',
+                    lineCap: 'round'
+                }).addTo(map);
+            }
+        }
+
+        function clearMyTrailPolyline() {
+            if (myTrailPolyline && typeof map !== 'undefined' && map) {
+                map.removeLayer(myTrailPolyline);
+                myTrailPolyline = null;
+            }
+            myTrailLatLngs = [];
         }
 
         // 2地点間の距離をkmで返す（ハーバサイン公式）
