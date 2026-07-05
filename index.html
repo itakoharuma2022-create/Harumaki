@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>全国位置情報・実績解除アプリ</title>
 
+    <!-- PWA対応: ホーム画面に追加してアプリのように使えるようにする -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#111216">
+    <link rel="icon" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="旅アプリ">
+
     <!-- 🛟 起動フェイルセーフ: CDN等が読み込めない場合、一定時間後に再読み込みUIを表示する -->
     <!-- このスクリプトはどの外部リソースより前に置き、パース時に即実行させる -->
     <script>
@@ -160,6 +169,36 @@
             align-items: center;
         }
 
+        #recenter-btn {
+            position: absolute;
+            right: 14px;
+            bottom: 130px;
+            z-index: 10;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(24, 25, 32, 0.95);
+            border: 1px solid #272a34;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            cursor: pointer;
+        }
+
+        #recenter-btn:active {
+            transform: scale(0.92);
+        }
+
+        #recenter-btn.locating svg {
+            animation: recenterSpin 1s linear infinite;
+        }
+
+        @keyframes recenterSpin {
+            100% { transform: rotate(360deg); }
+        }
+
         .nav-bar {
             position: absolute;
             bottom: 0;
@@ -260,7 +299,7 @@
 
         /* --- プロフィール: アバターピッカー --- */
         .avatar-picker {
-            display: grid;
+            display: none;
             grid-template-columns: repeat(6, 1fr);
             gap: 8px;
             background: #101116;
@@ -539,12 +578,15 @@
         #profile-avatar-btn.frame-sakura { box-shadow: 0 0 0 3px #ff8fb1, 0 0 14px rgba(255,143,177,0.55); }
 
         /* --- ショップ: キラキラエフェクト --- */
+        /* 称号のdivには古いバージョンからインラインで color:#94a3b8 が指定されているため、
+           !important を付けないとエフェクトのグラデーション文字色が反映されない */
         #profile-title.effect-sparkle {
-            background: linear-gradient(90deg, #ffd166, #ffffff, #ffd166);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            background: linear-gradient(90deg, #ffd166, #ffffff, #ffd166) !important;
+            background-size: 200% auto !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            color: transparent !important;
             animation: sparkleShine 2.5s linear infinite;
         }
 
@@ -603,6 +645,22 @@
             white-space: nowrap;
             margin-top: 2px;
             text-align: center;
+        }
+
+        /* 現在速度バッジ（マーカーの左下） */
+        .my-speed-badge {
+            position: absolute;
+            left: -6px;
+            bottom: -4px;
+            background: #111216;
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 800;
+            padding: 1px 5px;
+            border-radius: 8px;
+            border: 1px solid #3f4454;
+            line-height: 1.3;
+            white-space: nowrap;
         }
 
         .shop-item-list {
@@ -1068,6 +1126,12 @@
             <!-- 1. ホームタブ（マップ表示） -->
             <div id="tab-home" class="tab-content active">
                 <div id="map"></div>
+                <button id="recenter-btn" onclick="recenterToMyLocation()" title="現在地に戻る">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path>
+                    </svg>
+                </button>
                 <div class="map-overlay">
                     <div id="location-status" class="floating-status">READY TO EXPLORE</div>
                     <button class="btn" onclick="handleCheckIn()">📍 CHECK IN</button>
@@ -1151,9 +1215,12 @@
             <div id="tab-profile" class="tab-content">
                 <div class="scroll-content">
                     <!-- プロフィールヘッダー：アバター・称号・レベル -->
-                    <div class="card" style="text-align: center; background: linear-gradient(180deg, #1e202a 0%, #181920 100%); padding: 18px 14px;">
+                    <div class="card" style="text-align: center; background: linear-gradient(180deg, #1e202a 0%, #181920 100%); padding: 18px 14px; position:relative;">
+                        <button id="settings-btn" onclick="openSettings()" title="設定" style="position:absolute; top:12px; right:12px; width:34px; height:34px; border-radius:50%; background:#1c1e26; border:1px solid #272a34; color:#cbd5e1; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.14 12.94a7.14 7.14 0 0 0 .06-.94 7.14 7.14 0 0 0-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.3 7.3 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.14.56-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L1.65 8.84a.5.5 0 0 0 .12.64l2.03 1.58a7.14 7.14 0 0 0 0 1.88L1.77 14.5a.5.5 0 0 0-.12.64l1.92 3.32c.14.24.42.32.6.22l2.39-.96c.49.38 1.04.7 1.63.94l.36 2.54a.5.5 0 0 0 .5.42h3.84a.5.5 0 0 0 .5-.42l.36-2.54c.59-.24 1.14-.56 1.63-.94l2.39.96c.24.1.46 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.56ZM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z"/></svg>
+                        </button>
                         <div id="profile-avatar-btn" onclick="toggleAvatarPicker()" style="width: 64px; height: 64px; background: #272a34; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 10px; font-size: 1.8rem; border: 1px solid #3f4454; cursor:pointer;">👤</div>
-                        <div id="avatar-picker" class="avatar-picker" style="display:none;"></div>
+                        <div id="avatar-picker" class="avatar-picker"></div>
                         <input id="avatar-file-input" type="file" accept="image/*" style="display:none;" onchange="handleAvatarFileSelected(event)">
                         <div id="avatar-upload-status" style="display:none; font-size:0.65rem; color:#94a3b8; margin-bottom:10px;">アップロード中...</div>
 
@@ -1195,6 +1262,9 @@
                             <div style="display:flex; gap:8px; margin-bottom:8px;">
                                 <button class="btn btn-secondary" style="flex:1; font-size:0.75rem;" onclick="handleSignUp()">新規登録</button>
                                 <button class="btn btn-secondary" style="flex:1; font-size:0.75rem;" onclick="handleSignIn()">ログイン</button>
+                            </div>
+                            <div style="text-align:right; margin-bottom:8px;">
+                                <span onclick="handleForgotPassword()" style="font-size:0.68rem; color:#94a3b8; text-decoration:underline; cursor:pointer;">パスワードを忘れた場合</span>
                             </div>
                             <button class="btn btn-secondary" style="width:100%; font-size:0.78rem;" onclick="handleGoogleSignIn()">🔴 Googleでログイン</button>
                             <div id="auth-status-msg" style="font-size:0.7rem; color:#94a3b8; margin-top:8px; text-align:center;"></div>
@@ -1343,6 +1413,32 @@
             <div class="chat-input-row">
                 <input id="chat-input" type="text" placeholder="メッセージを入力..." onkeydown="if(event.key==='Enter') sendChatMessage()">
                 <button onclick="sendChatMessage()">送信</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 設定 モーダル ===== -->
+    <div id="settings-modal" class="modal-overlay" style="display:none;" onclick="if(event.target===this) closeSettings()">
+        <div class="modal-sheet">
+            <div class="modal-header">
+                <div class="modal-title">⚙️ 設定</div>
+                <button class="modal-close-btn" onclick="closeSettings()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="font-size:0.78rem; font-weight:800; color:#fff; margin-bottom:8px;">💾 セーブデータ</div>
+                <div style="font-size:0.68rem; color:#94a3b8; margin-bottom:12px; line-height:1.5;">
+                    冒険記録をファイルとして書き出したり、他の端末からのデータを読み込んだりできます。
+                </div>
+                <button class="btn" style="margin-bottom:10px;" onclick="exportSaveData()">📤 セーブデータをエクスポート</button>
+                <button class="btn btn-secondary" style="margin-bottom:20px;" onclick="document.getElementById('import-file-input').click()">📥 セーブデータをインポート</button>
+                <input id="import-file-input" type="file" accept="application/json" style="display:none;" onchange="handleImportFileSelected(event)">
+
+                <div style="font-size:0.62rem; color:#64748b; margin-bottom:20px; line-height:1.5;">
+                    ⚠️ インポートすると現在のデータは上書きされます。ログイン中の場合は、インポート後の内容がクラウド（Firebase）にも同期されます。
+                </div>
+
+                <div style="font-size:0.78rem; font-weight:800; color:#fff; margin-bottom:8px;">🗑️ データの初期化</div>
+                <button class="btn btn-secondary" style="color:#ff6b6b;" onclick="resetAllData()">すべての冒険記録を初期化</button>
             </div>
         </div>
     </div>
@@ -1878,7 +1974,7 @@
             return item && item.timestamp ? item.timestamp : (item ? item.date : '');
         }
 
-        function renderMapForSelectedDate() {
+        function renderMapForSelectedDate(autoFit = true) {
             if (!markersGroup || !polylineGroup) return;
             markersGroup.clearLayers();
             polylineGroup.clearLayers();
@@ -1915,9 +2011,11 @@
                     lineJoin: 'round'
                 }).addTo(polylineGroup);
 
-                const bounds = L.latLngBounds(coords);
-                map.fitBounds(bounds, { padding: [30, 30], maxZoom: 13, animate: true });
-            } else if (filteredCities.length === 1) {
+                if (autoFit) {
+                    const bounds = L.latLngBounds(coords);
+                    map.fitBounds(bounds, { padding: [30, 30], maxZoom: 13, animate: true });
+                }
+            } else if (filteredCities.length === 1 && autoFit) {
                 map.setView([filteredCities[0].lat, filteredCities[0].lng], 12, { animate: true });
             }
         }
@@ -2147,6 +2245,52 @@
             });
         }
 
+        // --- 現在地に地図の視点を戻す（チェックインはしない、視点移動のみ） ---
+        let myLocationDotMarker = null;
+
+        function recenterToMyLocation() {
+            if (!navigator.geolocation) {
+                showToast('⚠️ この端末では位置情報を利用できません');
+                return;
+            }
+            const btn = document.getElementById('recenter-btn');
+            if (btn) btn.classList.add('locating');
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    if (btn) btn.classList.remove('locating');
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+
+                    if (map) map.setView([lat, lng], 15, { animate: true });
+
+                    if (typeof L !== 'undefined' && markersGroup) {
+                        const dotIcon = L.divIcon({
+                            className: 'my-location-dot',
+                            html: `<div style="width:16px; height:16px; background:#4da6ff; border:3px solid #ffffff; border-radius:50%; box-shadow:0 0 0 6px rgba(77,166,255,0.25);"></div>`,
+                            iconSize: [16, 16],
+                            iconAnchor: [8, 8]
+                        });
+                        if (myLocationDotMarker) {
+                            myLocationDotMarker.setLatLng([lat, lng]);
+                            myLocationDotMarker.setIcon(dotIcon);
+                        } else {
+                            myLocationDotMarker = L.marker([lat, lng], { icon: dotIcon, zIndexOffset: 1000 }).addTo(map);
+                        }
+                    }
+                },
+                (error) => {
+                    if (btn) btn.classList.remove('locating');
+                    let msg = '⚠️ 現在地を取得できませんでした';
+                    if (error && error.code === error.PERMISSION_DENIED) {
+                        msg = '⚠️ 位置情報の利用が許可されていません（設定をご確認ください）';
+                    }
+                    showToast(msg);
+                },
+                { enableHighAccuracy: true, timeout: 8000 }
+            );
+        }
+
         async function handleCheckIn() {
             if (!nihonData) {
                 showToast("⚠️ DATA NOT READY");
@@ -2306,7 +2450,7 @@
             updateUI();
 
             selectedDateStr = dateStr;
-            renderMapForSelectedDate();
+            renderMapForSelectedDate(false); // チェックインでは足跡マーカーだけ更新し、見ている地図の視点は動かさない
         }
 
         function checkAchievements(dateStr, unlockedCode, unlockedPrefId, timestamp = null) {
@@ -2713,6 +2857,79 @@
 
             // 過去バージョンのセーブデータに存在しない新フィールドを安全に補完する
             // （これが無いと、機能追加のたびに古いデータを持つ端末でエラーになる）
+            normalizeAppStateDefaults();
+        }
+
+        // --- 設定モーダル ---
+        function openSettings() {
+            document.getElementById('settings-modal').style.display = 'flex';
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-modal').style.display = 'none';
+        }
+
+        // セーブデータをJSONファイルとしてダウンロードする
+        function exportSaveData() {
+            try {
+                const exportPayload = {
+                    exportedAt: new Date().toISOString(),
+                    appVersion: 'geo-nihon-tabi-v1',
+                    appState: appState
+                };
+                const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const dateLabel = formatDateKey(new Date()).replace(/\//g, '-');
+                a.href = url;
+                a.download = `tabi-savedata-${dateLabel}.json`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                showToast('📤 セーブデータをエクスポートしました');
+            } catch (e) {
+                console.error(e);
+                showToast('⚠️ エクスポートに失敗しました');
+            }
+        }
+
+        function handleImportFileSelected(event) {
+            const file = event.target.files && event.target.files[0];
+            event.target.value = '';
+            if (!file) return;
+
+            if (!confirm('現在のセーブデータは上書きされます。インポートを実行しますか？')) return;
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const parsed = JSON.parse(reader.result);
+                    const imported = parsed.appState ? parsed.appState : parsed; // 素のappState JSONにも対応
+
+                    if (!imported || typeof imported !== 'object' || !Array.isArray(imported.unlockedCities)) {
+                        showToast('⚠️ 有効なセーブデータファイルではありません');
+                        return;
+                    }
+
+                    appState = imported;
+                    // 新バージョンにしか無いフィールドを補完（過去のエクスポートファイルにも対応）
+                    normalizeAppStateDefaults();
+                    saveData();
+                    updateUI();
+                    closeSettings();
+                    showToast('✅ セーブデータをインポートしました');
+                } catch (e) {
+                    console.error(e);
+                    showToast('⚠️ ファイルの読み込みに失敗しました（JSON形式ではありません）');
+                }
+            };
+            reader.onerror = () => showToast('⚠️ ファイルの読み込みに失敗しました');
+            reader.readAsText(file);
+        }
+
+        // loadData() のデフォルト補完ロジックを、インポート時にも使い回せるよう関数化したもの
+        function normalizeAppStateDefaults() {
             if (!Array.isArray(appState.unlockedCities)) appState.unlockedCities = [];
             if (!Array.isArray(appState.unlockedBadges)) appState.unlockedBadges = [];
             if (typeof appState.avatar !== 'string') appState.avatar = "👤";
@@ -2764,7 +2981,8 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
         import {
             getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-            GoogleAuthProvider, signInWithPopup, signOut as fbSignOut, onAuthStateChanged
+            GoogleAuthProvider, signInWithPopup, signOut as fbSignOut, onAuthStateChanged,
+            sendPasswordResetEmail
         } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
         import {
             getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc,
@@ -2845,10 +3063,26 @@
             }
         };
 
+        window.handleForgotPassword = async function () {
+            const email = document.getElementById('auth-email').value.trim();
+            if (!email) {
+                setAuthMsg("⚠️ まずメールアドレス欄に登録済みのアドレスを入力してください");
+                return;
+            }
+            try {
+                setAuthMsg("送信中...");
+                await sendPasswordResetEmail(auth, email);
+                setAuthMsg(`✅ ${email} 宛にパスワード再設定用のメールを送信しました`);
+            } catch (e) {
+                setAuthMsg("⚠️ " + translateAuthError(e));
+            }
+        };
+
         window.handleSignOut = async function () {
             if (unsubRequests) unsubRequests();
             if (unsubFriendships) unsubFriendships();
             stopLocationSharing(false);
+            releaseWakeLock();
             clearAllFriendLocationWatchers();
             await fbSignOut(auth);
         };
@@ -2933,7 +3167,7 @@
             const toggle = document.getElementById('location-sharing-toggle');
             if (toggle) toggle.checked = appState.locationSharingEnabled;
             updateLocationSharingStatusText(appState.locationSharingEnabled);
-            if (appState.locationSharingEnabled) startLocationSharing();
+            if (appState.locationSharingEnabled) { startLocationSharing(); requestWakeLock(); }
         }
 
         // appStateの変更をFirestoreへ反映（ログイン中のみ）。既存の saveData() から自動的に呼ばれる。
@@ -3141,7 +3375,7 @@
                 }
 
                 friendLocationDataCache[friendUid] = loc;
-                placeFriendMarker(friendUid, fData, loc.lat, loc.lng);
+                placeFriendMarker(friendUid, fData, loc.lat, loc.lng, loc.speedKmh);
                 placeFriendPolyline(friendUid, loc.trail);
                 refreshOpenFriendPopup(friendUid, fData);
             }, () => {
@@ -3175,17 +3409,22 @@
             }
         }
 
-        function placeFriendMarker(friendUid, fData, lat, lng) {
+        function placeFriendMarker(friendUid, fData, lat, lng, speedKmh) {
             if (typeof L === 'undefined' || !friendMarkersLayer) return;
+
+            const speedLabel = (typeof speedKmh === 'number') ? `${speedKmh.toFixed(0)}<span style="font-size:0.5rem;">km/h</span>` : '';
 
             const icon = L.divIcon({
                 className: '',
                 html: `<div style="display:flex; flex-direction:column; align-items:center;">
-                            <div class="friend-map-marker">${fData.avatarImageUrl ? `<img src="${fData.avatarImageUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : (fData.avatar || "👤")}</div>
+                            <div style="position:relative;">
+                                <div class="friend-map-marker">${fData.avatarImageUrl ? `<img src="${fData.avatarImageUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : (fData.avatar || "👤")}</div>
+                                ${speedLabel ? `<div class="my-speed-badge">${speedLabel}</div>` : ''}
+                            </div>
                             <div class="friend-map-marker-label">${fData.nickname || "旅人"}</div>
                        </div>`,
-                iconSize: [70, 54],
-                iconAnchor: [35, 44]
+                iconSize: [70, 60],
+                iconAnchor: [35, 50]
             });
 
             if (friendLocationMarkers[friendUid]) {
@@ -3275,10 +3514,43 @@
 
             if (enabled) {
                 startLocationSharing();
+                requestWakeLock();
             } else {
                 stopLocationSharing(true);
+                releaseWakeLock();
             }
         };
+
+        // --- Wake Lock: 位置共有中に画面がスリープしてGPSが止まるのを防ぐ ---
+        // （※ Wake Lockは画面点灯を維持するだけで、アプリを閉じた後の完全なバックグラウンド
+        //    追跡を可能にするものではありません。画面表示中〜他アプリに切り替えるまでの間の
+        //    「スリープによる中断」を防ぐための機能です）
+        let wakeLockSentinel = null;
+
+        async function requestWakeLock() {
+            if (!('wakeLock' in navigator)) return;
+            try {
+                wakeLockSentinel = await navigator.wakeLock.request('screen');
+                wakeLockSentinel.addEventListener('release', () => { wakeLockSentinel = null; });
+            } catch (e) {
+                console.warn('Wake Lockの取得に失敗:', e);
+            }
+        }
+
+        function releaseWakeLock() {
+            if (wakeLockSentinel) {
+                wakeLockSentinel.release().catch(() => {});
+                wakeLockSentinel = null;
+            }
+        }
+
+        // タブを再度表示したときに位置共有がONならWake Lockを再取得する
+        // （Wake LockはタブがバックグラウンドになるとOSに自動解放されるため）
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && appState.locationSharingEnabled) {
+                requestWakeLock();
+            }
+        });
 
         function startLocationSharing() {
             if (!currentUser || !navigator.geolocation) return;
@@ -3286,6 +3558,13 @@
 
             myLocationWatchId = navigator.geolocation.watchPosition(
                 (position) => {
+                    // 自分の地図上のピンは毎回（スロットルなし）で滑らかに更新する
+                    const instantSpeedKmh = (typeof position.coords.speed === 'number' && !isNaN(position.coords.speed))
+                        ? position.coords.speed * 3.6
+                        : lastKnownSpeedKmh;
+                    lastKnownSpeedKmh = instantSpeedKmh;
+                    updateMyLiveMarker(position.coords.latitude, position.coords.longitude, instantSpeedKmh);
+
                     const now = Date.now();
                     if (now - lastLocationWriteMs < LOCATION_WRITE_THROTTLE_MS) return;
                     lastLocationWriteMs = now;
@@ -3298,6 +3577,32 @@
                 },
                 { enableHighAccuracy: true, maximumAge: 15000, timeout: 15000 }
             );
+        }
+
+        // --- 自分自身のライブマーカー（自分の地図上に表示。アバター画像・現在速度つき） ---
+        let myLiveMarker = null;
+        let lastKnownSpeedKmh = 0;
+
+        function updateMyLiveMarker(lat, lng, speedKmh) {
+            if (typeof L === 'undefined' || typeof map === 'undefined' || !map) return;
+
+            const avatarHtml = avatarInnerHTML(appState);
+            const icon = L.divIcon({
+                className: '',
+                html: `<div style="position:relative;">
+                            <div class="friend-map-marker" style="border-color:#4da6ff;">${avatarHtml}</div>
+                            <div class="my-speed-badge">${speedKmh.toFixed(0)}<span style="font-size:0.5rem;">km/h</span></div>
+                       </div>`,
+                iconSize: [44, 44],
+                iconAnchor: [22, 22]
+            });
+
+            if (myLiveMarker) {
+                myLiveMarker.setLatLng([lat, lng]);
+                myLiveMarker.setIcon(icon);
+            } else {
+                myLiveMarker = L.marker([lat, lng], { icon, zIndexOffset: 2000 }).addTo(map);
+            }
         }
 
         // 2地点間の距離をkmで返す（ハーバサイン公式）
@@ -3370,6 +3675,10 @@
             if (myLocationWatchId !== null) {
                 navigator.geolocation.clearWatch(myLocationWatchId);
                 myLocationWatchId = null;
+            }
+            if (myLiveMarker && typeof map !== 'undefined' && map) {
+                map.removeLayer(myLiveMarker);
+                myLiveMarker = null;
             }
             if (deleteDoc_ && currentUser) {
                 deleteDoc(doc(db, "liveLocations", currentUser.uid)).catch(() => {});
@@ -3590,6 +3899,16 @@
                 showToast('⚠️ メッセージの送信に失敗しました');
             }
         };
+    </script>
+    <script>
+        // PWA: Service Workerを登録（オフラインキャッシュ・ホーム画面追加対応）
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js').catch((e) => {
+                    console.warn('Service Worker登録に失敗:', e);
+                });
+            });
+        }
     </script>
 </body>
 </html>
