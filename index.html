@@ -585,22 +585,20 @@
         }
 
         /* --- ショップ --- */
-        /* --- ショップ: アバターフレーム --- */
-        #profile-avatar-btn.frame-gold { box-shadow: 0 0 0 3px #ffd166, 0 0 14px rgba(255,209,102,0.6); }
-        #profile-avatar-btn.frame-silver { box-shadow: 0 0 0 3px #c7ccd6, 0 0 14px rgba(199,204,214,0.5); }
-        #profile-avatar-btn.frame-sakura { box-shadow: 0 0 0 3px #ff8fb1, 0 0 14px rgba(255,143,177,0.55); }
+        /* アバターフレームは box-shadow を JS(applyCosmetics) から直接インラインで設定するため、
+           固定クラスは不要（パレットから動的生成される色に対応するため） */
 
-        /* --- ショップ: キラキラエフェクト --- */
+        /* --- ショップ: 称号グラデーション演出（色違い全種で共通利用） --- */
         /* 称号のdivには古いバージョンからインラインで color:#94a3b8 が指定されているため、
            !important を付けないとエフェクトのグラデーション文字色が反映されない */
-        #profile-title.effect-sparkle {
-            background: linear-gradient(90deg, #ffd166, #ffffff, #ffd166) !important;
+        #profile-title.effect-gradient-title {
+            background: var(--title-gradient, linear-gradient(90deg, #ffd166, #ffffff, #ffd166)) !important;
             background-size: 200% auto !important;
             -webkit-background-clip: text !important;
             background-clip: text !important;
             -webkit-text-fill-color: transparent !important;
             color: transparent !important;
-            animation: sparkleShine 2.5s linear infinite;
+            animation: sparkleShine var(--title-anim-speed, 2.5s) linear infinite;
         }
 
         @keyframes sparkleShine {
@@ -1362,8 +1360,18 @@
                     </div>
 
                     <div class="card">
+                        <div class="card-title">📍 足跡マーカーの色</div>
+                        <div id="shop-markers-list" class="shop-item-list"></div>
+                    </div>
+
+                    <div class="card">
                         <div class="card-title">✨ 特殊エフェクト</div>
                         <div id="shop-effects-list" class="shop-item-list"></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">🔔 チェックイン音</div>
+                        <div id="shop-sounds-list" class="shop-item-list"></div>
                     </div>
                 </div>
             </div>
@@ -1526,6 +1534,8 @@
             equippedFrame: "frame_none",
             equippedTheme: "theme_white",
             equippedEffect: "effect_none",
+            equippedMarkerStyle: "marker_red",
+            equippedSound: "sound_none",
             mailbox: [],
             mailboxMigrated: false,
             locationSharingEnabled: false
@@ -1636,30 +1646,149 @@
         }
 
         // --- ショップ: 商品データ ---
+        // カラーパレットから「フレーム」「テーマ」「マーカー」を自動生成し、
+        // 手打ちミスを減らしつつ約100種類のラインナップを実現している。
+        const COLOR_PALETTE = [
+            { key: "silver",    name: "シルバー",       icon: "🥈", hex: "#c7ccd6", tier: 1 },
+            { key: "sakura",    name: "サクラ",         icon: "🌸", hex: "#ff8fb1", tier: 1 },
+            { key: "coral",     name: "コーラル",       icon: "🪸", hex: "#ff7f6b", tier: 1 },
+            { key: "amber",     name: "アンバー",       icon: "🟠", hex: "#ffb703", tier: 1 },
+            { key: "mustard",   name: "マスタード",     icon: "🟡", hex: "#e9c46a", tier: 1 },
+            { key: "lime",      name: "ライム",         icon: "🟢", hex: "#a7d129", tier: 1 },
+            { key: "mint",      name: "ミント",         icon: "🌿", hex: "#6fffe9", tier: 1 },
+            { key: "sky",       name: "スカイ",         icon: "🔵", hex: "#4da6ff", tier: 1 },
+            { key: "lavender",  name: "ラベンダー",     icon: "💜", hex: "#b39ddb", tier: 1 },
+            { key: "rosegold",  name: "ローズゴールド", icon: "🌹", hex: "#f7c5cc", tier: 1 },
+            { key: "emerald",   name: "エメラルド",     icon: "💚", hex: "#00c896", tier: 2 },
+            { key: "turquoise", name: "ターコイズ",     icon: "🩵", hex: "#1fc8db", tier: 2 },
+            { key: "cobalt",    name: "コバルト",       icon: "🔷", hex: "#2b6cff", tier: 2 },
+            { key: "purple",    name: "パープル",       icon: "🟣", hex: "#9b59b6", tier: 2 },
+            { key: "magenta",   name: "マゼンタ",       icon: "💗", hex: "#e84393", tier: 2 },
+            { key: "olive",     name: "オリーブ",       icon: "🫒", hex: "#7d8c4a", tier: 2 },
+            { key: "clay",      name: "テラコッタ",     icon: "🧱", hex: "#c1622d", tier: 2 },
+            { key: "denim",     name: "デニム",         icon: "🩵", hex: "#3a5a86", tier: 2 },
+            { key: "peach",     name: "ピーチ",         icon: "🍑", hex: "#ffb5a7", tier: 2 },
+            { key: "forest",    name: "フォレスト",     icon: "🌲", hex: "#2e7d4f", tier: 2 },
+            { key: "gold",      name: "ゴールド",       icon: "🥇", hex: "#ffd166", tier: 3 },
+            { key: "platinum",  name: "プラチナ",       icon: "🤍", hex: "#e5e4e2", tier: 3 },
+            { key: "sapphire",  name: "サファイア",     icon: "💎", hex: "#2b5cad", tier: 3 },
+            { key: "ruby",      name: "ルビー",         icon: "❤️", hex: "#d7263d", tier: 3 },
+            { key: "jade",      name: "ジェイド",       icon: "🟩", hex: "#00a86b", tier: 3 },
+            { key: "onyx",      name: "オニキス",       icon: "⚫", hex: "#2c2f36", tier: 3 },
+            { key: "sunset",    name: "サンセット",     icon: "🌇", hex: "#ff6a3d", tier: 3 },
+            { key: "midnight",  name: "ミッドナイト",   icon: "🌌", hex: "#1b1f3b", tier: 3 },
+            { key: "aurora",    name: "オーロラ",       icon: "🌠", hex: "#7cf5d4", tier: 3 },
+            { key: "rainbow",   name: "レインボー",     icon: "🌈", hex: "#ff5ecb", tier: 4, gradient: "linear-gradient(90deg,#ff5ecb,#ffd166,#6fffe9,#4da6ff,#ff5ecb)" }
+        ];
+
+        const TIER_PRICE = { frame: [60, 100, 160, 280], theme: [90, 130, 190, 320], marker: [40, 70, 110, 200] };
+
+        function buildPaletteItems(prefix, unitLabel, priceList, extra) {
+            return COLOR_PALETTE.map(c => ({
+                id: `${prefix}_${c.key}`,
+                name: `${c.name}${unitLabel}`,
+                icon: c.icon,
+                price: priceList[c.tier - 1],
+                hex: c.hex,
+                gradient: c.gradient || null,
+                ...(extra ? extra(c) : {})
+            }));
+        }
+
         const SHOP_ITEMS = {
             frames: [
-                { id: "frame_none",   name: "フレームなし",     icon: "⚪", price: 0,   free: true, cssClass: "" },
-                { id: "frame_silver", name: "シルバーフレーム", icon: "🥈", price: 60,  cssClass: "frame-silver" },
-                { id: "frame_sakura", name: "桜フレーム",       icon: "🌸", price: 80,  cssClass: "frame-sakura" },
-                { id: "frame_gold",   name: "ゴールドフレーム", icon: "🥇", price: 150, cssClass: "frame-gold" }
+                { id: "frame_none", name: "フレームなし", icon: "⚪", price: 0, free: true, hex: null },
+                ...buildPaletteItems("frame", "フレーム", TIER_PRICE.frame)
             ],
             themes: [
-                { id: "theme_white", name: "クラシック",     icon: "⚪", price: 0,   free: true, color: "#ffffff" },
-                { id: "theme_gold",  name: "ゴールド",       icon: "🟡", price: 120, color: "#ffd166" },
-                { id: "theme_green", name: "エメラルド",     icon: "🟢", price: 120, color: "#00ff88" },
-                { id: "theme_pink",  name: "サクラピンク",   icon: "🌸", price: 120, color: "#ff8fb1" },
-                { id: "theme_blue",  name: "オーシャン",     icon: "🔵", price: 120, color: "#4da6ff" }
+                { id: "theme_white", name: "クラシック", icon: "⚪", price: 0, free: true, color: "#ffffff" },
+                ...buildPaletteItems("theme", "テーマ", TIER_PRICE.theme).map(i => ({ ...i, color: i.gradient || i.hex }))
+            ],
+            markers: [
+                { id: "marker_red", name: "レッド（標準）", icon: "📍", price: 0, free: true, hex: "#ff3b30" },
+                ...buildPaletteItems("marker", "ピン", TIER_PRICE.marker)
             ],
             effects: [
-                { id: "effect_none",     name: "なし",             icon: "✖️", price: 0,   free: true },
-                { id: "effect_sparkle",  name: "称号キラキラ演出", icon: "✨", price: 100 },
-                { id: "effect_confetti", name: "解放時の紙吹雪",   icon: "🎊", price: 150 }
+                { id: "effect_none", name: "なし", icon: "✖️", price: 0, free: true, type: "none" },
+
+                // 称号のグラデーション演出（色違いで13種）
+                { id: "effect_title_gold",     name: "称号：ゴールド輝き",   icon: "✨", price: 100, type: "title-gradient", gradient: "linear-gradient(90deg,#ffd166,#ffffff,#ffd166)", speed: "2.5s" },
+                { id: "effect_title_rainbow",  name: "称号：レインボー",     icon: "🌈", price: 220, type: "title-gradient", gradient: "linear-gradient(90deg,#ff5ecb,#ffd166,#6fffe9,#4da6ff,#ff5ecb)", speed: "3s" },
+                { id: "effect_title_neon",     name: "称号：ネオンシアン",   icon: "💠", price: 140, type: "title-gradient", gradient: "linear-gradient(90deg,#00e5ff,#ffffff,#00e5ff)", speed: "2s" },
+                { id: "effect_title_fire",     name: "称号：フレイム",       icon: "🔥", price: 160, type: "title-gradient", gradient: "linear-gradient(90deg,#ff3d00,#ffb703,#ff3d00)", speed: "1.8s" },
+                { id: "effect_title_ice",      name: "称号：フロスト",       icon: "❄️", price: 140, type: "title-gradient", gradient: "linear-gradient(90deg,#bfe9ff,#ffffff,#bfe9ff)", speed: "3.2s" },
+                { id: "effect_title_sakura",   name: "称号：サクラ舞い",     icon: "🌸", price: 130, type: "title-gradient", gradient: "linear-gradient(90deg,#ff8fb1,#ffffff,#ff8fb1)", speed: "3s" },
+                { id: "effect_title_jade",     name: "称号：翡翠の輝き",     icon: "🟢", price: 130, type: "title-gradient", gradient: "linear-gradient(90deg,#00c896,#ffffff,#00c896)", speed: "2.8s" },
+                { id: "effect_title_royal",    name: "称号：ロイヤルパープル", icon: "👑", price: 180, type: "title-gradient", gradient: "linear-gradient(90deg,#9b59b6,#ffffff,#9b59b6)", speed: "2.6s" },
+                { id: "effect_title_sunset",   name: "称号：サンセットグロー", icon: "🌇", price: 150, type: "title-gradient", gradient: "linear-gradient(90deg,#ff6a3d,#ffd166,#ff6a3d)", speed: "2.4s" },
+                { id: "effect_title_ocean",    name: "称号：オーシャンウェーブ", icon: "🌊", price: 150, type: "title-gradient", gradient: "linear-gradient(90deg,#2b6cff,#6fffe9,#2b6cff)", speed: "2.6s" },
+                { id: "effect_title_gothic",   name: "称号：ミッドナイトシルバー", icon: "🌙", price: 170, type: "title-gradient", gradient: "linear-gradient(90deg,#1b1f3b,#c7ccd6,#1b1f3b)", speed: "3.4s" },
+                { id: "effect_title_candy",    name: "称号：キャンディポップ", icon: "🍬", price: 140, type: "title-gradient", gradient: "linear-gradient(90deg,#ff5ecb,#fff,#4da6ff)", speed: "2.2s" },
+                { id: "effect_title_gold2",    name: "称号：シャンパンゴールド", icon: "🥂", price: 200, type: "title-gradient", gradient: "linear-gradient(90deg,#f7e7ce,#ffd166,#f7e7ce)", speed: "3s" },
+                { id: "effect_title_slow",     name: "称号：スローシマー",   icon: "🕯️", price: 110, type: "title-gradient", gradient: "linear-gradient(90deg,#ffd166,#ffffff,#ffd166)", speed: "5s" },
+
+                // 都市解放時のパーティクル演出（絵文字違いで4種）
+                { id: "effect_confetti",       name: "解放時の紙吹雪",       icon: "🎊", price: 150, type: "particles", particles: ["🎉","🎊","✨","🥳"] },
+                { id: "effect_fireworks",      name: "解放時の花火",         icon: "🎆", price: 220, type: "particles", particles: ["🎆","🎇","✨","💥"] },
+                { id: "effect_stardust",       name: "解放時の星屑",         icon: "🌟", price: 200, type: "particles", particles: ["🌟","⭐","✨","💫"] },
+                { id: "effect_petals",         name: "解放時の花吹雪",       icon: "🌸", price: 200, type: "particles", particles: ["🌸","🌺","🌼","🍃"] }
+            ],
+            sounds: [
+                { id: "sound_none",   name: "サウンドなし",     icon: "🔇", price: 0,   free: true, tones: null },
+                { id: "sound_ding",   name: "チャイム：Ding",    icon: "🔔", price: 50,  tones: [880] },
+                { id: "sound_bell",   name: "チャイム：ベル",    icon: "🛎️", price: 60,  tones: [988, 1319] },
+                { id: "sound_coin",   name: "チャイム：コイン",  icon: "🪙", price: 60,  tones: [1046, 1568] },
+                { id: "sound_level",  name: "チャイム：レベルアップ", icon: "⬆️", price: 90,  tones: [523, 659, 784] },
+                { id: "sound_magic",  name: "チャイム：マジック", icon: "✨", price: 90,  tones: [1046, 1318, 1568, 2093] },
+                { id: "sound_drum",   name: "チャイム：ドラムロール", icon: "🥁", price: 80,  tones: [220, 220, 220, 440] },
+                { id: "sound_harp",   name: "チャイム：ハープ",   icon: "🎼", price: 100, tones: [523, 587, 659, 784, 880] },
+                { id: "sound_retro",  name: "チャイム：レトロゲーム", icon: "🕹️", price: 100, tones: [660, 660, 660] },
+                { id: "sound_fanfare",name: "チャイム：ファンファーレ", icon: "📯", price: 130, tones: [523, 659, 784, 1046] }
             ]
         };
+
+        // 装着した「解放時のパーティクル演出」に応じてエフェクトを発火する
+        function triggerEquippedUnlockEffect() {
+            const effect = SHOP_ITEMS.effects.find(e => e.id === appState.equippedEffect);
+            if (effect && effect.type === 'particles') {
+                triggerConfetti(effect.particles);
+            }
+            playEquippedSound();
+        }
+
+        // 装着した「チェックイン音」を再生する（Web Audioで簡易合成、外部音源不要）
+        function playEquippedSound() {
+            const sound = SHOP_ITEMS.sounds.find(s => s.id === appState.equippedSound);
+            if (!sound || !sound.tones) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                sound.tones.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.12 + 0.35);
+                    osc.connect(gain).connect(ctx.destination);
+                    osc.start(ctx.currentTime + i * 0.12);
+                    osc.stop(ctx.currentTime + i * 0.12 + 0.35);
+                });
+            } catch (e) {
+                console.warn('サウンド再生に失敗:', e);
+            }
+        }
 
         function isPurchased(id) {
             return appState.purchasedItems.includes(id);
         }
+
+        const SHOP_FIELD_MAP = {
+            frames: 'equippedFrame',
+            themes: 'equippedTheme',
+            effects: 'equippedEffect',
+            markers: 'equippedMarkerStyle',
+            sounds: 'equippedSound'
+        };
 
         function purchaseItem(category, id) {
             const item = SHOP_ITEMS[category].find(i => i.id === id);
@@ -1678,27 +1807,42 @@
         }
 
         function equipItem(category, id) {
-            const fieldMap = { frames: 'equippedFrame', themes: 'equippedTheme', effects: 'equippedEffect' };
-            appState[fieldMap[category]] = id;
+            appState[SHOP_FIELD_MAP[category]] = id;
             saveData();
             updateUI();
             applyCosmetics();
+            if (category === 'sounds') playEquippedSound(); // 装着した瞬間に音を試聴できるように
         }
 
         // 装着中のフレーム・テーマ・エフェクトを実際の画面に反映
         function applyCosmetics() {
+            // アバターのフレーム（枠の色）: box-shadowを直接指定する方式（パレットから動的生成した色に対応するため）
             const avatarBtn = document.getElementById('profile-avatar-btn');
             if (avatarBtn) {
-                avatarBtn.classList.remove('frame-silver', 'frame-sakura', 'frame-gold');
                 const frame = SHOP_ITEMS.frames.find(f => f.id === appState.equippedFrame);
-                if (frame && frame.cssClass) avatarBtn.classList.add(frame.cssClass);
+                if (frame && frame.hex) {
+                    avatarBtn.style.boxShadow = `0 0 0 3px ${frame.hex}, 0 0 14px ${frame.hex}99`;
+                } else {
+                    avatarBtn.style.boxShadow = 'none';
+                }
             }
 
+            // テーマカラー（LVバッジ・アクティブなナビアイコンなどのアクセントカラー）
             const theme = SHOP_ITEMS.themes.find(t => t.id === appState.equippedTheme);
             if (theme) document.documentElement.style.setProperty('--accent-color', theme.color);
 
+            // 称号のグラデーション演出
             const titleEl = document.getElementById('profile-title');
-            if (titleEl) titleEl.classList.toggle('effect-sparkle', appState.equippedEffect === 'effect_sparkle');
+            const effect = SHOP_ITEMS.effects.find(e => e.id === appState.equippedEffect);
+            if (titleEl) {
+                if (effect && effect.type === 'title-gradient') {
+                    titleEl.classList.add('effect-gradient-title');
+                    titleEl.style.setProperty('--title-gradient', effect.gradient);
+                    titleEl.style.setProperty('--title-anim-speed', effect.speed || '2.5s');
+                } else {
+                    titleEl.classList.remove('effect-gradient-title');
+                }
+            }
         }
 
         // ショップタブの描画
@@ -1708,7 +1852,9 @@
 
             renderShopCategory('frames', 'shop-frames-list');
             renderShopCategory('themes', 'shop-themes-list');
+            renderShopCategory('markers', 'shop-markers-list');
             renderShopCategory('effects', 'shop-effects-list');
+            renderShopCategory('sounds', 'shop-sounds-list');
         }
 
         function renderShopCategory(category, containerId) {
@@ -1718,8 +1864,7 @@
 
             SHOP_ITEMS[category].forEach(item => {
                 const owned = item.free || isPurchased(item.id);
-                const fieldMap = { frames: 'equippedFrame', themes: 'equippedTheme', effects: 'equippedEffect' };
-                const equipped = appState[fieldMap[category]] === item.id;
+                const equipped = appState[SHOP_FIELD_MAP[category]] === item.id;
 
                 const div = document.createElement('div');
                 div.className = 'shop-item';
@@ -1729,15 +1874,17 @@
                     const affordable = (appState.coins || 0) >= item.price;
                     buttonHtml = `<button class="buy-btn" ${affordable ? '' : 'disabled'} onclick="purchaseItem('${category}','${item.id}')">🪙 ${item.price}</button>`;
                 } else {
-                    buttonHtml = `<button class="equip-btn ${equipped ? 'equipped' : ''}" onclick="equipItem('${category}','${item.id}')">${equipped ? '装着中' : '装着する'}</button>`;
+                    buttonHtml = `<button class="equip-btn ${equipped ? 'equipped' : ''}" onclick="equipItem('${category}','${item.id}')">${equipped ? '装着中' : (category === 'sounds' ? '再生/装着' : '装着する')}</button>`;
                 }
 
-                const swatch = category === 'themes'
-                    ? `<div class="shop-item-icon" style="background:${item.color};">${item.icon}</div>`
-                    : `<div class="shop-item-icon">${item.icon}</div>`;
+                // スウォッチ: color/gradientを持つカテゴリ（テーマ・マーカー）は背景色で見た目を表現
+                let swatchStyle = '';
+                if (category === 'themes' && item.color) swatchStyle = `background:${item.color};`;
+                else if (category === 'markers' && item.hex) swatchStyle = `background:${item.hex};`;
+                else if (category === 'frames' && item.hex) swatchStyle = `box-shadow: inset 0 0 0 3px ${item.hex};`;
 
                 div.innerHTML = `
-                    ${swatch}
+                    <div class="shop-item-icon" style="${swatchStyle}">${item.icon}</div>
                     <div class="shop-item-name">${item.name}</div>
                     ${owned ? '<div class="shop-item-price">所持済み</div>' : `<div class="shop-item-price">🪙 ${item.price}</div>`}
                     ${buttonHtml}
@@ -2001,10 +2148,13 @@
             if (!markersGroup || typeof L === 'undefined') return;
             markersGroup.clearLayers();
 
+            const markerItem = SHOP_ITEMS.markers.find(m => m.id === appState.equippedMarkerStyle);
+            const pinColor = (markerItem && markerItem.hex) ? markerItem.hex : '#ff3b30';
+
             appState.unlockedCities.forEach(item => {
                 const customIcon = L.divIcon({
                     className: 'custom-marker',
-                    html: `<div style="width: 12px; height: 12px; background: #ff3b30; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 0 6px rgba(255,59,48,0.6);"></div>`,
+                    html: `<div style="width: 12px; height: 12px; background: ${pinColor}; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 0 6px ${pinColor}99;"></div>`,
                     iconSize: [12, 12],
                     iconAnchor: [6, 6]
                 });
@@ -2463,7 +2613,8 @@
                 appState.unlockedCities.push({ prefId, cityName, code, lat, lng, date: dateStr, timestamp });
                 addCoins(COIN_REWARDS.newCity, `🎉 ${cityName} を解放`);
                 showToast(`🎉 UNLOCKED: ${cityName}`);
-                if (appState.equippedEffect === 'effect_confetti') triggerConfetti();
+                if (appState.equippedEffect !== 'effect_none') triggerEquippedUnlockEffect();
+                else playEquippedSound();
             } else {
                 showToast(`📍 再訪問: ${cityName}`);
                 // 重複登録を防ぐため、appState.unlockedCities.push は行いません
@@ -2650,8 +2801,8 @@
 
         // --- プロフィール: アバター選択 ---
         // ショップで購入できる「解放時の紙吹雪」演出
-        function triggerConfetti() {
-            const emojis = ['🎉', '🎊', '✨', '🥳'];
+        function triggerConfetti(customEmojis) {
+            const emojis = customEmojis && customEmojis.length ? customEmojis : ['🎉', '🎊', '✨', '🥳'];
             for (let i = 0; i < 18; i++) {
                 const span = document.createElement('div');
                 span.innerText = emojis[Math.floor(Math.random() * emojis.length)];
@@ -2966,6 +3117,8 @@
             if (typeof appState.equippedFrame !== 'string') appState.equippedFrame = "frame_none";
             if (typeof appState.equippedTheme !== 'string') appState.equippedTheme = "theme_white";
             if (typeof appState.equippedEffect !== 'string') appState.equippedEffect = "effect_none";
+            if (typeof appState.equippedMarkerStyle !== 'string') appState.equippedMarkerStyle = "marker_red";
+            if (typeof appState.equippedSound !== 'string') appState.equippedSound = "sound_none";
             if (!Array.isArray(appState.mailbox)) appState.mailbox = [];
             if (typeof appState.mailboxMigrated !== 'boolean') appState.mailboxMigrated = false;
             if (typeof appState.locationSharingEnabled !== 'boolean') appState.locationSharingEnabled = false;
@@ -3166,6 +3319,8 @@
                     equippedFrame: appState.equippedFrame || "frame_none",
                     equippedTheme: appState.equippedTheme || "theme_white",
                     equippedEffect: appState.equippedEffect || "effect_none",
+                    equippedMarkerStyle: appState.equippedMarkerStyle || "marker_red",
+                    equippedSound: appState.equippedSound || "sound_none",
                     locationSharingEnabled: false,
                     friendCode: friendCode,
                     createdAt: serverTimestamp()
@@ -3183,6 +3338,8 @@
                 appState.equippedFrame = data.equippedFrame || "frame_none";
                 appState.equippedTheme = data.equippedTheme || "theme_white";
                 appState.equippedEffect = data.equippedEffect || "effect_none";
+                appState.equippedMarkerStyle = data.equippedMarkerStyle || "marker_red";
+                appState.equippedSound = data.equippedSound || "sound_none";
                 appState.locationSharingEnabled = !!data.locationSharingEnabled;
                 document.getElementById('my-friend-code').innerText = data.friendCode || "------";
                 localStorage.setItem('geo_nihon_app_state_v5_calendar', JSON.stringify(appState));
@@ -3211,6 +3368,8 @@
                     equippedFrame: appState.equippedFrame || "frame_none",
                     equippedTheme: appState.equippedTheme || "theme_white",
                     equippedEffect: appState.equippedEffect || "effect_none",
+                    equippedMarkerStyle: appState.equippedMarkerStyle || "marker_red",
+                    equippedSound: appState.equippedSound || "sound_none",
                     locationSharingEnabled: !!appState.locationSharingEnabled
                 });
             } catch (e) {
@@ -3644,19 +3803,46 @@
         // --- 自分自身の移動軌跡ポリライン（本日分。位置共有ON中、自分の地図にリアルタイムで表示） ---
         let myTrailLatLngs = [];
         let myTrailPolyline = null;
+        const MY_TRAIL_LOCAL_KEY = 'geo_nihon_my_trail_v1';
 
-        // 位置共有を開始する際、同じ日の軌跡が既にFirestoreにあれば読み込んで続きから描画する
+        // 軌跡をlocalStorageにも保存しておく（ページの再読み込みが起きても、
+        // Firestoreとの通信を待たずに即座に続きから復元できるようにするための保険）
+        function saveMyTrailToLocalStorage() {
+            try {
+                localStorage.setItem(MY_TRAIL_LOCAL_KEY, JSON.stringify({
+                    dateKey: formatDateKey(new Date()),
+                    points: myTrailLatLngs
+                }));
+            } catch (e) { /* 保存容量オーバー等は無視して良い */ }
+        }
+
+        // 位置共有を開始する際、同じ日の軌跡があれば読み込んで続きから描画する。
+        // まずlocalStorage（同期・即時）を見て、その後Firestore側がより多くの点を
+        // 持っていれば（＝別端末で継続していた等）そちらを優先する。
         async function initMyTrailFromExistingDoc() {
             myTrailLatLngs = [];
+            const todayKey = formatDateKey(new Date());
+
+            try {
+                const localRaw = localStorage.getItem(MY_TRAIL_LOCAL_KEY);
+                if (localRaw) {
+                    const localData = JSON.parse(localRaw);
+                    if (localData.dateKey === todayKey && Array.isArray(localData.points)) {
+                        myTrailLatLngs = localData.points;
+                        drawMyTrailPolyline();
+                    }
+                }
+            } catch (e) { /* 破損データは無視 */ }
+
             if (!currentUser) return;
             try {
                 const snap = await getDoc(doc(db, "liveLocations", currentUser.uid));
                 if (snap.exists()) {
                     const data = snap.data();
-                    const todayKey = formatDateKey(new Date());
-                    if (data.trailDateKey === todayKey && Array.isArray(data.trail)) {
+                    if (data.trailDateKey === todayKey && Array.isArray(data.trail) && data.trail.length > myTrailLatLngs.length) {
                         myTrailLatLngs = data.trail.map(p => [p.lat, p.lng]);
                         drawMyTrailPolyline();
+                        saveMyTrailToLocalStorage();
                     }
                 }
             } catch (e) {
@@ -3670,6 +3856,7 @@
                 myTrailLatLngs = myTrailLatLngs.slice(myTrailLatLngs.length - TRAIL_MAX_POINTS);
             }
             drawMyTrailPolyline();
+            saveMyTrailToLocalStorage();
         }
 
         function drawMyTrailPolyline() {
