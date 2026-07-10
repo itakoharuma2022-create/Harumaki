@@ -339,6 +339,33 @@
         .avatar-option.selected { background: #ffffff; }
 
         /* --- プロフィール: 都道府県達成率グリッド --- */
+        /* --- プロフィール: 旅の統計ダッシュボード --- */
+        .travel-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .travel-stat-cell {
+            background: #101116;
+            border: 1px solid #272a34;
+            border-radius: 10px;
+            padding: 12px 8px;
+            text-align: center;
+        }
+
+        .travel-stat-cell .num {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .travel-stat-cell .label {
+            font-size: 0.62rem;
+            color: #94a3b8;
+            margin-top: 3px;
+        }
+
         .pref-achieve-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
@@ -745,6 +772,61 @@
             background: #00ff66;
             color: #063a1a;
             border-color: #00ff66;
+        }
+
+        .ranking-sort-btn.active {
+            background: #ffffff;
+            color: #111216;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #101116;
+            border: 1px solid #272a34;
+            border-radius: 10px;
+            padding: 8px 10px;
+        }
+
+        .ranking-item.me {
+            border-color: var(--accent-color, #ffffff);
+        }
+
+        .ranking-item .rank-num {
+            width: 26px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            flex-shrink: 0;
+        }
+
+        .ranking-item .rank-avatar {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: #1c1e26;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .ranking-item .rank-name {
+            flex: 1;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #fff;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ranking-item .rank-value {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--accent-color, #ffffff);
+            flex-shrink: 0;
         }
 
         .friend-item, .friend-request-item {
@@ -1257,6 +1339,10 @@
                                 <div style="font-size:1.1rem; font-weight:800; color:#fff;" id="profile-stat-badges">0</div>
                                 <div style="font-size:0.65rem; color:#94a3b8;">BADGES</div>
                             </div>
+                            <div>
+                                <div style="font-size:1.1rem; font-weight:800; color:#ff9f43;" id="profile-stat-streak">0🔥</div>
+                                <div style="font-size:0.65rem; color:#94a3b8;">STREAK</div>
+                            </div>
                         </div>
                     </div>
 
@@ -1316,6 +1402,21 @@
                                 <ul id="friend-requests-list" style="list-style:none; display:flex; flex-direction:column; gap:6px;"></ul>
                             </div>
 
+                            <div style="display:flex; gap:8px; margin-bottom:12px;">
+                                <button class="btn btn-secondary" style="flex:1; font-size:0.75rem;" onclick="openRanking()">🏆 ランキング</button>
+                            </div>
+
+                            <div style="background:#101116; border:1px solid #272a34; border-radius:8px; padding:10px 12px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                                <div>
+                                    <div style="font-size:0.78rem; color:#fff; font-weight:700;">👥 フレンドの足跡を地図に表示</div>
+                                    <div style="font-size:0.63rem; color:#64748b; margin-top:2px;">ホーム画面の地図にフレンドの訪問済み都市を紫色の点で重ねます</div>
+                                </div>
+                                <label class="loc-toggle-switch">
+                                    <input id="friend-footprints-toggle" type="checkbox" onchange="toggleFriendFootprints(this.checked)">
+                                    <span class="loc-toggle-slider"></span>
+                                </label>
+                            </div>
+
                             <div style="font-size:0.72rem; color:#94a3b8; font-weight:700; margin-bottom:6px;">フレンド一覧</div>
                             <ul id="friends-list" style="list-style:none; display:flex; flex-direction:column; gap:8px;"></ul>
                         </div>
@@ -1325,6 +1426,32 @@
                     <div class="card">
                         <div class="card-title">🗾 都道府県 制覇状況</div>
                         <div id="pref-achievement-grid" class="pref-achieve-grid"></div>
+                    </div>
+
+                    <!-- 旅の統計ダッシュボード -->
+                    <div class="card">
+                        <div class="card-title">📊 旅の統計</div>
+                        <div class="travel-stats-grid">
+                            <div class="travel-stat-cell">
+                                <div class="num" id="stat-days-visited">0</div>
+                                <div class="label">訪問日数</div>
+                            </div>
+                            <div class="travel-stat-cell">
+                                <div class="num" id="stat-total-distance">0<span style="font-size:0.6rem;">km</span></div>
+                                <div class="label">総移動距離(目安)</div>
+                            </div>
+                            <div class="travel-stat-cell">
+                                <div class="num" id="stat-current-streak">0<span style="font-size:0.6rem;">日</span></div>
+                                <div class="label">現在のストリーク</div>
+                            </div>
+                            <div class="travel-stat-cell">
+                                <div class="num" id="stat-top-pref">-</div>
+                                <div class="label">最多訪問都道府県</div>
+                            </div>
+                        </div>
+                        <div style="font-size:0.6rem; color:#64748b; margin-top:8px; line-height:1.5;">
+                            ※ 総移動距離はチェックイン地点間を結んだ概算距離です（実際の移動経路とは異なります）
+                        </div>
                     </div>
 
                     <!-- 直近の活動タイムライン -->
@@ -1464,6 +1591,24 @@
         </div>
     </div>
 
+    <!-- ===== ランキング モーダル ===== -->
+    <div id="ranking-modal" class="modal-overlay" style="display:none;" onclick="if(event.target===this) closeRanking()">
+        <div class="modal-sheet">
+            <div class="modal-header">
+                <div class="modal-title">🏆 ランキング</div>
+                <button class="modal-close-btn" onclick="closeRanking()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex; gap:6px; margin-bottom:12px;">
+                    <button class="btn btn-secondary ranking-sort-btn active" style="font-size:0.7rem; flex:1;" onclick="setRankingSort('cities')">🧭 都市数</button>
+                    <button class="btn btn-secondary ranking-sort-btn" style="font-size:0.7rem; flex:1;" onclick="setRankingSort('badges')">🏆 実績数</button>
+                    <button class="btn btn-secondary ranking-sort-btn" style="font-size:0.7rem; flex:1;" onclick="setRankingSort('coins')">🪙 コイン</button>
+                </div>
+                <ul id="ranking-list" style="list-style:none; display:flex; flex-direction:column; gap:8px;"></ul>
+            </div>
+        </div>
+    </div>
+
     <script>
         // 8地方区分（都道府県ID → 地方）。段階実績の判定に使用
         const REGIONS = {
@@ -1538,7 +1683,9 @@
             equippedSound: "sound_none",
             mailbox: [],
             mailboxMigrated: false,
-            locationSharingEnabled: false
+            locationSharingEnabled: false,
+            streakMilestonesAwarded: [],
+            showFriendFootprints: false
         };
 
         // コイン報酬テーブル
@@ -1643,6 +1790,20 @@
 
         function closeChat() {
             document.getElementById('chat-modal').style.display = 'none';
+        }
+
+        // --- ランキングモーダル（描画は module script が担当） ---
+        function closeRanking() {
+            document.getElementById('ranking-modal').style.display = 'none';
+        }
+
+        // --- フレンドの足跡オーバーレイ表示トグル ---
+        function toggleFriendFootprints(checked) {
+            appState.showFriendFootprints = checked;
+            saveData();
+            if (typeof window.refreshFriendFootprintsLayer === 'function') {
+                window.refreshFriendFootprintsLayer();
+            }
         }
 
         // --- ショップ: 商品データ ---
@@ -1919,11 +2080,97 @@
             return current;
         }
 
+        // 2地点間の距離をkmで返す（ハーバサイン公式）。位置共有機能側にも同名の関数があるが、
+        // module scriptとは別スコープなので競合しない。
+        function haversineKm(lat1, lng1, lat2, lng2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) ** 2 +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLng / 2) ** 2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        }
+
+        // 旅の統計（訪問日数・概算移動距離・最多訪問都道府県）を計算する
+        function computeTravelStats() {
+            const cities = [...appState.unlockedCities].sort((a, b) => {
+                const ta = (a.timestamp || a.date || '').replace(/\//g, '-').replace(' ', 'T');
+                const tb = (b.timestamp || b.date || '').replace(/\//g, '-').replace(' ', 'T');
+                return new Date(ta) - new Date(tb);
+            });
+
+            let totalDistanceKm = 0;
+            for (let i = 1; i < cities.length; i++) {
+                totalDistanceKm += haversineKm(cities[i - 1].lat, cities[i - 1].lng, cities[i].lat, cities[i].lng);
+            }
+
+            const daysVisited = new Set(appState.unlockedCities.map(c => c.date)).size;
+
+            const prefCounts = {};
+            appState.unlockedCities.forEach(c => {
+                prefCounts[c.prefId] = (prefCounts[c.prefId] || 0) + 1;
+            });
+            let topPrefId = null, topPrefCount = 0;
+            Object.keys(prefCounts).forEach(p => {
+                if (prefCounts[p] > topPrefCount) { topPrefCount = prefCounts[p]; topPrefId = p; }
+            });
+            const topPrefName = (topPrefId && nihonData && nihonData[topPrefId])
+                ? (nihonData[topPrefId].short || nihonData[topPrefId].name)
+                : '-';
+
+            return { totalDistanceKm, daysVisited, topPrefName, topPrefCount };
+        }
+
+        // 現在の連続チェックイン日数（ストリーク）を計算する。
+        // 今日まだチェックインしていなくても、昨日までの連続記録が続いていれば0にはならない（猶予）。
+        function computeCurrentStreak() {
+            const dateSet = new Set(appState.unlockedCities.map(c => c.date));
+            if (dateSet.size === 0) return 0;
+
+            let cursor = new Date();
+            if (!dateSet.has(formatDateKey(cursor))) {
+                cursor.setDate(cursor.getDate() - 1);
+                if (!dateSet.has(formatDateKey(cursor))) return 0; // 昨日も今日もなければストリーク途切れ
+            }
+
+            let streak = 0;
+            while (dateSet.has(formatDateKey(cursor))) {
+                streak++;
+                cursor.setDate(cursor.getDate() - 1);
+            }
+            return streak;
+        }
+
+        // ストリークの節目に到達したら一度だけコインを付与する
+        const STREAK_MILESTONES = [
+            { days: 3,   coins: 30 },
+            { days: 7,   coins: 80 },
+            { days: 14,  coins: 160 },
+            { days: 30,  coins: 350 },
+            { days: 60,  coins: 700 },
+            { days: 100, coins: 1200 }
+        ];
+
+        function checkStreakMilestones() {
+            const streak = computeCurrentStreak();
+            if (!Array.isArray(appState.streakMilestonesAwarded)) appState.streakMilestonesAwarded = [];
+
+            STREAK_MILESTONES.forEach(m => {
+                if (streak >= m.days && !appState.streakMilestonesAwarded.includes(m.days)) {
+                    appState.streakMilestonesAwarded.push(m.days);
+                    addCoins(m.coins, `🔥 ${m.days}日連続ストリーク`);
+                    setTimeout(() => showToast(`🔥 ${m.days}日連続チェックイン達成！`), 2400);
+                }
+            });
+        }
+
         let nihonData = null;
         let map;
         let markersGroup;
         let polylineGroup;
         let friendMarkersLayer;
+        let friendFootprintsLayer;
 
         let currentCalendarDate = new Date();
         let selectedDateStr = "";
@@ -2030,6 +2277,7 @@
             markersGroup = L.layerGroup().addTo(map);
             polylineGroup = L.layerGroup().addTo(map);
             friendMarkersLayer = L.layerGroup().addTo(map);
+            friendFootprintsLayer = L.layerGroup().addTo(map);
 
             // ユーザーが自分で地図をドラッグしたら「現在地に追従」モードを解除する
             map.on('dragstart', () => {
@@ -2621,6 +2869,7 @@
             }
 
             checkAchievements(dateStr, code, prefId, timestamp);
+            checkStreakMilestones();
             saveData();
             updateUI();
 
@@ -2745,6 +2994,9 @@
         function updateUI() {
             renderAllFootprintMarkers(); // 足跡マーカーは常に全件を反映し、絶対に消えないようにする
 
+            const footprintsToggle = document.getElementById('friend-footprints-toggle');
+            if (footprintsToggle) footprintsToggle.checked = !!appState.showFriendFootprints;
+
             const uniqueCount = new Set(appState.unlockedCities.map(c => c.code)).size;
             document.getElementById('stats-count').innerText = uniqueCount;
             document.getElementById('stats-badges').innerText =
@@ -2790,13 +3042,26 @@
             if (titleEl) titleEl.innerText = getExplorerTitle(uniqueCount);
 
             const prefsUnlocked = new Set(appState.unlockedCities.map(c => c.prefId)).size;
+            const streak = computeCurrentStreak();
 
             const cCities = document.getElementById('profile-stat-cities');
             const cPrefs = document.getElementById('profile-stat-prefs');
             const cBadges = document.getElementById('profile-stat-badges');
+            const cStreak = document.getElementById('profile-stat-streak');
             if (cCities) cCities.innerText = uniqueCount;
             if (cPrefs) cPrefs.innerText = `${prefsUnlocked}/47`;
             if (cBadges) cBadges.innerText = appState.unlockedBadges.length;
+            if (cStreak) cStreak.innerText = `${streak}🔥`;
+
+            const stats = computeTravelStats();
+            const elDays = document.getElementById('stat-days-visited');
+            const elDist = document.getElementById('stat-total-distance');
+            const elStreak2 = document.getElementById('stat-current-streak');
+            const elTopPref = document.getElementById('stat-top-pref');
+            if (elDays) elDays.innerText = stats.daysVisited;
+            if (elDist) elDist.innerHTML = `${stats.totalDistanceKm.toFixed(1)}<span style="font-size:0.6rem;">km</span>`;
+            if (elStreak2) elStreak2.innerHTML = `${streak}<span style="font-size:0.6rem;">日</span>`;
+            if (elTopPref) elTopPref.innerText = stats.topPrefName;
         }
 
         // --- プロフィール: アバター選択 ---
@@ -3122,6 +3387,8 @@
             if (!Array.isArray(appState.mailbox)) appState.mailbox = [];
             if (typeof appState.mailboxMigrated !== 'boolean') appState.mailboxMigrated = false;
             if (typeof appState.locationSharingEnabled !== 'boolean') appState.locationSharingEnabled = false;
+            if (!Array.isArray(appState.streakMilestonesAwarded)) appState.streakMilestonesAwarded = [];
+            if (typeof appState.showFriendFootprints !== 'boolean') appState.showFriendFootprints = false;
         }
 
         function resetAllData() {
@@ -3263,6 +3530,8 @@
             stopLocationSharing(false);
             releaseWakeLock();
             clearAllFriendLocationWatchers();
+            friendStatsCache = {};
+            if (typeof friendFootprintsLayer !== 'undefined' && friendFootprintsLayer) friendFootprintsLayer.clearLayers();
             await fbSignOut(auth);
         };
 
@@ -3490,6 +3759,9 @@
                 if (snapshot.empty) {
                     listEl.innerHTML = '<li style="color:#64748b; font-size:0.75rem;">まだフレンドがいません。コードで追加してみましょう。</li>';
                     clearAllFriendLocationWatchers();
+                    friendStatsCache = {};
+                    renderRankingIfOpen();
+                    refreshFriendFootprintsLayer();
                     return;
                 }
 
@@ -3506,6 +3778,16 @@
                     const cityCount = (fData.unlockedCities || []).length;
                     const badgeCount = (fData.unlockedBadges || []).length;
                     const level = Math.floor(cityCount / 3) + 1;
+
+                    // ランキング・足跡オーバーレイ用に統計とデータをキャッシュしておく
+                    friendStatsCache[friendUid] = {
+                        nickname: fData.nickname || "旅人",
+                        avatar: fData.avatar || "👤",
+                        avatarImageUrl: fData.avatarImageUrl || "",
+                        cityCount, badgeCount, level,
+                        coins: fData.coins || 0,
+                        unlockedCities: fData.unlockedCities || []
+                    };
 
                     const li = document.createElement('li');
                     li.className = 'friend-item';
@@ -3524,7 +3806,7 @@
                     watchFriendLocation(friendUid, fData);
                 }
 
-                // フレンドではなくなった相手の監視・マーカーを片付ける
+                // フレンドではなくなった相手の監視・マーカー・キャッシュを片付ける
                 Object.keys(friendLocationUnsubs).forEach(uidKey => {
                     if (!currentFriendUids.has(uidKey)) {
                         friendLocationUnsubs[uidKey]();
@@ -3532,8 +3814,122 @@
                         removeFriendMarker(uidKey);
                     }
                 });
+                Object.keys(friendStatsCache).forEach(uidKey => {
+                    if (!currentFriendUids.has(uidKey)) delete friendStatsCache[uidKey];
+                });
+
+                renderRankingIfOpen();
+                refreshFriendFootprintsLayer();
             });
         }
+
+        // --- ランキング機能 ---
+        let friendStatsCache = {};
+        let currentRankingSort = 'cities';
+
+        window.openRanking = function () {
+            document.getElementById('ranking-modal').style.display = 'flex';
+            renderRanking();
+        };
+
+        window.closeRanking = function () {
+            document.getElementById('ranking-modal').style.display = 'none';
+        };
+
+        window.setRankingSort = function (sortKey) {
+            currentRankingSort = sortKey;
+            document.querySelectorAll('.ranking-sort-btn').forEach(btn => btn.classList.remove('active'));
+            const map = { cities: 0, badges: 1, coins: 2 };
+            const btns = document.querySelectorAll('.ranking-sort-btn');
+            if (btns[map[sortKey]]) btns[map[sortKey]].classList.add('active');
+            renderRanking();
+        };
+
+        function renderRankingIfOpen() {
+            const modal = document.getElementById('ranking-modal');
+            if (modal && modal.style.display === 'flex') renderRanking();
+        }
+
+        function renderRanking() {
+            const listEl = document.getElementById('ranking-list');
+            if (!listEl) return;
+
+            const myCityCount = new Set(appState.unlockedCities.map(c => c.code)).size;
+            const entries = [{
+                uid: '__me__',
+                nickname: (appState.nickname && appState.nickname.trim()) || 'あなた',
+                avatar: appState.avatar || '👤',
+                avatarImageUrl: appState.avatarImageUrl || '',
+                cityCount: myCityCount,
+                badgeCount: appState.unlockedBadges.length,
+                coins: appState.coins || 0,
+                isMe: true
+            }];
+
+            Object.keys(friendStatsCache).forEach(uid => {
+                const f = friendStatsCache[uid];
+                entries.push({
+                    uid,
+                    nickname: f.nickname,
+                    avatar: f.avatar,
+                    avatarImageUrl: f.avatarImageUrl,
+                    cityCount: f.cityCount,
+                    badgeCount: f.badgeCount,
+                    coins: f.coins,
+                    isMe: false
+                });
+            });
+
+            const sortField = currentRankingSort === 'badges' ? 'badgeCount' : (currentRankingSort === 'coins' ? 'coins' : 'cityCount');
+            entries.sort((a, b) => b[sortField] - a[sortField]);
+
+            const medals = ['🥇', '🥈', '🥉'];
+            listEl.innerHTML = '';
+            entries.forEach((e, idx) => {
+                const li = document.createElement('li');
+                li.className = `ranking-item ${e.isMe ? 'me' : ''}`;
+                const rankLabel = medals[idx] || `${idx + 1}`;
+                const avatarHtml = e.avatarImageUrl
+                    ? `<img src="${e.avatarImageUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+                    : e.avatar;
+                const valueLabel = sortField === 'badgeCount' ? `${e[sortField]}実績` : (sortField === 'coins' ? `${e[sortField]}🪙` : `${e[sortField]}都市`);
+                li.innerHTML = `
+                    <div class="rank-num">${rankLabel}</div>
+                    <div class="rank-avatar">${avatarHtml}</div>
+                    <div class="rank-name">${e.nickname}${e.isMe ? '（あなた）' : ''}</div>
+                    <div class="rank-value">${valueLabel}</div>
+                `;
+                listEl.appendChild(li);
+            });
+        }
+
+        // --- フレンドの足跡オーバーレイ ---
+        let friendFootprintMarkerList = [];
+
+        window.refreshFriendFootprintsLayer = function () {
+            if (typeof L === 'undefined' || !friendFootprintsLayer) return;
+            friendFootprintsLayer.clearLayers();
+            friendFootprintMarkerList = [];
+
+            if (!appState.showFriendFootprints) return;
+
+            Object.keys(friendStatsCache).forEach(uid => {
+                const f = friendStatsCache[uid];
+                (f.unlockedCities || []).forEach(city => {
+                    if (typeof city.lat !== 'number' || typeof city.lng !== 'number') return;
+                    const icon = L.divIcon({
+                        className: '',
+                        html: `<div style="width:9px; height:9px; background:#9b59b6; border:1.5px solid #ffffff; border-radius:50%; box-shadow:0 0 5px rgba(155,89,182,0.7);"></div>`,
+                        iconSize: [9, 9],
+                        iconAnchor: [4, 4]
+                    });
+                    const marker = L.marker([city.lat, city.lng], { icon })
+                        .addTo(friendFootprintsLayer)
+                        .bindPopup(`<b style="color:#111216;">👥 ${f.nickname}</b><br><span style="color:#333;">${city.cityName}</span>`);
+                    friendFootprintMarkerList.push(marker);
+                });
+            });
+        };
 
         // --- フレンドの位置情報監視 ---
         const friendLocationUnsubs = {};
