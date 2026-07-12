@@ -1226,6 +1226,7 @@
                     </svg>
                 </button>
                 <div class="map-overlay">
+                    <div id="pending-checkin-badge" style="display:none; background:rgba(255,159,67,0.95); color:#111216; font-size:0.68rem; font-weight:800; padding:5px 12px; border-radius:20px;"></div>
                     <div id="location-status" class="floating-status">READY TO EXPLORE</div>
                     <button class="btn" onclick="handleCheckIn()">📍 CHECK IN</button>
                 </div>
@@ -1462,6 +1463,7 @@
 
                     <div class="card">
                         <div class="card-title">🧭 UNLOCKED CITIES</div>
+                        <input id="city-search-input" type="text" placeholder="🔍 都市名で検索..." oninput="renderUnlockedCitiesList()" style="width:100%; background:#101116; border:1px solid #272a34; border-radius:8px; padding:9px 10px; color:#fff; font-size:0.8rem; margin-bottom:10px; box-sizing:border-box;">
                         <ul id="unlocked-cities-list"></ul>
                     </div>
                 </div>
@@ -1517,9 +1519,10 @@
                 <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v2h-5z"/></svg>
                 HISTORY
             </button>
-            <button class="nav-item" onclick="switchTab('profile', 'EXPLORER PROFILE')">
+            <button class="nav-item" onclick="switchTab('profile', 'EXPLORER PROFILE')" style="position:relative;">
                 <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                 PROFILE
+                <span id="nav-unread-badge" style="display:none; position:absolute; top:2px; right:calc(50% - 26px); background:#ff3b30; color:#fff; font-size:0.6rem; font-weight:800; min-width:16px; height:16px; border-radius:8px; align-items:center; justify-content:center; padding:0 3px;">0</span>
             </button>
             <button class="nav-item" onclick="switchTab('shop', 'TRAVEL SHOP')">
                 <svg viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h6v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/></svg>
@@ -1685,7 +1688,8 @@
             mailboxMigrated: false,
             locationSharingEnabled: false,
             streakMilestonesAwarded: [],
-            showFriendFootprints: false
+            showFriendFootprints: false,
+            pendingCheckins: []
         };
 
         // コイン報酬テーブル
@@ -2234,6 +2238,8 @@
                     initPrefSelector();
                     renderBadges();
                     updateUI();
+                    updatePendingCheckinBadge();
+                    processPendingCheckins(); // 前回オフラインのまま終了した保留中チェックインがあれば処理する
 
                     const today = new Date();
                     selectedDateStr = formatDateKey(today);
@@ -2726,76 +2732,18 @@
             document.getElementById('location-status').innerText = "📍 GPS取得中...";
 
             navigator.geolocation.getCurrentPosition(
-                async (position) => {
+                (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
-                    
-                    document.getElementById('location-status').innerText = "🔍 都市を特定中...";
 
-                    // 直線距離による都道府県の暫定推定（Nominatim失敗時のフォールバック用）
-                    let fallbackPrefId = "13";
-                    let minDist = 999;
-                    Object.keys(prefCoordinates).forEach(pId => {
-                        const coord = prefCoordinates[pId];
-                        const d = Math.sqrt(Math.pow(coord[0]-lat, 2) + Math.pow(coord[1]-lng, 2));
-                        if(d < minDist) {
-                            minDist = d;
-                            fallbackPrefId = pId;
-                        }
-                    });
-
-                    try {
-                        const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`;
-                        const res = await fetch(geoUrl, {
-                            headers: { 'Accept-Language': 'ja' }
-                        });
-                        if (!res.ok) throw new Error("ジオコーディング失敗");
-                        const geoData = await res.json();
-                        
-                        const address = geoData.address || {};
-
-                        // ① 都道府県は Nominatim の address.state（例:「東京都」「北海道」）と
-                        //    Nihon.json のマスタ名を突き合わせて特定する（直線距離より高精度）
-                        const detectedPrefName = address.state || "";
-                        let prefId = matchPrefIdByName(detectedPrefName) || fallbackPrefId;
-
-                        // ② 市区町村名候補を優先順位付きで収集
-                        //    政令指定都市の「区」は suburb / city_district に入ることが多いため、
-                        //    区名候補を city 候補より先に評価する
-                        const wardCandidate = address.suburb || address.city_district || "";
-                        const cityCandidate = address.city || address.town || address.village || address.island || "";
-
-                        const cities = nihonData[prefId] ? nihonData[prefId].city : [];
-                        let matchedCity = null;
-
-                        // 区名 + 市名の組み合わせ（例: 札幌市 + 中央区 → 札幌市中央区）を最優先で照合
-                        if (wardCandidate && cityCandidate) {
-                            const combined = `${cityCandidate}${wardCandidate}`;
-                            matchedCity = cities.find(c => c.city === combined || c.city.includes(combined));
-                        }
-                        // 区名のみでの完全一致（例: 中央区 単体で北区等と誤爆しないよう完全一致優先）
-                        if (!matchedCity && wardCandidate) {
-                            matchedCity = cities.find(c => c.city === wardCandidate);
-                        }
-                        // 市区町村名の完全一致を優先し、なければ部分一致にフォールバック
-                        if (!matchedCity && cityCandidate) {
-                            matchedCity = cities.find(c => c.city === cityCandidate)
-                                || cities.find(c => c.city.includes(cityCandidate) || cityCandidate.includes(c.city));
-                        }
-
-                        if (matchedCity) {
-                            unlockCity(prefId, matchedCity.city, matchedCity.citycode, lat, lng);
-                        } else {
-                            // 市区町村を特定できなかった場合はランダム解放せず、正直に失敗を伝える
-                            document.getElementById('location-status').innerText = "⚠️ 現在地の市区町村を特定できませんでした";
-                            showToast("⚠️ 市区町村を特定できませんでした。もう一度お試しください");
-                        }
-
-                    } catch (err) {
-                        console.warn("逆ジオコーディング失敗:", err);
-                        document.getElementById('location-status').innerText = "⚠️ 通信エラー：もう一度お試しください";
-                        showToast("⚠️ ジオコーディングに失敗しました");
+                    // オフライン時は逆ジオコーディング（Nominatim通信）ができないため、
+                    // 座標だけを端末に一時保存しておき、オンライン復帰時に自動でチェックインする
+                    if (!navigator.onLine) {
+                        queuePendingCheckIn(lat, lng);
+                        return;
                     }
+
+                    resolveAndUnlockAt(lat, lng);
                 },
                 (error) => {
                     // GPS取得自体が失敗/拒否された場合はランダム解放せず、原因を明示する
@@ -2811,6 +2759,128 @@
                 { enableHighAccuracy: true, timeout: 8000 }
             );
         }
+
+        // 指定した緯度経度を逆ジオコーディングし、該当する市区町村をチェックインする
+        // （オンライン時のGPSチェックイン・オフラインキューの再処理の両方から呼ばれる共通処理）
+        async function resolveAndUnlockAt(lat, lng) {
+            document.getElementById('location-status').innerText = "🔍 都市を特定中...";
+
+            // 直線距離による都道府県の暫定推定（Nominatim失敗時のフォールバック用）
+            let fallbackPrefId = "13";
+            let minDist = 999;
+            Object.keys(prefCoordinates).forEach(pId => {
+                const coord = prefCoordinates[pId];
+                const d = Math.sqrt(Math.pow(coord[0]-lat, 2) + Math.pow(coord[1]-lng, 2));
+                if(d < minDist) {
+                    minDist = d;
+                    fallbackPrefId = pId;
+                }
+            });
+
+            try {
+                const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`;
+                const res = await fetch(geoUrl, {
+                    headers: { 'Accept-Language': 'ja' }
+                });
+                if (!res.ok) throw new Error("ジオコーディング失敗");
+                const geoData = await res.json();
+                
+                const address = geoData.address || {};
+
+                // ① 都道府県は Nominatim の address.state（例:「東京都」「北海道」）と
+                //    Nihon.json のマスタ名を突き合わせて特定する（直線距離より高精度）
+                const detectedPrefName = address.state || "";
+                let prefId = matchPrefIdByName(detectedPrefName) || fallbackPrefId;
+
+                // ② 市区町村名候補を優先順位付きで収集
+                //    政令指定都市の「区」は suburb / city_district に入ることが多いため、
+                //    区名候補を city 候補より先に評価する
+                const wardCandidate = address.suburb || address.city_district || "";
+                const cityCandidate = address.city || address.town || address.village || address.island || "";
+
+                const cities = nihonData[prefId] ? nihonData[prefId].city : [];
+                let matchedCity = null;
+
+                // 区名 + 市名の組み合わせ（例: 札幌市 + 中央区 → 札幌市中央区）を最優先で照合
+                if (wardCandidate && cityCandidate) {
+                    const combined = `${cityCandidate}${wardCandidate}`;
+                    matchedCity = cities.find(c => c.city === combined || c.city.includes(combined));
+                }
+                // 区名のみでの完全一致（例: 中央区 単体で北区等と誤爆しないよう完全一致優先）
+                if (!matchedCity && wardCandidate) {
+                    matchedCity = cities.find(c => c.city === wardCandidate);
+                }
+                // 市区町村名の完全一致を優先し、なければ部分一致にフォールバック
+                if (!matchedCity && cityCandidate) {
+                    matchedCity = cities.find(c => c.city === cityCandidate)
+                        || cities.find(c => c.city.includes(cityCandidate) || cityCandidate.includes(c.city));
+                }
+
+                if (matchedCity) {
+                    unlockCity(prefId, matchedCity.city, matchedCity.citycode, lat, lng);
+                    return true;
+                } else {
+                    // 市区町村を特定できなかった場合はランダム解放せず、正直に失敗を伝える
+                    document.getElementById('location-status').innerText = "⚠️ 現在地の市区町村を特定できませんでした";
+                    showToast("⚠️ 市区町村を特定できませんでした。もう一度お試しください");
+                    return false;
+                }
+
+            } catch (err) {
+                console.warn("逆ジオコーディング失敗:", err);
+                document.getElementById('location-status').innerText = "⚠️ 通信エラー：もう一度お試しください";
+                showToast("⚠️ ジオコーディングに失敗しました");
+                return false;
+            }
+        }
+
+        // --- オフライン チェックインキュー ---
+        function queuePendingCheckIn(lat, lng) {
+            if (!Array.isArray(appState.pendingCheckins)) appState.pendingCheckins = [];
+            appState.pendingCheckins.push({ lat, lng, capturedAt: Date.now() });
+            saveData();
+            updatePendingCheckinBadge();
+            document.getElementById('location-status').innerText = "📡 オフライン：位置を保存しました";
+            showToast("📡 オフラインのため位置情報だけ保存しました。オンラインになったら自動でチェックインします");
+        }
+
+        // オンライン復帰時（またはアプリ起動時）に、保存しておいた座標をまとめてチェックインする
+        async function processPendingCheckins() {
+            if (!Array.isArray(appState.pendingCheckins) || appState.pendingCheckins.length === 0) return;
+            if (!navigator.onLine) return;
+
+            const queue = appState.pendingCheckins;
+            appState.pendingCheckins = [];
+            saveData();
+            updatePendingCheckinBadge();
+
+            showToast(`📡 オンラインに復帰しました。保留中の${queue.length}件をチェックインします`);
+
+            for (const item of queue) {
+                await resolveAndUnlockAt(item.lat, item.lng);
+                await new Promise(r => setTimeout(r, 400)); // Nominatimへの連続リクエストを避けるための小休止
+            }
+        }
+
+        function updatePendingCheckinBadge() {
+            const count = Array.isArray(appState.pendingCheckins) ? appState.pendingCheckins.length : 0;
+            const statusEl = document.getElementById('location-status');
+            if (count > 0 && statusEl && statusEl.innerText.indexOf('オフライン') === -1) {
+                // 他のステータス表示を上書きしないよう、バッジ的な補足だけ別要素があれば理想だが、
+                // ここでは簡易的にタイトルに件数を反映する
+            }
+            const pendingBadge = document.getElementById('pending-checkin-badge');
+            if (pendingBadge) {
+                if (count > 0) {
+                    pendingBadge.innerText = `📡 保留中のチェックイン: ${count}件`;
+                    pendingBadge.style.display = 'block';
+                } else {
+                    pendingBadge.style.display = 'none';
+                }
+            }
+        }
+
+        window.addEventListener('online', processPendingCheckins);
 
         // Nominatim の都道府県名（例:「東京都」「北海道」「大阪府」「京都府」）を
         // Nihon.json の name / short と突き合わせて prefId を返す
@@ -2991,6 +3061,37 @@
             return true;
         }
 
+        // 都市名で検索・絞り込みできる「UNLOCKED CITIES」一覧の描画
+        function renderUnlockedCitiesList() {
+            const listEl = document.getElementById('unlocked-cities-list');
+            if (!listEl) return;
+
+            const searchInput = document.getElementById('city-search-input');
+            const keyword = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+            listEl.innerHTML = '';
+
+            if (appState.unlockedCities.length === 0) {
+                listEl.innerHTML = '<li>No data. Start your adventure!</li>';
+                return;
+            }
+
+            const filtered = [...appState.unlockedCities].reverse().filter(item =>
+                !keyword || (item.cityName || '').toLowerCase().includes(keyword)
+            );
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = '<li style="color:#64748b;">「' + (searchInput ? searchInput.value : '') + '」に一致する都市はありません</li>';
+                return;
+            }
+
+            filtered.forEach(item => {
+                const li = document.createElement('li');
+                li.innerText = `✓  ${item.cityName} (${displayTimestamp(item)})`;
+                listEl.appendChild(li);
+            });
+        }
+
         function updateUI() {
             renderAllFootprintMarkers(); // 足跡マーカーは常に全件を反映し、絶対に消えないようにする
 
@@ -3005,19 +3106,7 @@
             const level = Math.floor(uniqueCount / 3) + 1;
             document.getElementById('profile-level').innerText = level;
 
-            const listEl = document.getElementById('unlocked-cities-list');
-            if(listEl) {
-                listEl.innerHTML = '';
-                if (appState.unlockedCities.length === 0) {
-                    listEl.innerHTML = '<li>No data. Start your adventure!</li>';
-                } else {
-                    [...appState.unlockedCities].reverse().forEach(item => {
-                        const li = document.createElement('li');
-                        li.innerText = `✓  ${item.cityName} (${displayTimestamp(item)})`;
-                        listEl.appendChild(li);
-                    });
-                }
-            }
+            renderUnlockedCitiesList();
 
             updateProfileHeader(uniqueCount);
             renderPrefAchievement();
@@ -3389,6 +3478,7 @@
             if (typeof appState.locationSharingEnabled !== 'boolean') appState.locationSharingEnabled = false;
             if (!Array.isArray(appState.streakMilestonesAwarded)) appState.streakMilestonesAwarded = [];
             if (typeof appState.showFriendFootprints !== 'boolean') appState.showFriendFootprints = false;
+            if (!Array.isArray(appState.pendingCheckins)) appState.pendingCheckins = [];
         }
 
         function resetAllData() {
@@ -3530,6 +3620,7 @@
             stopLocationSharing(false);
             releaseWakeLock();
             clearAllFriendLocationWatchers();
+            clearAllUnreadMessageWatchers();
             friendStatsCache = {};
             if (typeof friendFootprintsLayer !== 'undefined' && friendFootprintsLayer) friendFootprintsLayer.clearLayers();
             await fbSignOut(auth);
@@ -3759,6 +3850,7 @@
                 if (snapshot.empty) {
                     listEl.innerHTML = '<li style="color:#64748b; font-size:0.75rem;">まだフレンドがいません。コードで追加してみましょう。</li>';
                     clearAllFriendLocationWatchers();
+                    clearAllUnreadMessageWatchers();
                     friendStatsCache = {};
                     renderRankingIfOpen();
                     refreshFriendFootprintsLayer();
@@ -3804,6 +3896,7 @@
 
                     // このフレンドの位置情報のリアルタイム監視を開始（未開始なら）
                     watchFriendLocation(friendUid, fData);
+                    watchUnreadMessages(friendUid);
                 }
 
                 // フレンドではなくなった相手の監視・マーカー・キャッシュを片付ける
@@ -3812,6 +3905,7 @@
                         friendLocationUnsubs[uidKey]();
                         delete friendLocationUnsubs[uidKey];
                         removeFriendMarker(uidKey);
+                        clearUnreadMessageWatcher(uidKey);
                     }
                 });
                 Object.keys(friendStatsCache).forEach(uidKey => {
@@ -4076,6 +4170,53 @@
                 delete friendLocationUnsubs[uidKey];
                 removeFriendMarker(uidKey);
             });
+        }
+
+        // --- 未読メッセージのバッジ表示 ---
+        const unreadMsgUnsubs = {};
+        const unreadCounts = {};
+
+        function watchUnreadMessages(friendUid) {
+            if (unreadMsgUnsubs[friendUid] || !currentUser) return; // 既に監視中
+
+            const convId = getConversationId(currentUser.uid, friendUid);
+            const q = query(
+                collection(db, "conversations", convId, "messages"),
+                where("receiverId", "==", currentUser.uid),
+                where("read", "==", false)
+            );
+
+            unreadMsgUnsubs[friendUid] = onSnapshot(q, (snapshot) => {
+                unreadCounts[friendUid] = snapshot.size;
+                updateUnreadBadges();
+            }, () => { /* 権限エラー等は無視 */ });
+        }
+
+        function clearUnreadMessageWatcher(friendUid) {
+            if (unreadMsgUnsubs[friendUid]) {
+                unreadMsgUnsubs[friendUid]();
+                delete unreadMsgUnsubs[friendUid];
+            }
+            delete unreadCounts[friendUid];
+        }
+
+        function clearAllUnreadMessageWatchers() {
+            Object.keys(unreadMsgUnsubs).forEach(uidKey => clearUnreadMessageWatcher(uidKey));
+            updateUnreadBadges();
+        }
+
+        // ナビゲーションバーのPROFILEアイコンに未読メッセージ合計数のバッジを表示する
+        function updateUnreadBadges() {
+            const total = Object.values(unreadCounts).reduce((sum, n) => sum + n, 0);
+            const badge = document.getElementById('nav-unread-badge');
+            if (badge) {
+                if (total > 0) {
+                    badge.innerText = total > 99 ? '99+' : total;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
         }
 
         // --- 自分の位置情報共有 ---
