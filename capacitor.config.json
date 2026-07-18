@@ -1,0 +1,13 @@
+{
+  "appId": "com.tabi.adventure",
+  "appName": "旅アプリ",
+  "webDir": ".",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true
+  }
+}
