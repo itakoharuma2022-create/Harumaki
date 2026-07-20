@@ -1,7 +1,7 @@
 {
   "appId": "com.tabi.adventure",
   "appName": "旅アプリ",
-  "webDir": ".",
+  "webDir": "www",
   "server": {
     "androidScheme": "https"
   },
