@@ -29,6 +29,12 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Get SHA-1 fingerprint
+        run: |
+          keytool -list -v -keystore $ANDROID_HOME/debug.keystore -alias androiddebugkey -storepass android 2>&1 | grep SHA1 || \
+          keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android 2>&1 | grep SHA1 || \
+          echo "SHA1 not found in default keystores"
+
       - name: Copy web assets to www
         run: mkdir -p www && cp index.html manifest.json service-worker.js Nihon.json badges.json capacitor-bridge.js www/
 
