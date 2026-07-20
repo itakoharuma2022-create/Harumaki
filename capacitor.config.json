@@ -1,6 +1,6 @@
 {
-  "appId": "com.tabi.adventure",
-  "appName": "旅アプリ",
+  "appId": "com.infinity.travel",
+  "appName": "Infinity travel",
   "webDir": "www",
   "server": {
     "androidScheme": "https"
