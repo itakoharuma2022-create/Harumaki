@@ -3590,14 +3590,27 @@
             }
         };
 
-        window.handleGoogleSignIn = async function () {
-            try {
-                setAuthMsg("Googleログイン中...");
-                await signInWithPopup(auth, new GoogleAuthProvider());
-            } catch (e) {
-                setAuthMsg("⚠️ " + translateAuthError(e));
+        window.handleGoogleSignIn = async function() {
+    // Capacitor ネイティブ環境では Firebase Authentication プラグインを使用
+    if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+        try {
+            const { FirebaseAuthentication } = await import('@capacitor-firebase/authentication');
+            const result = await FirebaseAuthentication.signInWithGoogle();
+            if (result && result.credential) {
+                const credential = firebase.auth.GoogleAuthProvider.credential(
+                    result.credential.idToken
+                );
+                await firebase.auth().signInWithCredential(credential);
             }
-        };
+        } catch (e) {
+            console.warn('Capacitor Google Sign-In error:', e);
+            document.getElementById('auth-status-msg').innerText = '⚠️ ログインに失敗しました';
+        }
+        return;
+    }
+    // ブラウザ用: 既存のリダイレクトフロー
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithRedirect(provider);
 
         window.handleForgotPassword = async function () {
             const email = document.getElementById('auth-email').value.trim();
