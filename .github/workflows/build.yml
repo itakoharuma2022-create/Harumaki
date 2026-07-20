@@ -30,7 +30,7 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Copy web assets to www
-        run: mkdir -p www && cp index.html manifest.json service-worker.js Nihon.json badges.json capacitor-bridge.js www/
+        run: mkdir -p www && cp index.html manifest.json service-worker.js Nihon.json badges.json www/
 
       - name: Add Android platform
         run: npx cap add android
