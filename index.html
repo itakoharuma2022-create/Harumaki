@@ -3610,7 +3610,10 @@
     }
     // ブラウザ用: 既存のリダイレクトフロー
     const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithRedirect(provider);
+    firebase.auth().signInWithPopup(provider).catch(function(e) {
+        console.warn('Google Sign-In error:', e);
+        document.getElementById('auth-status-msg').innerText = '⚠️ ログインに失敗しました';
+    });
 
         window.handleForgotPassword = async function () {
             const email = document.getElementById('auth-email').value.trim();
