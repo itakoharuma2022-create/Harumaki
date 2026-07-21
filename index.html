@@ -3591,29 +3591,14 @@
         };
 
         window.handleGoogleSignIn = async function() {
-    // Capacitor ネイティブ環境では Firebase Authentication プラグインを使用
-    if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
-        try {
-            const { FirebaseAuthentication } = await import('@capacitor-firebase/authentication');
-            const result = await FirebaseAuthentication.signInWithGoogle();
-            if (result && result.credential) {
-                const credential = firebase.auth.GoogleAuthProvider.credential(
-                    result.credential.idToken
-                );
-                await firebase.auth().signInWithCredential(credential);
-            }
-        } catch (e) {
-            console.warn('Capacitor Google Sign-In error:', e);
-            document.getElementById('auth-status-msg').innerText = '⚠️ ログインに失敗しました';
-        }
-        return;
-    }
-    // ブラウザ用: 既存のリダイレクトフロー
+    // signInWithPopup を使用（ブラウザ・Capacitor 共通）
     const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider).catch(function(e) {
+    try {
+        await firebase.auth().signInWithPopup(provider);
+    } catch (e) {
         console.warn('Google Sign-In error:', e);
-        document.getElementById('auth-status-msg').innerText = '⚠️ ログインに失敗しました';
-    });
+        document.getElementById('auth-status-msg').innerText = '⚠️ ログインに失敗しました。メール認証をご利用ください。';
+    }
 
         window.handleForgotPassword = async function () {
             const email = document.getElementById('auth-email').value.trim();
