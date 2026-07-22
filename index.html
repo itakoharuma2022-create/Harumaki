@@ -3599,6 +3599,7 @@
         console.warn('Google Sign-In error:', e);
         document.getElementById('auth-status-msg').innerText = '⚠️ ログインに失敗しました。メール認証をご利用ください。';
     }
+        };
 
         window.handleForgotPassword = async function () {
             const email = document.getElementById('auth-email').value.trim();
