@@ -39,7 +39,7 @@ jobs:
         run: mkdir -p www && cp index.html manifest.json service-worker.js Nihon.json badges.json capacitor-bridge.js www/
 
       - name: Add Android platform
-        run: npx cap add android || echo "Android platform already exists, skipping"
+        run: npx cap add android
 
       - name: Copy google-services.json
         run: cp google-services.json android/app/
