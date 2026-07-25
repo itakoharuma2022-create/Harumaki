@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>全国位置情報・実績解除アプリ</title>
-
+    <>全国位置情報・実績解除アプリ</title>
+title
     <!-- PWA対応: ホーム画面に追加してアプリのように使えるようにする -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#111216">
@@ -2814,6 +2814,17 @@
                 if (!matchedCity && cityCandidate) {
                     matchedCity = cities.find(c => c.city === cityCandidate)
                         || cities.find(c => c.city.includes(cityCandidate) || cityCandidate.includes(c.city));
+                }
+
+                // フォールバック: 個別の町村名が見つからない場合、Nominatimの「郡」情報を使って
+                // 郡単位のデータ（例:「東茨城郡」）に一致すればそちらでチェックインする。
+                // Nihon.jsonには町村単位まで登録済みの都道府県もあれば、郡単位までしか
+                // 登録されていない都道府県もまだ残っているため、後者でも
+                // 「特定できませんでした」と失敗させないための保険。
+                if (!matchedCity && address.county) {
+                    const countyCandidate = address.county;
+                    matchedCity = cities.find(c => c.city === countyCandidate)
+                        || cities.find(c => c.city.includes(countyCandidate) || countyCandidate.includes(c.city));
                 }
 
                 if (matchedCity) {
