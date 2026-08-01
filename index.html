@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <>全国位置情報・実績解除アプリ</title>
-title
+    <title>全国位置情報・実績解除アプリ</title>
+
     <!-- PWA対応: ホーム画面に追加してアプリのように使えるようにする -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#111216">
@@ -2795,8 +2795,8 @@ title
                 // ② 市区町村名候補を優先順位付きで収集
                 //    政令指定都市の「区」は suburb / city_district に入ることが多いため、
                 //    区名候補を city 候補より先に評価する
-                const wardCandidate = address.suburb || address.city_district || "";
-                const cityCandidate = address.city || address.town || address.village || address.island || "";
+                const wardCandidate = (address.suburb || address.city_district || "").trim();
+                const cityCandidate = (address.city || address.town || address.village || address.island || "").trim();
 
                 const cities = nihonData[prefId] ? nihonData[prefId].city : [];
                 let matchedCity = null;
@@ -2831,9 +2831,13 @@ title
                     unlockCity(prefId, matchedCity.city, matchedCity.citycode, lat, lng);
                     return true;
                 } else {
-                    // 市区町村を特定できなかった場合はランダム解放せず、正直に失敗を伝える
+                    // 市区町村を特定できなかった場合はランダム解放せず、正直に失敗を伝える。
+                    // 原因究明のため、Nominatimが実際に返した住所要素をそのまま表示する
+                    // （3秒で消えるトーストだと読み切れないため、確実に読めるalertで表示）。
+                    const debugInfo = `検出された都道府県: ${prefId}\n市区町村候補: "${cityCandidate}"\n区候補: "${wardCandidate}"\n郡: "${address.county || 'なし'}"`;
+                    console.warn("チェックイン特定失敗の詳細:", address);
                     document.getElementById('location-status').innerText = "⚠️ 現在地の市区町村を特定できませんでした";
-                    showToast("⚠️ 市区町村を特定できませんでした。もう一度お試しください");
+                    alert("⚠️ 市区町村を特定できませんでした\n\n" + debugInfo + "\n\nこの内容をClaudeに伝えていただければ原因を調査できます。");
                     return false;
                 }
 
