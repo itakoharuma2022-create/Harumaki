@@ -14,9 +14,8 @@ const APP_SHELL = [
   './index.html',
   './Nihon.json',
   './badges.json',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+  './manifest.json'
+  // アイコン画像 (icon-192.png, icon-512.png) の記述を削除しました
 ];
 
 self.addEventListener('install', (event) => {
@@ -47,16 +46,10 @@ self.addEventListener('fetch', (event) => {
                          url.includes('jsdelivr.net');
 
   if (isExternalApi || event.request.method !== 'GET') {
-    return; // これらはService Workerを介さず通常通り処理する
+    return; // これらはService Workerをバイパスして通常通り通信させる
   }
 
   event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-        return response;
-      })
-      .catch(() => caches.match(event.request))
+    fetch(event.request).catch(() => caches.match(event.request))
   );
 });
