@@ -5,8 +5,15 @@
 
   async function startBg() {
     try {
-      var mod = await import('@capacitor-community/background-geolocation');
-      await mod.BackgroundGeolocation.addWatcher(
+      // import() を使わず、Capacitorが自動注入するグローバルオブジェクトから取得
+      var BackgroundGeolocation = window.Capacitor.Plugins.BackgroundGeolocation;
+      
+      if (!BackgroundGeolocation) {
+        console.warn('[CapacitorBridge] BackgroundGeolocation プラグインが見つかりません');
+        return;
+      }
+
+      await BackgroundGeolocation.addWatcher(
         {
           backgroundMessage: '位置情報を取得中...',
           backgroundTitle: '旅アプリ',
@@ -33,15 +40,19 @@
         }
       );
     } catch (e) {
-      console.warn('[CapacitorBridge]', e);
+      console.warn('[CapacitorBridge] 位置情報の監視開始エラー:', e);
     }
   }
 
   async function stopBg() {
     try {
-      var mod = await import('@capacitor-community/background-geolocation');
-      await mod.BackgroundGeolocation.removeAllWatchers();
-    } catch (e) {}
+      var BackgroundGeolocation = window.Capacitor.Plugins.BackgroundGeolocation;
+      if (BackgroundGeolocation) {
+        await BackgroundGeolocation.removeAllWatchers();
+      }
+    } catch (e) {
+      console.warn('[CapacitorBridge] 位置情報の監視停止エラー:', e);
+    }
   }
 
   var orig = window.toggleLocationSharing;
@@ -50,5 +61,5 @@
     if (on) startBg(); else stopBg();
   };
 
-  window.CapacitorBridge = { start: startBg, stop: stopBg, isNative: true };
+  window.CapacitorBridge = { startBg: startBg, stopBg: stopBg };
 })();
