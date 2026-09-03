@@ -1260,7 +1260,68 @@
         #map, .leaflet-container { background: #eef3f7 !important; }
         .leaflet-control-attribution { background: rgba(255,255,255,.88) !important; color: #5f6368 !important; }
 
-    </style>
+    
+
+/* ===== Unified Light Theme v2 ===== */
+:root {
+  --bg: #f7f8fa;
+  --surface: #ffffff;
+  --surface-alt: #f1f3f4;
+  --text: #202124;
+  --muted: #6b7280;
+  --border: #dadce0;
+  --shadow: 0 1px 3px rgba(60,64,67,.16), 0 2px 6px rgba(60,64,67,.08);
+  --c-blue:#1a73e8; --c-purple:#9334e6; --c-orange:#f29900;
+  --c-green:#188038; --c-red:#d93025; --c-yellow:#f9ab00; --c-teal:#12b5cb;
+}
+html, body { background:#f7f8fa !important; color:#202124 !important; }
+body *, body *::before, body *::after { border-color:#dadce0; }
+/* remove dark-map filter completely */
+.leaflet-tile-pane { filter:none !important; }
+/* primary page chrome */
+.header, .top-header, header, .bottom-nav, .nav-bar, .page-header,
+.tab-header, .tab-bar { background:#fff !important; color:#202124 !important; border-color:#dadce0 !important; }
+/* cards, panels and all legacy dark inline panels */
+.card, .modal-content, .settings-modal-content, .shop-item, .badge-card,
+.calendar-container, .history-card, .friend-card, .profile-card,
+[class*="card"], [class*="panel"], [class*="section"] {
+  background:#fff !important; color:#202124 !important; border-color:#dadce0 !important;
+  box-shadow:var(--shadow) !important;
+}
+[style*="background:#101116"], [style*="background: #101116"],
+[style*="background:#111216"], [style*="background: #111216"],
+[style*="background:#14151c"], [style*="background: #14151c"],
+[style*="background:#181920"], [style*="background: #181920"],
+[style*="background:#1c1e26"], [style*="background: #1c1e26"],
+[style*="background:#1e202a"], [style*="background: #1e202a"] {
+  background:#fff !important; color:#202124 !important; border-color:#dadce0 !important;
+}
+/* inputs and selects */
+input, select, textarea, .input, .search-input {
+  background:#fff !important; color:#202124 !important; border-color:#dadce0 !important;
+}
+input::placeholder, textarea::placeholder { color:#80868b !important; opacity:1; }
+/* readable text across legacy components */
+.card *, .modal-content *, .settings-modal-content *, .shop-item *, .badge-card *,
+.history-card *, .friend-card *, .profile-card * { color:inherit; }
+.muted, .subtext, .secondary-text, small { color:#6b7280 !important; }
+/* restore semantic accents */
+.btn, .checkin-btn, button.primary { background:#1a73e8 !important; color:#fff !important; border-color:#1a73e8 !important; }
+button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important; color:#202124 !important; border-color:#dadce0 !important; }
+.toggle input:checked + .slider, .switch input:checked + .slider { background:#188038 !important; }
+/* bottom navigation accents */
+.bottom-nav .nav-item.active, .nav-item.active { color:#1a73e8 !important; }
+#tab-badges.active, .nav-item[data-tab="badges"].active { color:#9334e6 !important; }
+#tab-history.active, .nav-item[data-tab="history"].active { color:#f29900 !important; }
+#tab-profile.active, .nav-item[data-tab="profile"].active { color:#188038 !important; }
+#tab-shop.active, .nav-item[data-tab="shop"].active { color:#12b5cb !important; }
+/* map container must remain neutral and white around the map */
+#map, .map-container { background:#fff !important; }
+.leaflet-container { background:#fff !important; }
+.leaflet-control, .leaflet-popup-content-wrapper, .leaflet-popup-tip { background:#fff !important; color:#202124 !important; }
+/* achievement/shop tiles: no dark legacy backgrounds */
+.badge-item, .achievement-item, .shop-item, .cosmetic-item { background:#fff !important; color:#202124 !important; }
+</style>
 
 </head>
 <body>
@@ -2349,7 +2410,7 @@
         function initMap() {
             map = L.map('map', { zoomControl: false }).setView([36.5, 137.5], 5);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap &copy; CARTO'
+                attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
             
             markersGroup = L.layerGroup().addTo(map);
