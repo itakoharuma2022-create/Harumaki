@@ -51,4 +51,4 @@
   };
 
   window.CapacitorBridge = { start: startBg, stop: stopBg, isNative: true };
-})();
+})(); 
