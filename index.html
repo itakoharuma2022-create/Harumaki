@@ -1208,6 +1208,58 @@
         .nav-item { color: var(--muted) !important; }
         .nav-item.active { color: var(--accent-color) !important; }
 
+        /* v7 unified seven-color light theme */
+        :root {
+            --c-blue: #1a73e8;
+            --c-red: #ea4335;
+            --c-yellow: #fbbc04;
+            --c-green: #34a853;
+            --c-purple: #a142f4;
+            --c-teal: #12b5cb;
+            --c-orange: #fa7b17;
+            --accent-color: var(--c-blue);
+            --bg: #f8f9fa;
+            --surface: #ffffff;
+            --surface-alt: #f1f3f4;
+            --text: #202124;
+            --muted: #5f6368;
+            --border: #dadce0;
+        }
+
+        /* App shell */
+        body, #app, .app-shell, .tab-content { background: var(--bg) !important; color: var(--text) !important; }
+        .top-header, header, .bottom-nav, .nav-bar, .page-header { background: var(--surface) !important; color: var(--text) !important; border-color: var(--border) !important; }
+        .card, .profile-card, .modal-content, .settings-modal-content, .shop-item, .friend-item,
+        .mail-item, .avatar-picker, .travel-stat-cell, .friend-detail-stat, .calendar-container {
+            background: var(--surface) !important; color: var(--text) !important; border-color: var(--border) !important;
+        }
+        .card *, .profile-card *, .friend-item *, .mail-item *, .shop-item * { border-color: var(--border); }
+        .card-title, h1, h2, h3, .tab-title, .modal-title, .friend-name, .mail-title,
+        .friend-detail-stat .num, .travel-stat-cell .num { color: var(--text) !important; }
+        .card p, .subtitle, .muted, .friend-stats, .mail-body, .friend-detail-stat .label,
+        .travel-stat-cell .label { color: var(--muted) !important; }
+        input, textarea, select, .input, .friend-code-input {
+            background: #fff !important; color: var(--text) !important; border-color: var(--border) !important;
+        }
+
+        /* Seven colors used consistently by feature */
+        .btn, .checkin-btn { background: var(--c-blue) !important; }
+        .badge, .badge-card, .achievement, .level-badge { border-color: var(--c-yellow) !important; }
+        .coin, .streak, .streak-value { color: var(--c-orange) !important; }
+        .online, .success, .toggle input:checked + .slider, .switch input:checked + .slider { background: var(--c-green) !important; }
+        .mail-badge, .notification-badge, .danger { background: var(--c-red) !important; }
+        .shop-item.featured, .theme-purple { border-color: var(--c-purple) !important; }
+        .friend-marker, .theme-teal { color: var(--c-teal) !important; }
+        .nav-item:nth-child(1).active { color: var(--c-blue) !important; }
+        .nav-item:nth-child(2).active { color: var(--c-purple) !important; }
+        .nav-item:nth-child(3).active { color: var(--c-orange) !important; }
+        .nav-item:nth-child(4).active { color: var(--c-green) !important; }
+        .nav-item:nth-child(5).active { color: var(--c-red) !important; }
+
+        /* Keep map truly light */
+        #map, .leaflet-container { background: #eef3f7 !important; }
+        .leaflet-control-attribution { background: rgba(255,255,255,.88) !important; color: #5f6368 !important; }
+
     </style>
 
 </head>
@@ -2296,7 +2348,7 @@
 
         function initMap() {
             map = L.map('map', { zoomControl: false }).setView([36.5, 137.5], 5);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap &copy; CARTO'
             }).addTo(map);
             
