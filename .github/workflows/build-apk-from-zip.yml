@@ -1,0 +1,89 @@
+name: Build Harumaki APK from ZIP
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+    paths:
+      - '**.zip'
+      - '.github/workflows/build-apk-from-zip.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find and extract Android project ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP_FILE="$(find . -maxdepth 3 -type f -iname '*Harumaki*APK*.zip' | head -n 1)"
+          if [ -z "${ZIP_FILE}" ]; then
+            ZIP_FILE="$(find . -maxdepth 3 -type f -iname '*.zip' | head -n 1)"
+          fi
+          if [ -z "${ZIP_FILE}" ]; then
+            echo 'ERROR: No ZIP file was found in this repository.'
+            exit 1
+          fi
+          echo "Using ZIP: ${ZIP_FILE}"
+          rm -rf extracted
+          mkdir -p extracted
+          unzip -q "${ZIP_FILE}" -d extracted
+          PROJECT_DIR="$(find extracted -type f \( -name settings.gradle -o -name settings.gradle.kts \) -printf '%h\n' | head -n 1)"
+          if [ -z "${PROJECT_DIR}" ]; then
+            echo 'ERROR: Android project settings.gradle was not found inside the ZIP.'
+            find extracted -maxdepth 5 -type f | sort
+            exit 1
+          fi
+          echo "PROJECT_DIR=${PROJECT_DIR}" >> "$GITHUB_ENV"
+          echo "Android project: ${PROJECT_DIR}"
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build debug APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          GRADLE_VERSION=8.13
+          curl -fsSL "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" -o gradle.zip
+          unzip -q gradle.zip
+          "./gradle-${GRADLE_VERSION}/bin/gradle" :app:assembleDebug --no-daemon --stacktrace
+
+      - name: Collect APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifact-apk
+          find extracted -type f -name '*.apk' -print | sort
+          APK_FILE="$(find extracted -type f -path '*/build/outputs/apk/debug/*.apk' | head -n 1)"
+          if [ -z "${APK_FILE}" ]; then
+            APK_FILE="$(find extracted -type f -name '*.apk' | head -n 1)"
+          fi
+          if [ -z "${APK_FILE}" ]; then
+            echo 'ERROR: APK was not generated.'
+            exit 1
+          fi
+          cp "${APK_FILE}" artifact-apk/Harumaki-debug.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Harumaki-APK
+          path: artifact-apk/Harumaki-debug.apk
+          if-no-files-found: error
+          retention-days: 30
