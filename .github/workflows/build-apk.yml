@@ -1,0 +1,90 @@
+name: Build Harumaki APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find ZIP file
+        run: |
+          echo "Repository files:"
+          ls -la
+          ZIP_FILE=$(find . -maxdepth 1 -type f -iname "*.zip" | head -n 1)
+
+          if [ -z "$ZIP_FILE" ]; then
+            echo "ERROR: ZIP file was not found."
+            exit 1
+          fi
+
+          echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_ENV
+
+      - name: Extract Android project
+        run: |
+          mkdir extracted-project
+          unzip "$ZIP_FILE" -d extracted-project
+          echo "Extracted files:"
+          find extracted-project -maxdepth 4 -type f | head -n 100
+
+      - name: Find Android project
+        run: |
+          PROJECT_DIR=$(find extracted-project -type f \( -name "settings.gradle" -o -name "settings.gradle.kts" \) -printf '%h\n' | head -n 1)
+
+          if [ -z "$PROJECT_DIR" ]; then
+            echo "ERROR: Android project settings.gradle was not found."
+            exit 1
+          fi
+
+          echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
+          echo "Android project found at: $PROJECT_DIR"
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build APK
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          if [ -f "./gradlew" ]; then
+            chmod +x ./gradlew
+            ./gradlew assembleDebug --stacktrace
+          else
+            gradle assembleDebug --stacktrace
+          fi
+
+      - name: Find generated APK
+        run: |
+          mkdir -p artifact-apk
+
+          find "$PROJECT_DIR" \
+            -type f \
+            -name "*.apk" \
+            -not -path "*/intermediates/*" \
+            -exec cp {} artifact-apk/ \;
+
+          echo "APK files:"
+          find artifact-apk -type f -name "*.apk"
+
+          APK_COUNT=$(find artifact-apk -type f -name "*.apk" | wc -l)
+
+          if [ "$APK_COUNT" -eq 0 ]; then
+            echo "ERROR: No APK was generated."
+            exit 1
+          fi
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v5
+        with:
+          name: Harumaki-APK
+          path: artifact-apk/*.apk
+          if-no-files-found: error
