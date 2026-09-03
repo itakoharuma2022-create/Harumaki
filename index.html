@@ -1321,6 +1321,14 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
 .leaflet-control, .leaflet-popup-content-wrapper, .leaflet-popup-tip { background:#fff !important; color:#202124 !important; }
 /* achievement/shop tiles: no dark legacy backgrounds */
 .badge-item, .achievement-item, .shop-item, .cosmetic-item { background:#fff !important; color:#202124 !important; }
+
+        /* --- 未解放市町村アラート --- */
+        #checkin-btn.unlock-available {
+            animation: unlockPulse 1.2s ease-in-out infinite;
+            background: linear-gradient(135deg, #16a34a, #22c55e) !important;
+            box-shadow: 0 0 0 4px rgba(34,197,94,.16), 0 10px 24px rgba(22,163,74,.28) !important;
+        }
+        @keyframes unlockPulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.025); } }
 </style>
 
 </head>
@@ -1361,7 +1369,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                 <div class="map-overlay">
                     <div id="pending-checkin-badge" style="display:none; background:rgba(255,159,67,0.95); color:#111216; font-size:0.68rem; font-weight:800; padding:5px 12px; border-radius:20px;"></div>
                     <div id="location-status" class="floating-status">READY TO EXPLORE</div>
-                    <button class="btn" onclick="handleCheckIn()">📍 CHECK IN</button>
+                    <button id="checkin-btn" class="btn" onclick="handleCheckIn()">📍 CHECK IN</button>
                 </div>
             </div>
 
@@ -2372,6 +2380,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                     renderBadges();
                     updateUI();
                     updatePendingCheckinBadge();
+                    startUnlockAlertMonitoring();
                     processPendingCheckins(); // 前回オフラインのまま終了した保留中チェックインがあれば処理する
 
                     const today = new Date();
@@ -2832,6 +2841,37 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
         // 取り残されて見える不具合があった）。
         let followMeEnabled = false;
 
+        // --- 位置情報取得: 高精度 → 通常精度のフォールバック ---
+        // 高精度GPSが一定時間内に取得できない場合、通常精度で再試行する。
+        // 権限拒否は再試行せず、そのまま呼び出し元へ返す。
+        function getCurrentPositionWithFallback(onSuccess, onError) {
+            if (!navigator.geolocation) {
+                onError({ code: 0, message: 'Geolocation is not supported' });
+                return;
+            }
+
+            const tryLowAccuracy = () => {
+                navigator.geolocation.getCurrentPosition(
+                    onSuccess,
+                    onError,
+                    { enableHighAccuracy: false, maximumAge: 30000, timeout: 15000 }
+                );
+            };
+
+            navigator.geolocation.getCurrentPosition(
+                onSuccess,
+                (error) => {
+                    if (error && error.code === error.PERMISSION_DENIED) {
+                        onError(error);
+                        return;
+                    }
+                    // タイムアウト・位置取得不能時のみ通常精度へフォールバック
+                    tryLowAccuracy();
+                },
+                { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 }
+            );
+        }
+
         function recenterToMyLocation() {
             if (!navigator.geolocation) {
                 showToast('⚠️ この端末では位置情報を利用できません');
@@ -2842,7 +2882,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             followMeEnabled = true; // 以後、自分が地図を操作するまでカメラが追従する
             if (btn) btn.classList.add('following');
 
-            navigator.geolocation.getCurrentPosition(
+            getCurrentPositionWithFallback(
                 (position) => {
                     if (btn) btn.classList.remove('locating');
                     const lat = position.coords.latitude;
@@ -2864,7 +2904,6 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                     }
                     showToast(msg);
                 },
-                { enableHighAccuracy: true, timeout: 8000 }
             );
         }
 
@@ -2880,7 +2919,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
 
             document.getElementById('location-status').innerText = "📍 GPS取得中...";
 
-            navigator.geolocation.getCurrentPosition(
+            getCurrentPositionWithFallback(
                 (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
@@ -2905,9 +2944,75 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                     document.getElementById('location-status').innerText = msg;
                     showToast(msg);
                 },
-                { enableHighAccuracy: true, timeout: 8000 }
             );
         }
+
+        // --- 未解放市町村 接近アラート ---
+        let unlockAlertState = { pendingCode: null, pendingCityName: '', reminderId: null, lastCheckMs: 0, lastLat: null, lastLng: null, notifiedCodes: new Set() };
+        const UNLOCK_ALERT_CHECK_INTERVAL_MS = 45000;
+        const UNLOCK_ALERT_REMINDER_MS = 30000;
+
+        function setUnlockAvailableAlert(cityName, code) {
+            if (unlockAlertState.pendingCode === code) return;
+            clearUnlockAvailableAlert();
+            unlockAlertState.pendingCode = code;
+            unlockAlertState.pendingCityName = cityName;
+            const btn = document.getElementById('checkin-btn');
+            if (btn) { btn.classList.add('unlock-available'); btn.innerText = `📍 ${cityName} を解放！ CHECK IN`; }
+            const status = document.getElementById('location-status');
+            if (status) status.innerText = `🎉 新しい市町村：${cityName}`;
+            if (navigator.vibrate) navigator.vibrate([180, 90, 180]);
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('新しい市町村を解放できます！', { body: `${cityName} にいます。CHECK INをお忘れなく！`, tag: `unlock-${code}`, renotify: true });
+            }
+            showToast(`🎉 ${cityName} を解放できます！`);
+            unlockAlertState.reminderId = setInterval(() => {
+                if (!unlockAlertState.pendingCode) return;
+                if (navigator.vibrate && document.visibilityState === 'visible') navigator.vibrate([120, 80, 120]);
+                showToast(`📍 ${unlockAlertState.pendingCityName} をCHECK INできます`);
+            }, UNLOCK_ALERT_REMINDER_MS);
+        }
+
+        function clearUnlockAvailableAlert() {
+            if (unlockAlertState.reminderId) clearInterval(unlockAlertState.reminderId);
+            unlockAlertState.reminderId = null;
+            unlockAlertState.pendingCode = null;
+            unlockAlertState.pendingCityName = '';
+            const btn = document.getElementById('checkin-btn');
+            if (btn) { btn.classList.remove('unlock-available'); btn.innerText = '📍 CHECK IN'; }
+        }
+
+        async function detectUnlockableMunicipality(lat, lng) {
+            const now = Date.now();
+            if (now - unlockAlertState.lastCheckMs < UNLOCK_ALERT_CHECK_INTERVAL_MS) return;
+            unlockAlertState.lastCheckMs = now;
+            if (!navigator.onLine || !nihonData) return;
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`, { headers:{'Accept-Language':'ja'} });
+                if (!res.ok) return;
+                const address = (await res.json()).address || {};
+                const prefId = matchPrefIdByName(address.state || '');
+                const cities = prefId && nihonData[prefId] ? nihonData[prefId].city : [];
+                const ward = (address.suburb || address.city_district || '').trim();
+                const city = (address.city || address.town || address.village || address.island || '').trim();
+                let found = null;
+                if (ward && city) { const combined = `${city}${ward}`; found = cities.find(c => c.city === combined || c.city.includes(combined)); }
+                if (!found && ward) found = cities.find(c => c.city === ward);
+                if (!found && city) found = cities.find(c => c.city === city) || cities.find(c => c.city.includes(city) || city.includes(c.city));
+                if (!found && address.county) found = cities.find(c => c.city === address.county) || cities.find(c => c.city.includes(address.county) || address.county.includes(c.city));
+                if (!found) { clearUnlockAvailableAlert(); return; }
+                const unlocked = appState.unlockedCities.some(c => c.code === found.citycode);
+                if (!unlocked) setUnlockAvailableAlert(found.city, found.citycode);
+                else clearUnlockAvailableAlert();
+            } catch (e) { console.warn('未解放市町村の確認に失敗:', e); }
+        }
+
+        // 通知はブラウザ仕様上、ユーザー操作をきっかけに許可を求める。
+        window.addEventListener('pointerdown', () => {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().catch(() => {});
+            }
+        }, { once: true });
 
         // 指定した緯度経度を逆ジオコーディングし、該当する市区町村をチェックインする
         // （オンライン時のGPSチェックイン・オフラインキューの再処理の両方から呼ばれる共通処理）
@@ -3110,6 +3215,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             const timestamp = targetedDate ? targetedDate : formatDateTimeSeconds(now);
 
             const alreadyUnlocked = appState.unlockedCities.some(c => c.code === code);
+            if (unlockAlertState.pendingCode === code) clearUnlockAvailableAlert();
             
             if (!alreadyUnlocked) {
                 appState.unlockedCities.push({ prefId, cityName, code, lat, lng, date: dateStr, timestamp });
@@ -4408,6 +4514,17 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             }
         }
 
+        // チェックイン忘れ防止用。位置共有がOFFでも未解放市町村を検知する。
+        let unlockAlertWatchId = null;
+        function startUnlockAlertMonitoring() {
+            if (!navigator.geolocation || unlockAlertWatchId !== null) return;
+            unlockAlertWatchId = navigator.geolocation.watchPosition(
+                pos => detectUnlockableMunicipality(pos.coords.latitude, pos.coords.longitude),
+                err => console.warn('未解放市町村監視の位置情報取得失敗:', err),
+                { enableHighAccuracy: true, maximumAge: 30000, timeout: 30000 }
+            );
+        }
+
         // --- 自分の位置情報共有 ---
         let myLocationWatchId = null;
         let lastLocationWriteMs = 0;
@@ -4478,6 +4595,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                     lastKnownSpeedKmh = instantSpeedKmh;
                     updateMyLiveMarker(position.coords.latitude, position.coords.longitude, instantSpeedKmh);
                     appendToMyTrail(position.coords.latitude, position.coords.longitude);
+                    detectUnlockableMunicipality(position.coords.latitude, position.coords.longitude);
 
                     const now = Date.now();
                     if (now - lastLocationWriteMs < LOCATION_WRITE_THROTTLE_MS) return;
@@ -4959,4 +5077,3 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
     <script src="capacitor-bridge.js"></script>    
 </body>
 </html>
- 
