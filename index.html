@@ -2445,46 +2445,45 @@
             polylineGroup.clearLayers();
 
             const filteredCities = appState.unlockedCities.filter(item => item.date === selectedDateStr);
+            const statusEl = document.getElementById('location-status');
+            const historyTrail = (typeof window.loadTrailHistoryForDate === 'function')
+                ? window.loadTrailHistoryForDate(selectedDateStr) : [];
 
-            if (filteredCities.length === 0) {
-                document.getElementById('location-status').innerText = `${selectedDateStr} : 記録なし`;
-                return;
-            }
-
-            document.getElementById('location-status').innerText = `${selectedDateStr} のルート`;
-
-            // GPS軌跡があれば従来の「チェックイン地点の直線結び」より優先する。
-            const historyTrail = loadTrailHistoryForDate(selectedDateStr);
+            // GPS軌跡があれば、チェックイン地点の有無に関係なく最優先で表示する。
             if (historyTrail.length >= 2) {
-                L.polyline(historyTrail, { color: 'var(--trail-color)', weight: 4, opacity: 0.9, lineJoin: 'round', lineCap: 'round' }).addTo(polylineGroup);
-                document.getElementById('location-status').innerText = `${selectedDateStr} のGPS軌跡`;
+                L.polyline(historyTrail, { color: getComputedStyle(document.documentElement).getPropertyValue('--trail-color').trim() || '#4da6ff', weight: 4, opacity: 0.9, lineJoin: 'round', lineCap: 'round' }).addTo(polylineGroup);
+                if (statusEl) statusEl.innerText = `${selectedDateStr} のGPS軌跡`;
                 if (autoFit) map.fitBounds(L.latLngBounds(historyTrail), { padding: [30, 30] });
                 return;
             }
-            // ローカルに無い場合はログイン済みならFirestoreの過去日データを取得して再描画。
-            const requestedTrailDate = selectedDateStr;
-            loadTrailHistoryFromFirestore(requestedTrailDate).then(points => {
-                if (points.length >= 2 && requestedTrailDate === selectedDateStr) {
-                    localStorage.setItem(MY_TRAIL_HISTORY_PREFIX + requestedTrailDate, JSON.stringify({ version:1, dateKey:requestedTrailDate, points, updatedAt:Date.now() }));
-                    if (polylineGroup) { polylineGroup.clearLayers(); L.polyline(points, { color:'var(--trail-color)', weight:4, opacity:.9, lineJoin:'round', lineCap:'round' }).addTo(polylineGroup); }
-                }
-            });
 
+            // ローカルに無い場合は、ログイン済みならFirestoreの過去日データを取得して再描画。
+            if (typeof window.loadTrailHistoryFromFirestore === 'function') {
+                const requestedTrailDate = selectedDateStr;
+                window.loadTrailHistoryFromFirestore(requestedTrailDate).then(points => {
+                    if (points.length >= 2 && requestedTrailDate === selectedDateStr) {
+                        localStorage.setItem('geo_nihon_my_trail_day_v1:' + requestedTrailDate, JSON.stringify({ version: 1, dateKey: requestedTrailDate, points, updatedAt: Date.now() }));
+                        if (polylineGroup) {
+                            polylineGroup.clearLayers();
+                            L.polyline(points, { color: getComputedStyle(document.documentElement).getPropertyValue('--trail-color').trim() || '#4da6ff', weight: 4, opacity: 0.9, lineJoin: 'round', lineCap: 'round' }).addTo(polylineGroup);
+                        }
+                        if (statusEl) statusEl.innerText = `${requestedTrailDate} のGPS軌跡`;
+                        if (autoFit) map.fitBounds(L.latLngBounds(points), { padding: [30, 30] });
+                    }
+                }).catch(() => {});
+            }
+
+            if (filteredCities.length === 0) {
+                if (statusEl) statusEl.innerText = `${selectedDateStr} : 記録なし`;
+                return;
+            }
+
+            if (statusEl) statusEl.innerText = `${selectedDateStr} のルート`;
             if (filteredCities.length >= 2) {
                 const coords = filteredCities.map(item => [item.lat, item.lng]);
-                L.polyline(coords, {
-                    color: '#ff3b30',
-                    weight: 3.5,
-                    opacity: 0.9,
-                    dashArray: '5, 5',
-                    lineJoin: 'round'
-                }).addTo(polylineGroup);
-
-                if (autoFit) {
-                    const bounds = L.latLngBounds(coords);
-                    map.fitBounds(bounds, { padding: [30, 30], maxZoom: 13, animate: true });
-                }
-            } else if (filteredCities.length === 1 && autoFit) {
+                L.polyline(coords, { color: '#ff3b30', weight: 3.5, opacity: 0.9, dashArray: '5, 5', lineJoin: 'round' }).addTo(polylineGroup);
+                if (autoFit) map.fitBounds(L.latLngBounds(coords), { padding: [30, 30], maxZoom: 13, animate: true });
+            } else if (autoFit) {
                 map.setView([filteredCities[0].lat, filteredCities[0].lng], 12, { animate: true });
             }
         }
@@ -4447,7 +4446,7 @@
             if (!currentUser || !dateKey || !Array.isArray(points) || points.length === 0) return;
             try {
                 // 日単位サブコレクションに分割。1日の巨大軌跡でユーザードキュメントを壊さない。
-                const ref = doc(db, 'users', currentUser.uid, 'trailDays', dateKey);
+                const ref = doc(db, 'users', currentUser.uid, 'trailDays', dateKey.replaceAll('/', '-'));
                 const packed = points.slice(-TRAIL_HISTORY_MAX_POINTS_PER_DAY).map((p, i) => ({ lat: p[0], lng: p[1], i }));
                 await setDoc(ref, { version: 1, dateKey, trail: packed, updatedAtMs: Date.now(), updatedAt: serverTimestamp() });
             } catch (e) { console.warn('軌跡履歴Firestore同期失敗:', e); }
@@ -4456,12 +4455,16 @@
         async function loadTrailHistoryFromFirestore(dateKey) {
             if (!currentUser) return [];
             try {
-                const snap = await getDoc(doc(db, 'users', currentUser.uid, 'trailDays', dateKey));
+                const snap = await getDoc(doc(db, 'users', currentUser.uid, 'trailDays', dateKey.replaceAll('/', '-')));
                 if (!snap.exists()) return [];
                 const trail = snap.data().trail;
                 return Array.isArray(trail) ? trail.map(p => [p.lat, p.lng]) : [];
             } catch (e) { return []; }
         }
+
+        // type="module" 内の関数を通常script側（HISTORY描画）からも利用できるよう公開する。
+        window.loadTrailHistoryForDate = loadTrailHistoryForDate;
+        window.loadTrailHistoryFromFirestore = loadTrailHistoryFromFirestore;
 
         // 位置共有を開始する際、同じ日の軌跡があれば読み込んで続きから描画する。
         // まずlocalStorage（同期・即時）を見て、その後Firestore側がより多くの点を
