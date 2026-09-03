@@ -2380,7 +2380,9 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                     renderBadges();
                     updateUI();
                     updatePendingCheckinBadge();
-                    startUnlockAlertMonitoring();
+                    if (typeof window.startUnlockAlertMonitoring === 'function') {
+                        window.startUnlockAlertMonitoring();
+                    }
                     processPendingCheckins(); // 前回オフラインのまま終了した保留中チェックインがあれば処理する
 
                     const today = new Date();
@@ -4525,6 +4527,9 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             );
         }
 
+        // type=moduleのスコープ外にある起動処理からも安全に呼べるよう公開
+        window.startUnlockAlertMonitoring = startUnlockAlertMonitoring;
+
         // --- 自分の位置情報共有 ---
         let myLocationWatchId = null;
         let lastLocationWriteMs = 0;
@@ -4652,7 +4657,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
         let myTrailPolyline = null;
         const MY_TRAIL_LOCAL_KEY = 'geo_nihon_my_trail_v1';
         const MY_TRAIL_HISTORY_PREFIX = 'geo_nihon_my_trail_day_v1:';
-        const TRAIL_HISTORY_MAX_POINTS_PER_DAY = 5000;
+        const TRAIL_HISTORY_MAX_POINTS_PER_DAY = Number.MAX_SAFE_INTEGER;
 
         // 軌跡をlocalStorageにも保存しておく（ページの再読み込みが起きても、
         // Firestoreとの通信を待たずに即座に続きから復元できるようにするための保険）
@@ -4662,7 +4667,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                 localStorage.setItem(MY_TRAIL_HISTORY_PREFIX + dateKey, JSON.stringify({
                     version: 2,
                     dateKey,
-                    points: myTrailHistoryLatLngs.slice(-TRAIL_HISTORY_MAX_POINTS_PER_DAY),
+                    points: myTrailHistoryLatLngs.slice(),
                     updatedAt: Date.now()
                 }));
             } catch (e) { console.warn('軌跡ローカル保存失敗:', e); }
@@ -4677,24 +4682,92 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             } catch (e) { return []; }
         }
 
+        // Firestoreは1ドキュメントに無制限の配列を保存できないため、
+        // 1日分を500点ずつのチャンクに分割する。
+        const TRAIL_CHUNK_SIZE = 500;
+
         async function syncTrailHistoryDayToFirestore(dateKey, points) {
             if (!currentUser || !dateKey || !Array.isArray(points) || points.length === 0) return;
+
             try {
-                // 日単位サブコレクションに分割。1日の巨大軌跡でユーザードキュメントを壊さない。
-                const ref = doc(db, 'users', currentUser.uid, 'trailDays', dateKey.replaceAll('/', '-'));
-                const packed = points.slice(-TRAIL_HISTORY_MAX_POINTS_PER_DAY).map((p, i) => ({ lat: p[0], lng: p[1], i }));
-                await setDoc(ref, { version: 1, dateKey, trail: packed, updatedAtMs: Date.now(), updatedAt: serverTimestamp() });
-            } catch (e) { console.warn('軌跡履歴Firestore同期失敗:', e); }
+                const dayId = dateKey.replaceAll('/', '-');
+                const dayRef = doc(db, 'users', currentUser.uid, 'trailDays', dayId);
+                const chunkCount = Math.ceil(points.length / TRAIL_CHUNK_SIZE);
+
+                await setDoc(dayRef, {
+                    version: 2,
+                    dateKey,
+                    pointCount: points.length,
+                    chunkCount,
+                    updatedAtMs: Date.now(),
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+
+                // users/{uid}/trailDays/{date}/chunks/{000000 ...}
+                const writes = [];
+                for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
+                    const start = chunkIndex * TRAIL_CHUNK_SIZE;
+                    const chunkPoints = points.slice(start, start + TRAIL_CHUNK_SIZE)
+                        .map((p, i) => ({ lat: p[0], lng: p[1], i: start + i }));
+                    const chunkId = String(chunkIndex).padStart(6, '0');
+                    const chunkRef = doc(
+                        db, 'users', currentUser.uid, 'trailDays', dayId,
+                        'chunks', chunkId
+                    );
+                    writes.push(setDoc(chunkRef, {
+                        version: 1,
+                        chunkIndex,
+                        points: chunkPoints,
+                        updatedAtMs: Date.now()
+                    }));
+                }
+                await Promise.all(writes);
+            } catch (e) {
+                console.warn('軌跡履歴Firestore同期失敗:', e);
+            }
         }
 
         async function loadTrailHistoryFromFirestore(dateKey) {
-            if (!currentUser) return [];
+            if (!currentUser || !dateKey) return [];
+
             try {
-                const snap = await getDoc(doc(db, 'users', currentUser.uid, 'trailDays', dateKey.replaceAll('/', '-')));
-                if (!snap.exists()) return [];
-                const trail = snap.data().trail;
+                const dayId = dateKey.replaceAll('/', '-');
+                const dayRef = doc(db, 'users', currentUser.uid, 'trailDays', dayId);
+                const daySnap = await getDoc(dayRef);
+                if (!daySnap.exists()) return [];
+
+                const dayData = daySnap.data();
+
+                // 新形式：チャンクをすべて読み込んで順番に結合
+                if (dayData.version >= 2) {
+                    const chunksSnap = await getDocs(
+                        collection(db, 'users', currentUser.uid, 'trailDays', dayId, 'chunks')
+                    );
+                    const chunks = [];
+                    chunksSnap.forEach(d => chunks.push(d.data()));
+                    chunks.sort((a, b) => (a.chunkIndex || 0) - (b.chunkIndex || 0));
+
+                    const points = [];
+                    chunks.forEach(chunk => {
+                        if (Array.isArray(chunk.points)) {
+                            chunk.points.forEach(p => {
+                                if (typeof p.lat === 'number' && typeof p.lng === 'number') {
+                                    points.push({ lat: p.lat, lng: p.lng, i: p.i });
+                                }
+                            });
+                        }
+                    });
+                    points.sort((a, b) => (a.i || 0) - (b.i || 0));
+                    return points.map(p => [p.lat, p.lng]);
+                }
+
+                // 旧形式との後方互換
+                const trail = dayData.trail;
                 return Array.isArray(trail) ? trail.map(p => [p.lat, p.lng]) : [];
-            } catch (e) { return []; }
+            } catch (e) {
+                console.warn('軌跡履歴Firestore読み込み失敗:', e);
+                return [];
+            }
         }
 
         // type="module" 内の関数を通常script側（HISTORY描画）からも利用できるよう公開する。
@@ -4715,7 +4788,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                 if (historyRaw) {
                     const historyData = JSON.parse(historyRaw);
                     if (historyData.dateKey === todayKey && Array.isArray(historyData.points)) {
-                        myTrailHistoryLatLngs = historyData.points.slice(-TRAIL_HISTORY_MAX_POINTS_PER_DAY);
+                        myTrailHistoryLatLngs = historyData.points.slice();
                         myTrailLatLngs = myTrailHistoryLatLngs.slice(-TRAIL_MAX_POINTS);
                         drawMyTrailPolyline();
                     }
@@ -4726,7 +4799,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                         const localData = JSON.parse(localRaw);
                         if (localData.dateKey === todayKey && Array.isArray(localData.points)) {
                             myTrailLatLngs = localData.points.slice(-TRAIL_MAX_POINTS);
-                            myTrailHistoryLatLngs = localData.points.slice(-TRAIL_HISTORY_MAX_POINTS_PER_DAY);
+                            myTrailHistoryLatLngs = localData.points.slice();
                             drawMyTrailPolyline();
                         }
                     }
@@ -4741,7 +4814,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                     if (data.trailDateKey === todayKey && Array.isArray(data.trail) && data.trail.length > myTrailLatLngs.length) {
                         myTrailLatLngs = data.trail.map(p => [p.lat, p.lng]).slice(-TRAIL_MAX_POINTS);
                         if (myTrailHistoryLatLngs.length === 0) {
-                            myTrailHistoryLatLngs = data.trail.map(p => [p.lat, p.lng]).slice(-TRAIL_HISTORY_MAX_POINTS_PER_DAY);
+                            myTrailHistoryLatLngs = data.trail.map(p => [p.lat, p.lng]);
                         }
                         drawMyTrailPolyline();
                         saveMyTrailToLocalStorage(todayKey);
@@ -4773,9 +4846,6 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
 
             if (myTrailLatLngs.length > TRAIL_MAX_POINTS) {
                 myTrailLatLngs = myTrailLatLngs.slice(-TRAIL_MAX_POINTS);
-            }
-            if (myTrailHistoryLatLngs.length > TRAIL_HISTORY_MAX_POINTS_PER_DAY) {
-                myTrailHistoryLatLngs = myTrailHistoryLatLngs.slice(-TRAIL_HISTORY_MAX_POINTS_PER_DAY);
             }
 
             drawMyTrailPolyline();
@@ -4826,7 +4896,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
         }
 
         const DWELL_RESET_DISTANCE_KM = 0.05; // 50m以上動いたら「別の場所に移動した」とみなす
-        const TRAIL_MAX_POINTS = 400; // 1ドキュメントが肥大化しすぎないよう軌跡の保持点数に上限を設ける
+        const TRAIL_MAX_POINTS = 400; // liveLocationsのリアルタイム共有・画面描画用のみ。日別履歴は別チャンク保存。
 
         async function writeMyLocation(position, now) {
             const lat = position.coords.latitude;
