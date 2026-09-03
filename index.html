@@ -4644,22 +4644,26 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
         window.updateMyLiveMarker = updateMyLiveMarker;
         window.getMyLastKnownSpeedKmh = () => lastKnownSpeedKmh;
 
-        // --- 自分自身の移動軌跡ポリライン（本日分。位置共有ON中、自分の地図にリアルタイムで表示） ---
+        // --- 自分自身の移動軌跡 ---
+        // ライブ表示用は軽量に保ち、履歴用は日付ごとに別保存する。
         let myTrailLatLngs = [];
+        let myTrailHistoryLatLngs = [];
+        let myTrailDateKey = null;
         let myTrailPolyline = null;
         const MY_TRAIL_LOCAL_KEY = 'geo_nihon_my_trail_v1';
         const MY_TRAIL_HISTORY_PREFIX = 'geo_nihon_my_trail_day_v1:';
-        const TRAIL_HISTORY_MAX_POINTS_PER_DAY = 2000;
+        const TRAIL_HISTORY_MAX_POINTS_PER_DAY = 5000;
 
         // 軌跡をlocalStorageにも保存しておく（ページの再読み込みが起きても、
         // Firestoreとの通信を待たずに即座に続きから復元できるようにするための保険）
-        function saveMyTrailToLocalStorage() {
+        function saveMyTrailToLocalStorage(dateKey = myTrailDateKey || formatDateKey(new Date())) {
             try {
-                const dateKey = formatDateKey(new Date());
                 localStorage.setItem(MY_TRAIL_LOCAL_KEY, JSON.stringify({ dateKey, points: myTrailLatLngs }));
-                // 過去日閲覧用。appStateには入れないため既存セーブを肥大化させない。
                 localStorage.setItem(MY_TRAIL_HISTORY_PREFIX + dateKey, JSON.stringify({
-                    version: 1, dateKey, points: myTrailLatLngs.slice(-TRAIL_HISTORY_MAX_POINTS_PER_DAY), updatedAt: Date.now()
+                    version: 2,
+                    dateKey,
+                    points: myTrailHistoryLatLngs.slice(-TRAIL_HISTORY_MAX_POINTS_PER_DAY),
+                    updatedAt: Date.now()
                 }));
             } catch (e) { console.warn('軌跡ローカル保存失敗:', e); }
         }
@@ -4702,15 +4706,29 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
         // 持っていれば（＝別端末で継続していた等）そちらを優先する。
         async function initMyTrailFromExistingDoc() {
             myTrailLatLngs = [];
+            myTrailHistoryLatLngs = [];
             const todayKey = formatDateKey(new Date());
+            myTrailDateKey = todayKey;
 
             try {
-                const localRaw = localStorage.getItem(MY_TRAIL_LOCAL_KEY);
-                if (localRaw) {
-                    const localData = JSON.parse(localRaw);
-                    if (localData.dateKey === todayKey && Array.isArray(localData.points)) {
-                        myTrailLatLngs = localData.points;
+                const historyRaw = localStorage.getItem(MY_TRAIL_HISTORY_PREFIX + todayKey);
+                if (historyRaw) {
+                    const historyData = JSON.parse(historyRaw);
+                    if (historyData.dateKey === todayKey && Array.isArray(historyData.points)) {
+                        myTrailHistoryLatLngs = historyData.points.slice(-TRAIL_HISTORY_MAX_POINTS_PER_DAY);
+                        myTrailLatLngs = myTrailHistoryLatLngs.slice(-TRAIL_MAX_POINTS);
                         drawMyTrailPolyline();
+                    }
+                }
+                if (myTrailHistoryLatLngs.length === 0) {
+                    const localRaw = localStorage.getItem(MY_TRAIL_LOCAL_KEY);
+                    if (localRaw) {
+                        const localData = JSON.parse(localRaw);
+                        if (localData.dateKey === todayKey && Array.isArray(localData.points)) {
+                            myTrailLatLngs = localData.points.slice(-TRAIL_MAX_POINTS);
+                            myTrailHistoryLatLngs = localData.points.slice(-TRAIL_HISTORY_MAX_POINTS_PER_DAY);
+                            drawMyTrailPolyline();
+                        }
                     }
                 }
             } catch (e) { /* 破損データは無視 */ }
@@ -4721,9 +4739,12 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                 if (snap.exists()) {
                     const data = snap.data();
                     if (data.trailDateKey === todayKey && Array.isArray(data.trail) && data.trail.length > myTrailLatLngs.length) {
-                        myTrailLatLngs = data.trail.map(p => [p.lat, p.lng]);
+                        myTrailLatLngs = data.trail.map(p => [p.lat, p.lng]).slice(-TRAIL_MAX_POINTS);
+                        if (myTrailHistoryLatLngs.length === 0) {
+                            myTrailHistoryLatLngs = data.trail.map(p => [p.lat, p.lng]).slice(-TRAIL_HISTORY_MAX_POINTS_PER_DAY);
+                        }
                         drawMyTrailPolyline();
-                        saveMyTrailToLocalStorage();
+                        saveMyTrailToLocalStorage(todayKey);
                     }
                 }
             } catch (e) {
@@ -4732,15 +4753,38 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
         }
 
         function appendToMyTrail(lat, lng) {
-            myTrailLatLngs.push([lat, lng]);
-            if (myTrailLatLngs.length > TRAIL_MAX_POINTS) {
-                myTrailLatLngs = myTrailLatLngs.slice(myTrailLatLngs.length - TRAIL_MAX_POINTS);
-            }
-            drawMyTrailPolyline();
-            saveMyTrailToLocalStorage();
             const dateKey = formatDateKey(new Date());
+
+            if (myTrailDateKey && myTrailDateKey !== dateKey) {
+                const previousDateKey = myTrailDateKey;
+                const previousHistory = myTrailHistoryLatLngs.slice();
+                if (previousHistory.length > 0) {
+                    syncTrailHistoryDayToFirestore(previousDateKey, previousHistory);
+                }
+                myTrailLatLngs = [];
+                myTrailHistoryLatLngs = [];
+                if (myTrailPolyline) myTrailPolyline.setLatLngs([]);
+            }
+            myTrailDateKey = dateKey;
+
+            const point = [lat, lng];
+            myTrailLatLngs.push(point);
+            myTrailHistoryLatLngs.push(point);
+
+            if (myTrailLatLngs.length > TRAIL_MAX_POINTS) {
+                myTrailLatLngs = myTrailLatLngs.slice(-TRAIL_MAX_POINTS);
+            }
+            if (myTrailHistoryLatLngs.length > TRAIL_HISTORY_MAX_POINTS_PER_DAY) {
+                myTrailHistoryLatLngs = myTrailHistoryLatLngs.slice(-TRAIL_HISTORY_MAX_POINTS_PER_DAY);
+            }
+
+            drawMyTrailPolyline();
+            saveMyTrailToLocalStorage(dateKey);
+
             if (typeof window.__trailHistorySyncTimer !== 'undefined') clearTimeout(window.__trailHistorySyncTimer);
-            window.__trailHistorySyncTimer = setTimeout(() => syncTrailHistoryDayToFirestore(dateKey, myTrailLatLngs), 1500);
+            window.__trailHistorySyncTimer = setTimeout(() => {
+                syncTrailHistoryDayToFirestore(dateKey, myTrailHistoryLatLngs.slice());
+            }, 1500);
         }
 
         function drawMyTrailPolyline() {
@@ -4766,6 +4810,8 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                 myTrailPolyline = null;
             }
             myTrailLatLngs = [];
+            myTrailHistoryLatLngs = [];
+            myTrailDateKey = null;
         }
 
         // 2地点間の距離をkmで返す（ハーバサイン公式）
