@@ -7,7 +7,7 @@
 
     <!-- PWA対応: ホーム画面に追加してアプリのように使えるようにする -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#111216">
+    <meta name="theme-color" content="#ffffff">
     <link rel="icon" href="icon-192.png">
     <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21,10 +21,10 @@
             var boot = document.getElementById('boot-screen');
             if (boot && boot.style.display !== 'none') {
                 boot.innerHTML =
-                    '<div style="text-align:center;color:#fff;padding:0 20px;">' +
+                    '<div style="text-align:center;color:#202124;padding:0 20px;">' +
                     '<p style="margin-bottom:20px;line-height:1.6;font-size:0.95rem;">読み込みに時間がかかっています。<br>' +
                     'ネットワーク接続（Wi-Fi/モバイル回線）をご確認のうえ、<br>再読み込みしてください。</p>' +
-                    '<button onclick="location.reload()" style="padding:12px 28px;background:#fff;color:#111216;border:none;border-radius:12px;font-weight:700;font-size:0.9rem;cursor:pointer;">再読み込み</button>' +
+                    '<button onclick="location.reload()" style="padding:12px 28px;background:#fff;color:#202124;border:none;border-radius:12px;font-weight:700;font-size:0.9rem;cursor:pointer;">再読み込み</button>' +
                     '</div>';
             }
         }, 12000);
@@ -54,8 +54,8 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #111216;
-            color: #f3f4f6;
+            background-color: #ffffff;
+            color: #202124;
         }
 
         .phone-container {
@@ -64,18 +64,19 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            background: #111216;
+            background: #f8f9fa;
         }
 
         header {
-            background: rgba(17, 18, 22, 0.95);
-            color: #ffffff;
+            background: rgba(255, 255, 255, 0.95);
+            color:#202124;
             padding: 16px;
             text-align: center;
             font-weight: 700;
-            font-size: 1.1rem;
-            letter-spacing: 0.1em;
-            border-bottom: 1px solid #272a34;
+            font-size: 1.05rem;
+            letter-spacing: 0.02em;
+            border-bottom: 1px solid #dadce0;
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,.16);
             z-index: 20;
             backdrop-filter: blur(10px);
             flex-shrink: 0;
@@ -87,8 +88,8 @@
             left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            background: #1c1e26;
-            border: 1px solid #272a34;
+            background: #ffffff;
+            border: 1px solid #dadce0;
             border-radius: 50%;
             width: 38px;
             height: 38px;
@@ -104,7 +105,7 @@
             top: -3px;
             right: -3px;
             background: #ff3b30;
-            color: #fff;
+            color:#202124;
             font-size: 0.6rem;
             font-weight: 800;
             min-width: 16px;
@@ -144,7 +145,7 @@
             padding: 16px 14px;
             height: 100%;
             overflow-y: auto;
-            background-color: #111216;
+            background-color: #ffffff;
         }
 
         #map {
@@ -184,13 +185,13 @@
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            background: rgba(24, 25, 32, 0.95);
-            border: 1px solid #272a34;
-            color: #ffffff;
+            background: rgba(255, 255, 255, 0.97);
+            border: 1px solid #dadce0;
+            color:#202124;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            box-shadow: 0 1px 3px rgba(60,64,67,.15), 0 4px 12px rgba(60,64,67,.1);
             cursor: pointer;
         }
 
@@ -203,9 +204,9 @@
         }
 
         #recenter-btn.following {
-            background: #4da6ff;
-            border-color: #4da6ff;
-            color: #ffffff;
+            background: #1a73e8;
+            border-color: #1a73e8;
+            color:#202124;
         }
 
         @keyframes recenterSpin {
@@ -218,8 +219,8 @@
             left: 0;
             right: 0;
             height: calc(70px + env(safe-area-inset-bottom, 0px));
-            background: rgba(17, 18, 22, 0.95);
-            border-top: 1px solid #272a34;
+            background: rgba(255, 255, 255, 0.95);
+            border-top: 1px solid #dadce0;
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -233,7 +234,7 @@
             height: 100%;
             background: none;
             border: none;
-            color: #64748b;
+            color: #5f6368;
             font-size: 0.75rem;
             font-weight: 500;
             cursor: pointer;
@@ -279,7 +280,7 @@
             width: 100%;
             padding: 12px;
             background: #ffffff;
-            color: #111216;
+            color:#202124;
             border: none;
             border-radius: 12px;
             font-size: 0.9rem;
@@ -288,24 +289,24 @@
             cursor: pointer;
             text-align: center;
             transition: all 0.2s ease;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 1px 3px rgba(60,64,67,.15), 0 2px 6px rgba(60,64,67,.1);
         }
 
         .btn:active {
             transform: scale(0.97);
-            background: #e2e8f0;
+            background: #dadce0;
         }
 
         .btn-secondary {
-            background: #272a34;
-            color: #ffffff;
-            border: 1px solid #3f4454;
+            background: #dadce0;
+            color:#202124;
+            border: 1px solid #dadce0;
             box-shadow: none;
         }
 
         .card {
-            background: #181920;
-            border: 1px solid #272a34;
+            background: #ffffff;
+            border: 1px solid #dadce0;
             border-radius: 14px;
             padding: 16px;
             margin-bottom: 16px;
@@ -315,7 +316,7 @@
             font-size: 0.95rem;
             font-weight: 700;
             margin-bottom: 10px;
-            color: #ffffff;
+            color:#202124;
             letter-spacing: 0.03em;
         }
 
@@ -324,8 +325,8 @@
             display: none;
             grid-template-columns: repeat(6, 1fr);
             gap: 8px;
-            background: #101116;
-            border: 1px solid #272a34;
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
             border-radius: 12px;
             padding: 10px;
             margin: 0 auto 12px;
@@ -336,8 +337,8 @@
 
         .avatar-option {
             font-size: 1.3rem;
-            background: #1c1e26;
-            border: 1px solid #272a34;
+            background: #ffffff;
+            border: 1px solid #dadce0;
             border-radius: 8px;
             padding: 6px 0;
             cursor: pointer;
@@ -356,8 +357,8 @@
         }
 
         .travel-stat-cell {
-            background: #101116;
-            border: 1px solid #272a34;
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
             border-radius: 10px;
             padding: 12px 8px;
             text-align: center;
@@ -366,12 +367,12 @@
         .travel-stat-cell .num {
             font-size: 1.15rem;
             font-weight: 800;
-            color: #fff;
+            color:#202124;
         }
 
         .travel-stat-cell .label {
             font-size: 0.62rem;
-            color: #94a3b8;
+            color: #5f6368;
             margin-top: 3px;
         }
 
@@ -382,8 +383,8 @@
         }
 
         .pref-achieve-cell {
-            background: #101116;
-            border: 1px solid #272a34;
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
             border-radius: 8px;
             padding: 8px 4px 6px;
             text-align: center;
@@ -393,7 +394,7 @@
 
         .pref-achieve-cell .pref-name {
             font-size: 0.62rem;
-            color: #cbd5e1;
+            color: #5f6368;
             font-weight: 700;
             position: relative;
             z-index: 1;
@@ -404,7 +405,7 @@
 
         .pref-achieve-cell .pref-pct {
             font-size: 0.6rem;
-            color: #64748b;
+            color: #5f6368;
             position: relative;
             z-index: 1;
             margin-top: 2px;
@@ -436,7 +437,7 @@
             align-items: flex-start;
             gap: 10px;
             font-size: 0.78rem;
-            color: #e2e8f0;
+            color: #dadce0;
             padding-bottom: 10px;
             border-bottom: 1px solid #20222b;
         }
@@ -454,7 +455,7 @@
         .timeline-date {
             display: block;
             font-size: 0.65rem;
-            color: #64748b;
+            color: #5f6368;
             margin-top: 2px;
         }
 
@@ -470,7 +471,7 @@
         }
 
         .modal-sheet {
-            background: #14151c;
+            background: #f1f3f4;
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             width: 100%;
@@ -479,7 +480,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 -8px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 -2px 10px rgba(60,64,67,.2);
         }
 
         .modal-header {
@@ -487,16 +488,16 @@
             align-items: center;
             justify-content: space-between;
             padding: 16px;
-            border-bottom: 1px solid #272a34;
+            border-bottom: 1px solid #dadce0;
             flex-shrink: 0;
         }
 
-        .modal-title { font-size: 1rem; font-weight: 800; color: #fff; }
+        .modal-title { font-size: 1rem; font-weight: 800; color:#202124; }
 
         .modal-close-btn {
-            background: #1c1e26;
-            border: 1px solid #272a34;
-            color: #cbd5e1;
+            background: #ffffff;
+            border: 1px solid #dadce0;
+            color: #5f6368;
             width: 30px; height: 30px;
             border-radius: 50%;
             font-size: 0.85rem;
@@ -510,34 +511,34 @@
 
         /* --- メールボックス --- */
         .mail-item {
-            background: #101116;
-            border: 1px solid #272a34;
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
             border-radius: 12px;
             padding: 12px;
             margin-bottom: 10px;
         }
 
-        .mail-item .mail-title { font-size: 0.85rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
-        .mail-item .mail-body { font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px; line-height: 1.5; }
+        .mail-item .mail-title { font-size: 0.85rem; font-weight: 800; color:#202124; margin-bottom: 4px; }
+        .mail-item .mail-body { font-size: 0.75rem; color: #5f6368; margin-bottom: 8px; line-height: 1.5; }
         .mail-item .mail-coin { font-size: 0.75rem; color: #ffd166; font-weight: 700; margin-bottom: 8px; }
         .mail-item button {
-            background: #ffffff; color: #111216; border: none; border-radius: 8px;
+            background: #ffffff; color:#202124; border: none; border-radius: 8px;
             padding: 7px 14px; font-size: 0.72rem; font-weight: 800; cursor: pointer;
         }
-        .mail-item button:disabled { background: #2c2f3a; color: #6b7280; cursor: default; }
+        .mail-item button:disabled { background: #e8eaed; color: #5f6368; cursor: default; }
 
         /* --- フレンド詳細 --- */
         .friend-detail-header {
             text-align: center;
             padding-bottom: 16px;
             margin-bottom: 16px;
-            border-bottom: 1px solid #272a34;
+            border-bottom: 1px solid #dadce0;
         }
 
         .friend-detail-avatar {
             width: 72px; height: 72px;
             font-size: 2rem;
-            background: #272a34;
+            background: #dadce0;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             margin: 0 auto 10px;
@@ -551,15 +552,15 @@
         }
 
         .friend-detail-stat {
-            background: #101116;
-            border: 1px solid #272a34;
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
             border-radius: 10px;
             padding: 10px 4px;
             text-align: center;
         }
 
-        .friend-detail-stat .num { font-size: 1.05rem; font-weight: 800; color: #fff; }
-        .friend-detail-stat .label { font-size: 0.62rem; color: #94a3b8; margin-top: 2px; }
+        .friend-detail-stat .num { font-size: 1.05rem; font-weight: 800; color:#202124; }
+        .friend-detail-stat .label { font-size: 0.62rem; color: #5f6368; margin-top: 2px; }
 
         /* --- チャット --- */
         .chat-messages {
@@ -582,36 +583,36 @@
         .chat-bubble.mine {
             align-self: flex-end;
             background: var(--accent-color, #ffffff);
-            color: #111216;
+            color:#202124;
         }
 
         .chat-bubble.theirs {
             align-self: flex-start;
-            background: #272a34;
-            color: #e2e8f0;
+            background: #dadce0;
+            color: #dadce0;
         }
 
         .chat-input-row {
             display: flex;
             gap: 8px;
             padding: 12px;
-            border-top: 1px solid #272a34;
+            border-top: 1px solid #dadce0;
             flex-shrink: 0;
         }
 
         .chat-input-row input {
             flex: 1;
-            background: #101116;
-            border: 1px solid #272a34;
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
             border-radius: 20px;
             padding: 9px 14px;
-            color: #fff;
+            color:#202124;
             font-size: 0.82rem;
         }
 
         .chat-input-row button {
             background: #ffffff;
-            color: #111216;
+            color:#202124;
             border: none;
             border-radius: 20px;
             padding: 0 18px;
@@ -625,7 +626,7 @@
            固定クラスは不要（パレットから動的生成される色に対応するため） */
 
         /* --- ショップ: 称号グラデーション演出（色違い全種で共通利用） --- */
-        /* 称号のdivには古いバージョンからインラインで color:#94a3b8 が指定されているため、
+        /* 称号のdivには古いバージョンからインラインで color:#5f6368 が指定されているため、
            !important を付けないとエフェクトのグラデーション文字色が反映されない */
         #profile-title.effect-gradient-title {
             background: var(--title-gradient, linear-gradient(90deg, #ffd166, #ffffff, #ffd166)) !important;
@@ -653,7 +654,7 @@
         .loc-toggle-switch input { opacity: 0; width: 0; height: 0; }
         .loc-toggle-slider {
             position: absolute; cursor: pointer; inset: 0;
-            background: #272a34;
+            background: #dadce0;
             border-radius: 24px;
             transition: 0.2s;
         }
@@ -662,7 +663,7 @@
             position: absolute;
             height: 18px; width: 18px;
             left: 3px; bottom: 3px;
-            background: #94a3b8;
+            background: #5f6368;
             border-radius: 50%;
             transition: 0.2s;
         }
@@ -676,17 +677,17 @@
         .friend-map-marker {
             width: 36px; height: 36px;
             border-radius: 50%;
-            background: #14151c;
+            background: #f1f3f4;
             border: 2px solid #00c853;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            box-shadow: 0 1px 3px rgba(60,64,67,.15), 0 2px 6px rgba(60,64,67,.1);
         }
         .friend-map-marker-label {
             font-size: 0.62rem;
             font-weight: 700;
-            color: #fff;
-            background: rgba(17,18,22,0.85);
+            color:#202124;
+            background: rgba(255,255,255,0.9);
             padding: 1px 6px;
             border-radius: 6px;
             white-space: nowrap;
@@ -699,13 +700,13 @@
             position: absolute;
             left: -6px;
             bottom: -4px;
-            background: #111216;
-            color: #fff;
+            background: #ffffff;
+            color:#202124;
             font-size: 0.6rem;
             font-weight: 800;
             padding: 1px 5px;
             border-radius: 8px;
-            border: 1px solid #3f4454;
+            border: 1px solid #dadce0;
             line-height: 1.3;
             white-space: nowrap;
         }
@@ -717,8 +718,8 @@
         }
 
         .shop-item {
-            background: #101116;
-            border: 1px solid #272a34;
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
             border-radius: 12px;
             padding: 10px 8px;
             text-align: center;
@@ -733,13 +734,13 @@
             width: 44px; height: 44px;
             display: flex; align-items: center; justify-content: center;
             border-radius: 50%;
-            background: #1c1e26;
+            background: #ffffff;
         }
 
         .shop-item .shop-item-name {
             font-size: 0.68rem;
             font-weight: 700;
-            color: #e2e8f0;
+            color: #dadce0;
             line-height: 1.3;
         }
 
@@ -762,19 +763,19 @@
 
         .shop-item button.buy-btn {
             background: #ffffff;
-            color: #111216;
+            color:#202124;
         }
 
         .shop-item button.buy-btn:disabled {
-            background: #2c2f3a;
-            color: #6b7280;
+            background: #e8eaed;
+            color: #5f6368;
             cursor: not-allowed;
         }
 
         .shop-item button.equip-btn {
-            background: #272a34;
-            color: #cbd5e1;
-            border: 1px solid #3f4454;
+            background: #dadce0;
+            color: #5f6368;
+            border: 1px solid #dadce0;
         }
 
         .shop-item button.equip-btn.equipped {
@@ -785,15 +786,15 @@
 
         .ranking-sort-btn.active {
             background: #ffffff;
-            color: #111216;
+            color:#202124;
         }
 
         .ranking-item {
             display: flex;
             align-items: center;
             gap: 10px;
-            background: #101116;
-            border: 1px solid #272a34;
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
             border-radius: 10px;
             padding: 8px 10px;
         }
@@ -807,14 +808,14 @@
             text-align: center;
             font-weight: 800;
             font-size: 0.9rem;
-            color: #94a3b8;
+            color: #5f6368;
             flex-shrink: 0;
         }
 
         .ranking-item .rank-avatar {
             width: 32px; height: 32px;
             border-radius: 50%;
-            background: #1c1e26;
+            background: #ffffff;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.1rem;
             flex-shrink: 0;
@@ -824,7 +825,7 @@
             flex: 1;
             font-size: 0.8rem;
             font-weight: 700;
-            color: #fff;
+            color:#202124;
             min-width: 0;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -842,8 +843,8 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            background: #101116;
-            border: 1px solid #272a34;
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
             border-radius: 10px;
             padding: 8px 10px;
         }
@@ -852,26 +853,26 @@
             font-size: 1.3rem;
             width: 34px; height: 34px;
             display: flex; align-items: center; justify-content: center;
-            background: #1c1e26;
+            background: #ffffff;
             border-radius: 50%;
             flex-shrink: 0;
         }
 
         .friend-item .friend-info { flex: 1; min-width: 0; }
-        .friend-item .friend-name { font-size: 0.8rem; font-weight: 700; color: #fff; }
-        .friend-item .friend-stats { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; }
+        .friend-item .friend-name { font-size: 0.8rem; font-weight: 700; color:#202124; }
+        .friend-item .friend-stats { font-size: 0.65rem; color: #5f6368; margin-top: 2px; }
 
-        .friend-request-item .friend-name { flex: 1; font-size: 0.78rem; color: #fff; }
+        .friend-request-item .friend-name { flex: 1; font-size: 0.78rem; color:#202124; }
 
         .floating-status {
-            background: rgba(24, 25, 32, 0.95);
+            background: rgba(255, 255, 255, 0.97);
             padding: 8px 18px;
             border-radius: 30px;
             font-size: 0.8rem;
             font-weight: 600;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            color: #94a3b8;
-            border: 1px solid #272a34;
+            box-shadow: 0 2px 6px rgba(60,64,67,.15), 0 6px 16px rgba(60,64,67,.1);
+            color: #5f6368;
+            border: 1px solid #dadce0;
             max-width: 100%;
             white-space: nowrap;
             overflow: hidden;
@@ -887,14 +888,14 @@
         }
 
         .badge-item {
-            background: #1e202a;
+            background: #f8f9fa;
             border-radius: 12px;
             padding: 12px 6px;
             text-align: center;
             font-size: 0.7rem;
             filter: grayscale(100%);
             opacity: 0.3;
-            border: 1px solid #272a34;
+            border: 1px solid #dadce0;
         }
 
         .badge-item.unlocked {
@@ -911,18 +912,18 @@
 
         .badge-name {
             font-weight: 700;
-            color: #ffffff;
+            color:#202124;
         }
 
         .select-box {
             width: 100%;
             padding: 10px;
             border-radius: 8px;
-            border: 1px solid #272a34;
+            border: 1px solid #dadce0;
             font-size: 0.85rem;
             margin-bottom: 10px;
-            background-color: #1e202a;
-            color: #ffffff;
+            background-color: #f8f9fa;
+            color:#202124;
             outline: none;
         }
 
@@ -932,12 +933,12 @@
             left: 50%;
             transform: translateX(-50%) translateY(-120px);
             background: #ffffff;
-            color: #111216;
+            color:#202124;
             padding: 12px 24px;
             border-radius: 12px;
             font-size: 0.85rem;
             font-weight: 700;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 12px rgba(60,64,67,.2), 0 12px 28px rgba(60,64,67,.12);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 100;
             text-align: center;
@@ -956,9 +957,9 @@
 
         li {
             padding: 8px 0;
-            border-bottom: 1px solid #1e202a;
+            border-bottom: 1px solid #f8f9fa;
             font-size: 0.85rem;
-            color: #cbd5e1;
+            color: #5f6368;
         }
         
         li:last-child {
@@ -969,8 +970,8 @@
         .calendar-container {
             display: flex;
             flex-direction: column;
-            background: #181920;
-            border: 1px solid #272a34;
+            background: #ffffff;
+            border: 1px solid #dadce0;
             border-radius: 14px;
             padding: 12px;
             margin-bottom: 14px;
@@ -984,13 +985,13 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
-            color: #ffffff;
+            color:#202124;
             font-size: 0.9rem;
             font-weight: 700;
         }
 
         .calendar-header button {
-            background: #272a34;
+            background: #dadce0;
             color: white;
             border: none;
             padding: 4px 10px;
@@ -1009,13 +1010,13 @@
         .weekday-label {
             font-size: 0.7rem;
             font-weight: 600;
-            color: #64748b;
+            color: #5f6368;
             padding-bottom: 4px;
         }
 
         .calendar-day {
-            background: #1e202a;
-            border: 1px solid #272a34;
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
             border-radius: 6px;
             aspect-ratio: 1;
             display: flex;
@@ -1024,7 +1025,7 @@
             align-items: center;
             font-size: 0.75rem;
             font-weight: 600;
-            color: #cbd5e1;
+            color: #5f6368;
             cursor: pointer;
             position: relative;
             transition: all 0.2s;
@@ -1043,7 +1044,7 @@
         .calendar-day.has-history {
             border-color: #ff3b30;
             background: rgba(255, 59, 48, 0.08);
-            color: #ffffff;
+            color:#202124;
         }
 
         .calendar-day.has-history::after {
@@ -1068,8 +1069,8 @@
         }
 
         .history-detail-card {
-            background: #181920;
-            border: 1px solid #272a34;
+            background: #ffffff;
+            border: 1px solid #dadce0;
             border-radius: 14px;
             padding: 16px;
         }
@@ -1077,21 +1078,21 @@
         .history-tag {
             display: inline-block;
             padding: 2px 6px;
-            background: #272a34;
+            background: #dadce0;
             border-radius: 4px;
             font-size: 0.7rem;
-            color: #94a3b8;
+            color: #5f6368;
             margin-bottom: 6px;
         }
 
-        /* ブートアニメーション画面 */
+        /* ブートアニメーション画面（Google風） */
         #boot-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #0b0c10;
+            background-color: #ffffff;
             z-index: 9999;
             display: flex;
             flex-direction: column;
@@ -1101,46 +1102,94 @@
             transition: opacity 0.5s ease-out;
         }
 
-        .boot-terminal {
+        .boot-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            margin-bottom: 36px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        .dot-loader {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 34px;
+        }
+
+        .dot-loader .dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            display: inline-block;
+            animation: dotBounce 1.1s ease-in-out infinite;
+        }
+        .dot-blue { background: #1a73e8; animation-delay: 0s; }
+        .dot-red { background: #ea4335; animation-delay: 0.12s; }
+        .dot-yellow { background: #fbbc04; animation-delay: 0.24s; }
+        .dot-green { background: #34a853; animation-delay: 0.36s; }
+
+        @keyframes dotBounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.55; }
+            30% { transform: translateY(-10px); opacity: 1; }
+        }
+
+        .boot-checklist {
             width: 100%;
             max-width: 340px;
-            font-family: "Courier New", Courier, monospace;
-            font-size: 0.85rem;
-            color: #00ff66;
+            font-size: 0.88rem;
+            color: #202124;
             text-align: left;
-            line-height: 1.8;
-            margin-bottom: 30px;
         }
 
         .boot-row {
             opacity: 0;
-            margin-bottom: 4px;
+            transform: translateY(6px);
+            margin-bottom: 12px;
             display: flex;
+            align-items: center;
             justify-content: space-between;
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            transition: opacity 0.35s ease, transform 0.35s ease;
         }
 
         .boot-row.visible {
             opacity: 1;
+            transform: translateY(0);
         }
 
+        .boot-label { color: #3c4043; }
+
         .boot-success {
-            font-weight: bold;
-            background: #00ff66;
-            color: #0b0c10;
-            padding: 0 6px;
-            border-radius: 3px;
+            font-weight: 700;
+            font-size: 0.72rem;
+            background: #e6f4ea;
+            color: #188038;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .boot-wait {
+            font-weight: 700;
+            font-size: 0.72rem;
+            background: #f1f3f4;
+            color: #5f6368;
+            padding: 3px 10px;
+            border-radius: 20px;
         }
 
         .start-alert {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #ffffff;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #202124;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 26px;
             opacity: 0;
             transform: scale(0.9);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            letter-spacing: 0.05em;
+            letter-spacing: 0.02em;
         }
 
         .start-alert.visible {
@@ -1151,8 +1200,8 @@
         .spinner {
             width: 30px;
             height: 30px;
-            border: 3px solid rgba(0, 255, 102, 0.2);
-            border-top: 3px solid #00ff66;
+            border: 3px solid rgba(26, 115, 232, 0.2);
+            border-top: 3px solid #1a73e8;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 20px;
@@ -1185,9 +1234,9 @@
             top: 16%;
             left: 50%;
             transform: translateX(-50%);
-            background: #111216;
+            background: #ffffff;
             border: 1px solid #ffffff33;
-            color: #fff;
+            color:#202124;
             padding: 10px 18px;
             border-radius: 30px;
             font-size: 0.85rem;
@@ -1215,7 +1264,7 @@
             --c-yellow: #fbbc04;
             --c-green: #34a853;
             --c-purple: #a142f4;
-            --c-teal: #12b5cb;
+            --c-teal: #1a73e8;
             --c-orange: #fa7b17;
             --accent-color: var(--c-blue);
             --bg: #f8f9fa;
@@ -1268,11 +1317,11 @@
   --surface: #ffffff;
   --surface-alt: #f1f3f4;
   --text: #202124;
-  --muted: #6b7280;
+  --muted: #5f6368;
   --border: #dadce0;
   --shadow: 0 1px 3px rgba(60,64,67,.16), 0 2px 6px rgba(60,64,67,.08);
   --c-blue:#1a73e8; --c-purple:#9334e6; --c-orange:#f29900;
-  --c-green:#188038; --c-red:#d93025; --c-yellow:#f9ab00; --c-teal:#12b5cb;
+  --c-green:#188038; --c-red:#d93025; --c-yellow:#f9ab00; --c-teal:#1a73e8;
 }
 html, body { background:#f7f8fa !important; color:#202124 !important; }
 body *, body *::before, body *::after { border-color:#dadce0; }
@@ -1288,12 +1337,12 @@ body *, body *::before, body *::after { border-color:#dadce0; }
   background:#fff !important; color:#202124 !important; border-color:#dadce0 !important;
   box-shadow:var(--shadow) !important;
 }
-[style*="background:#101116"], [style*="background: #101116"],
-[style*="background:#111216"], [style*="background: #111216"],
-[style*="background:#14151c"], [style*="background: #14151c"],
-[style*="background:#181920"], [style*="background: #181920"],
-[style*="background:#1c1e26"], [style*="background: #1c1e26"],
-[style*="background:#1e202a"], [style*="background: #1e202a"] {
+[style*="background:#f8f9fa"], [style*="background: #f8f9fa"],
+[style*="background:#ffffff"], [style*="background: #ffffff"],
+[style*="background:#f1f3f4"], [style*="background: #f1f3f4"],
+[style*="background:#ffffff"], [style*="background: #ffffff"],
+[style*="background:#ffffff"], [style*="background: #ffffff"],
+[style*="background:#f8f9fa"], [style*="background: #f8f9fa"] {
   background:#fff !important; color:#202124 !important; border-color:#dadce0 !important;
 }
 /* inputs and selects */
@@ -1304,7 +1353,7 @@ input::placeholder, textarea::placeholder { color:#80868b !important; opacity:1;
 /* readable text across legacy components */
 .card *, .modal-content *, .settings-modal-content *, .shop-item *, .badge-card *,
 .history-card *, .friend-card *, .profile-card * { color:inherit; }
-.muted, .subtext, .secondary-text, small { color:#6b7280 !important; }
+.muted, .subtext, .secondary-text, small { color:#5f6368 !important; }
 /* restore semantic accents */
 .btn, .checkin-btn, button.primary { background:#1a73e8 !important; color:#fff !important; border-color:#1a73e8 !important; }
 button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important; color:#202124 !important; border-color:#dadce0 !important; }
@@ -1314,7 +1363,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
 #tab-badges.active, .nav-item[data-tab="badges"].active { color:#9334e6 !important; }
 #tab-history.active, .nav-item[data-tab="history"].active { color:#f29900 !important; }
 #tab-profile.active, .nav-item[data-tab="profile"].active { color:#188038 !important; }
-#tab-shop.active, .nav-item[data-tab="shop"].active { color:#12b5cb !important; }
+#tab-shop.active, .nav-item[data-tab="shop"].active { color:#1a73e8 !important; }
 /* map container must remain neutral and white around the map */
 #map, .map-container { background:#fff !important; }
 .leaflet-container { background:#fff !important; }
@@ -1336,12 +1385,20 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
 
     <!-- 🚀 ブートアニメーション画面 -->
     <div id="boot-screen">
-        <div id="boot-spinner" class="spinner"></div>
-        <div class="boot-terminal">
-            <div id="row1" class="boot-row"><span>> index.html loading...</span><span class="boot-success">OK</span></div>
-            <div id="row2" class="boot-row"><span>> system initialization...</span><span class="boot-success">OK</span></div>
-            <div id="row3" class="boot-row"><span>> Nihon.json / badges.json fetching...</span><span id="json-status-text">WAIT</span></div>
-            <div id="row4" class="boot-row"><span>> mapping framework ready...</span><span class="boot-success">OK</span></div>
+        <div class="boot-logo">
+            <span style="color:#1a73e8">H</span><span style="color:#ea4335">a</span><span style="color:#fbbc04">r</span><span style="color:#1a73e8">u</span><span style="color:#34a853">m</span><span style="color:#ea4335">a</span><span style="color:#fbbc04">k</span><span style="color:#1a73e8">i</span>
+        </div>
+        <div id="boot-spinner" class="dot-loader">
+            <span class="dot dot-blue"></span>
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+        </div>
+        <div class="boot-checklist">
+            <div id="row1" class="boot-row"><span class="boot-label">アプリデータを確認中...</span><span class="boot-success">OK</span></div>
+            <div id="row2" class="boot-row"><span class="boot-label">システムを初期化中...</span><span class="boot-success">OK</span></div>
+            <div id="row3" class="boot-row"><span class="boot-label">地図・実績データを取得中...</span><span id="json-status-text" class="boot-wait">WAIT</span></div>
+            <div id="row4" class="boot-row"><span class="boot-label">冒険の準備を整えています...</span><span class="boot-success">OK</span></div>
         </div>
         <div id="start-msg" class="start-alert">
             読み込み完了！<br>冒険を始めよう！
@@ -1362,12 +1419,13 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                 <div id="map"></div>
                 <button id="recenter-btn" onclick="recenterToMyLocation()" title="現在地に戻る">
                     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+
                         <circle cx="12" cy="12" r="3"></circle>
                         <path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path>
                     </svg>
                 </button>
                 <div class="map-overlay">
-                    <div id="pending-checkin-badge" style="display:none; background:rgba(255,159,67,0.95); color:#111216; font-size:0.68rem; font-weight:800; padding:5px 12px; border-radius:20px;"></div>
+                    <div id="pending-checkin-badge" style="display:none; background:rgba(255,159,67,0.95); color:#202124; font-size:0.68rem; font-weight:800; padding:5px 12px; border-radius:20px;"></div>
                     <div id="location-status" class="floating-status">READY TO EXPLORE</div>
                     <button id="checkin-btn" class="btn" onclick="handleCheckIn()">📍 CHECK IN</button>
                 </div>
@@ -1376,16 +1434,16 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             <!-- 2. 実績タブ -->
             <div id="tab-achievements" class="tab-content">
                 <div class="scroll-content">
-                    <div class="card" style="margin-bottom: 16px; background: #1e202a; border: 1px solid #272a34;">
+                    <div class="card" style="margin-bottom: 16px; background: #f8f9fa; border: 1px solid #dadce0;">
                         <div style="display:flex; justify-content:space-around; text-align:center;">
                             <div>
-                                <div style="font-size:1.4rem; font-weight:800; color:#ffffff;" id="stats-count">0</div>
-                                <div style="font-size:0.7rem; color:#94a3b8; margin-top:4px;">解放都市・区</div>
+                                <div style="font-size:1.4rem; font-weight:800; color:#202124;" id="stats-count">0</div>
+                                <div style="font-size:0.7rem; color:#5f6368; margin-top:4px;">解放都市・区</div>
                             </div>
-                            <div style="border-left: 1px solid #272a34;"></div>
+                            <div style="border-left: 1px solid #dadce0;"></div>
                             <div>
-                                <div style="font-size:1.4rem; font-weight:800; color:#ffffff;" id="stats-badges">0</div>
-                                <div style="font-size:0.7rem; color:#94a3b8; margin-top:4px;">獲得実績</div>
+                                <div style="font-size:1.4rem; font-weight:800; color:#202124;" id="stats-badges">0</div>
+                                <div style="font-size:0.7rem; color:#5f6368; margin-top:4px;">獲得実績</div>
                             </div>
                         </div>
                     </div>
@@ -1415,16 +1473,16 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                         <div class="card-title" style="font-size:0.85rem; margin-bottom:8px;">🕒 この日の冒険記録</div>
                         
                         <div style="margin-bottom:12px;">
-                            <div style="font-size:0.75rem; color:#94a3b8; margin-bottom:4px; font-weight:700;">🔓 解放した市区町村</div>
+                            <div style="font-size:0.75rem; color:#5f6368; margin-bottom:4px; font-weight:700;">🔓 解放した市区町村</div>
                             <ul id="detail-cities-list" style="padding-left:2px;">
-                                <li style="color:#64748b; font-size:0.8rem;">日付をタップすると一覧が表示されます。</li>
+                                <li style="color:#5f6368; font-size:0.8rem;">日付をタップすると一覧が表示されます。</li>
                             </ul>
                         </div>
 
                         <div>
-                            <div style="font-size:0.75rem; color:#94a3b8; margin-bottom:4px; font-weight:700;">🏆 解除した実績</div>
+                            <div style="font-size:0.75rem; color:#5f6368; margin-bottom:4px; font-weight:700;">🏆 解除した実績</div>
                             <ul id="detail-badges-list" style="padding-left:2px;">
-                                <li style="color:#64748b; font-size:0.8rem;">日付をタップすると一覧が表示されます。</li>
+                                <li style="color:#5f6368; font-size:0.8rem;">日付をタップすると一覧が表示されます。</li>
                             </ul>
                         </div>
                     </div>
@@ -1437,7 +1495,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                             <select id="city-selector" class="select-box" style="margin-bottom:0; padding:6px; font-size:0.8rem;"></select>
                         </div>
                         <div style="display:flex; gap:6px; align-items:center; margin-bottom:8px;">
-                            <label style="font-size:0.7rem; color:#94a3b8; white-space:nowrap;">シミュレート日:</label>
+                            <label style="font-size:0.7rem; color:#5f6368; white-space:nowrap;">シミュレート日:</label>
                             <input type="date" id="simulator-date-input" class="select-box" style="margin-bottom:0; padding:4px; font-size:0.75rem; height:28px;">
                         </div>
                         <button class="btn btn-secondary" style="padding:8px; font-size:0.8rem; border-radius:8px;" onclick="handleSimulateCheckIn()">選択都市を擬似解放</button>
@@ -1450,40 +1508,40 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             <div id="tab-profile" class="tab-content">
                 <div class="scroll-content">
                     <!-- プロフィールヘッダー：アバター・称号・レベル -->
-                    <div class="card" style="text-align: center; background: linear-gradient(180deg, #1e202a 0%, #181920 100%); padding: 18px 14px; position:relative;">
-                        <button id="settings-btn" onclick="openSettings()" title="設定" style="position:absolute; top:12px; right:12px; width:34px; height:34px; border-radius:50%; background:#1c1e26; border:1px solid #272a34; color:#cbd5e1; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                    <div class="card" style="text-align: center; background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%); padding: 18px 14px; position:relative;">
+                        <button id="settings-btn" onclick="openSettings()" title="設定" style="position:absolute; top:12px; right:12px; width:34px; height:34px; border-radius:50%; background:#ffffff; border:1px solid #dadce0; color:#5f6368; display:flex; align-items:center; justify-content:center; cursor:pointer;">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.14 12.94a7.14 7.14 0 0 0 .06-.94 7.14 7.14 0 0 0-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.3 7.3 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.14.56-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L1.65 8.84a.5.5 0 0 0 .12.64l2.03 1.58a7.14 7.14 0 0 0 0 1.88L1.77 14.5a.5.5 0 0 0-.12.64l1.92 3.32c.14.24.42.32.6.22l2.39-.96c.49.38 1.04.7 1.63.94l.36 2.54a.5.5 0 0 0 .5.42h3.84a.5.5 0 0 0 .5-.42l.36-2.54c.59-.24 1.14-.56 1.63-.94l2.39.96c.24.1.46 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.56ZM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z"/></svg>
                         </button>
-                        <div id="profile-avatar-btn" onclick="toggleAvatarPicker()" style="width: 64px; height: 64px; background: #272a34; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 10px; font-size: 1.8rem; border: 1px solid #3f4454; cursor:pointer;">👤</div>
+                        <div id="profile-avatar-btn" onclick="toggleAvatarPicker()" style="width: 64px; height: 64px; background: #dadce0; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 10px; font-size: 1.8rem; border: 1px solid #dadce0; cursor:pointer;">👤</div>
                         <div id="avatar-picker" class="avatar-picker"></div>
                         <input id="avatar-file-input" type="file" accept="image/*" style="display:none;" onchange="handleAvatarFileSelected(event)">
-                        <div id="avatar-upload-status" style="display:none; font-size:0.65rem; color:#94a3b8; margin-bottom:10px;">アップロード中...</div>
+                        <div id="avatar-upload-status" style="display:none; font-size:0.65rem; color:#5f6368; margin-bottom:10px;">アップロード中...</div>
 
-                        <div id="profile-nickname-display" class="card-title" style="margin-bottom: 2px; font-size:0.95rem; cursor:pointer;" onclick="toggleNicknameEdit()">EXPLORER <span style="font-size:0.7rem; color:#64748b;">✎</span></div>
+                        <div id="profile-nickname-display" class="card-title" style="margin-bottom: 2px; font-size:0.95rem; cursor:pointer;" onclick="toggleNicknameEdit()">EXPLORER <span style="font-size:0.7rem; color:#5f6368;">✎</span></div>
                         <div id="profile-nickname-edit" style="display:none; gap:6px; justify-content:center; margin-bottom:6px;">
-                            <input id="profile-nickname-input" type="text" maxlength="14" placeholder="名前を入力" style="background:#101116; border:1px solid #272a34; border-radius:8px; padding:6px 10px; color:#fff; font-size:0.82rem; width:150px; text-align:center;">
+                            <input id="profile-nickname-input" type="text" maxlength="14" placeholder="名前を入力" style="background:#f8f9fa; border:1px solid #dadce0; border-radius:8px; padding:6px 10px; color:#202124; font-size:0.82rem; width:150px; text-align:center;">
                             <button class="btn btn-secondary" style="padding:6px 12px; font-size:0.72rem; width:auto;" onclick="saveNickname()">保存</button>
                         </div>
-                        <div id="profile-title" style="font-size:0.75rem; color:#94a3b8; font-weight:600; margin-bottom:10px;">🔰 かけだし旅人</div>
+                        <div id="profile-title" style="font-size:0.75rem; color:#5f6368; font-weight:600; margin-bottom:10px;">🔰 かけだし旅人</div>
 
-                        <span id="profile-lv-badge" style="background: var(--accent-color); color: #111216; padding: 2px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 800;">LV. <span id="profile-level">1</span></span>
+                        <span id="profile-lv-badge" style="background: var(--accent-color); color:#202124; padding: 2px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 800;">LV. <span id="profile-level">1</span></span>
 
                         <div style="display:flex; justify-content:center; gap:22px; margin-top:14px;">
                             <div>
-                                <div style="font-size:1.1rem; font-weight:800; color:#fff;" id="profile-stat-cities">0</div>
-                                <div style="font-size:0.65rem; color:#94a3b8;">CITIES</div>
+                                <div style="font-size:1.1rem; font-weight:800; color:#202124;" id="profile-stat-cities">0</div>
+                                <div style="font-size:0.65rem; color:#5f6368;">CITIES</div>
                             </div>
                             <div>
-                                <div style="font-size:1.1rem; font-weight:800; color:#fff;" id="profile-stat-prefs">0/47</div>
-                                <div style="font-size:0.65rem; color:#94a3b8;">PREFS</div>
+                                <div style="font-size:1.1rem; font-weight:800; color:#202124;" id="profile-stat-prefs">0/47</div>
+                                <div style="font-size:0.65rem; color:#5f6368;">PREFS</div>
                             </div>
                             <div>
-                                <div style="font-size:1.1rem; font-weight:800; color:#fff;" id="profile-stat-badges">0</div>
-                                <div style="font-size:0.65rem; color:#94a3b8;">BADGES</div>
+                                <div style="font-size:1.1rem; font-weight:800; color:#202124;" id="profile-stat-badges">0</div>
+                                <div style="font-size:0.65rem; color:#5f6368;">BADGES</div>
                             </div>
                             <div>
                                 <div style="font-size:1.1rem; font-weight:800; color:#ff9f43;" id="profile-stat-streak">0🔥</div>
-                                <div style="font-size:0.65rem; color:#94a3b8;">STREAK</div>
+                                <div style="font-size:0.65rem; color:#5f6368;">STREAK</div>
                             </div>
                         </div>
                     </div>
@@ -1495,37 +1553,37 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                         <!-- 未ログイン時 -->
                         <div id="auth-logged-out">
                             <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:10px;">
-                                <input id="auth-email" type="email" placeholder="メールアドレス" style="background:#101116; border:1px solid #272a34; border-radius:8px; padding:9px 10px; color:#fff; font-size:0.8rem;">
-                                <input id="auth-password" type="password" placeholder="パスワード（6文字以上）" style="background:#101116; border:1px solid #272a34; border-radius:8px; padding:9px 10px; color:#fff; font-size:0.8rem;">
+                                <input id="auth-email" type="email" placeholder="メールアドレス" style="background:#f8f9fa; border:1px solid #dadce0; border-radius:8px; padding:9px 10px; color:#202124; font-size:0.8rem;">
+                                <input id="auth-password" type="password" placeholder="パスワード（6文字以上）" style="background:#f8f9fa; border:1px solid #dadce0; border-radius:8px; padding:9px 10px; color:#202124; font-size:0.8rem;">
                             </div>
                             <div style="display:flex; gap:8px; margin-bottom:8px;">
                                 <button class="btn btn-secondary" style="flex:1; font-size:0.75rem;" onclick="handleSignUp()">新規登録</button>
                                 <button class="btn btn-secondary" style="flex:1; font-size:0.75rem;" onclick="handleSignIn()">ログイン</button>
                             </div>
                             <div style="text-align:right; margin-bottom:8px;">
-                                <span onclick="handleForgotPassword()" style="font-size:0.68rem; color:#94a3b8; text-decoration:underline; cursor:pointer;">パスワードを忘れた場合</span>
+                                <span onclick="handleForgotPassword()" style="font-size:0.68rem; color:#5f6368; text-decoration:underline; cursor:pointer;">パスワードを忘れた場合</span>
                             </div>
                             <button class="btn btn-secondary" style="width:100%; font-size:0.78rem;" onclick="handleGoogleSignIn()">🔴 Googleでログイン</button>
-                            <div id="auth-status-msg" style="font-size:0.7rem; color:#94a3b8; margin-top:8px; text-align:center;"></div>
+                            <div id="auth-status-msg" style="font-size:0.7rem; color:#5f6368; margin-top:8px; text-align:center;"></div>
                         </div>
 
                         <!-- ログイン済み -->
                         <div id="auth-logged-in" style="display:none;">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                                <div style="font-size:0.78rem; color:#cbd5e1;">ログイン中: <span id="auth-user-email" style="color:#fff; font-weight:700;"></span></div>
+                                <div style="font-size:0.78rem; color:#5f6368;">ログイン中: <span id="auth-user-email" style="color:#202124; font-weight:700;"></span></div>
                                 <button class="btn btn-secondary" style="font-size:0.68rem; padding:5px 10px;" onclick="handleSignOut()">ログアウト</button>
                             </div>
 
-                            <div style="background:#101116; border:1px solid #272a34; border-radius:8px; padding:10px; margin-bottom:12px; text-align:center;">
-                                <div style="font-size:0.65rem; color:#94a3b8;">あなたのフレンドコード</div>
-                                <div id="my-friend-code" style="font-size:1.1rem; font-weight:800; letter-spacing:0.1em; color:#fff; margin-top:3px;">------</div>
-                                <div style="font-size:0.65rem; color:#64748b; margin-top:2px;">このコードを友達に伝えてね</div>
+                            <div style="background:#f8f9fa; border:1px solid #dadce0; border-radius:8px; padding:10px; margin-bottom:12px; text-align:center;">
+                                <div style="font-size:0.65rem; color:#5f6368;">あなたのフレンドコード</div>
+                                <div id="my-friend-code" style="font-size:1.1rem; font-weight:800; letter-spacing:0.1em; color:#202124; margin-top:3px;">------</div>
+                                <div style="font-size:0.65rem; color:#5f6368; margin-top:2px;">このコードを友達に伝えてね</div>
                             </div>
 
-                            <div style="background:#101116; border:1px solid #272a34; border-radius:8px; padding:10px 12px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                            <div style="background:#f8f9fa; border:1px solid #dadce0; border-radius:8px; padding:10px 12px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
                                 <div>
-                                    <div style="font-size:0.78rem; color:#fff; font-weight:700;">📍 リアルタイム位置共有</div>
-                                    <div id="location-sharing-status-text" style="font-size:0.63rem; color:#64748b; margin-top:2px;">フレンドに現在地を共有します（OFF）</div>
+                                    <div style="font-size:0.78rem; color:#202124; font-weight:700;">📍 リアルタイム位置共有</div>
+                                    <div id="location-sharing-status-text" style="font-size:0.63rem; color:#5f6368; margin-top:2px;">フレンドに現在地を共有します（OFF）</div>
                                 </div>
                                 <label class="loc-toggle-switch">
                                     <input id="location-sharing-toggle" type="checkbox" onchange="toggleLocationSharing(this.checked)">
@@ -1534,13 +1592,13 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                             </div>
 
                             <div style="display:flex; gap:8px; margin-bottom:6px;">
-                                <input id="add-friend-code" type="text" placeholder="友達のコードを入力" style="flex:1; background:#101116; border:1px solid #272a34; border-radius:8px; padding:9px 10px; color:#fff; font-size:0.8rem; text-transform:uppercase;">
+                                <input id="add-friend-code" type="text" placeholder="友達のコードを入力" style="flex:1; background:#f8f9fa; border:1px solid #dadce0; border-radius:8px; padding:9px 10px; color:#202124; font-size:0.8rem; text-transform:uppercase;">
                                 <button class="btn btn-secondary" style="font-size:0.75rem; padding:0 14px;" onclick="handleSendFriendRequest()">申請</button>
                             </div>
-                            <div id="friend-action-msg" style="font-size:0.7rem; color:#94a3b8; margin-bottom:10px;"></div>
+                            <div id="friend-action-msg" style="font-size:0.7rem; color:#5f6368; margin-bottom:10px;"></div>
 
                             <div id="friend-requests-section" style="display:none; margin-bottom:12px;">
-                                <div style="font-size:0.72rem; color:#94a3b8; font-weight:700; margin-bottom:6px;">📨 届いているリクエスト</div>
+                                <div style="font-size:0.72rem; color:#5f6368; font-weight:700; margin-bottom:6px;">📨 届いているリクエスト</div>
                                 <ul id="friend-requests-list" style="list-style:none; display:flex; flex-direction:column; gap:6px;"></ul>
                             </div>
 
@@ -1548,10 +1606,10 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                                 <button class="btn btn-secondary" style="flex:1; font-size:0.75rem;" onclick="openRanking()">🏆 ランキング</button>
                             </div>
 
-                            <div style="background:#101116; border:1px solid #272a34; border-radius:8px; padding:10px 12px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                            <div style="background:#f8f9fa; border:1px solid #dadce0; border-radius:8px; padding:10px 12px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
                                 <div>
-                                    <div style="font-size:0.78rem; color:#fff; font-weight:700;">👥 フレンドの足跡を地図に表示</div>
-                                    <div style="font-size:0.63rem; color:#64748b; margin-top:2px;">ホーム画面の地図にフレンドの訪問済み都市を紫色の点で重ねます</div>
+                                    <div style="font-size:0.78rem; color:#202124; font-weight:700;">👥 フレンドの足跡を地図に表示</div>
+                                    <div style="font-size:0.63rem; color:#5f6368; margin-top:2px;">ホーム画面の地図にフレンドの訪問済み都市を紫色の点で重ねます</div>
                                 </div>
                                 <label class="loc-toggle-switch">
                                     <input id="friend-footprints-toggle" type="checkbox" onchange="toggleFriendFootprints(this.checked)">
@@ -1559,7 +1617,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                                 </label>
                             </div>
 
-                            <div style="font-size:0.72rem; color:#94a3b8; font-weight:700; margin-bottom:6px;">フレンド一覧</div>
+                            <div style="font-size:0.72rem; color:#5f6368; font-weight:700; margin-bottom:6px;">フレンド一覧</div>
                             <ul id="friends-list" style="list-style:none; display:flex; flex-direction:column; gap:8px;"></ul>
                         </div>
                     </div>
@@ -1591,7 +1649,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                                 <div class="label">最多訪問都道府県</div>
                             </div>
                         </div>
-                        <div style="font-size:0.6rem; color:#64748b; margin-top:8px; line-height:1.5;">
+                        <div style="font-size:0.6rem; color:#5f6368; margin-top:8px; line-height:1.5;">
                             ※ 総移動距離はチェックイン地点間を結んだ概算距離です（実際の移動経路とは異なります）
                         </div>
                     </div>
@@ -1604,7 +1662,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
 
                     <div class="card">
                         <div class="card-title">🧭 UNLOCKED CITIES</div>
-                        <input id="city-search-input" type="text" placeholder="🔍 都市名で検索..." oninput="renderUnlockedCitiesList()" style="width:100%; background:#101116; border:1px solid #272a34; border-radius:8px; padding:9px 10px; color:#fff; font-size:0.8rem; margin-bottom:10px; box-sizing:border-box;">
+                        <input id="city-search-input" type="text" placeholder="🔍 都市名で検索..." oninput="renderUnlockedCitiesList()" style="width:100%; background:#f8f9fa; border:1px solid #dadce0; border-radius:8px; padding:9px 10px; color:#202124; font-size:0.8rem; margin-bottom:10px; box-sizing:border-box;">
                         <ul id="unlocked-cities-list"></ul>
                     </div>
                 </div>
@@ -1613,10 +1671,10 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             <!-- 5. ショップタブ -->
             <div id="tab-shop" class="tab-content">
                 <div class="scroll-content">
-                    <div class="card" style="text-align:center; background: linear-gradient(180deg, #1e202a 0%, #181920 100%);">
+                    <div class="card" style="text-align:center; background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);">
                         <div class="card-title" style="margin-bottom:6px;">🪙 旅コイン所持数</div>
                         <div id="shop-coin-balance" style="font-size:1.8rem; font-weight:800; color:#ffd166;">0</div>
-                        <div style="font-size:0.68rem; color:#94a3b8; margin-top:4px;">新しい都市を解放（+10）・実績達成（+50）でコインが貯まります</div>
+                        <div style="font-size:0.68rem; color:#5f6368; margin-top:4px;">新しい都市を解放（+10）・実績達成（+50）でコインが貯まります</div>
                     </div>
 
                     <div class="card">
@@ -1663,7 +1721,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             <button class="nav-item" onclick="switchTab('profile', 'EXPLORER PROFILE')" style="position:relative;">
                 <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                 PROFILE
-                <span id="nav-unread-badge" style="display:none; position:absolute; top:2px; right:calc(50% - 26px); background:#ff3b30; color:#fff; font-size:0.6rem; font-weight:800; min-width:16px; height:16px; border-radius:8px; align-items:center; justify-content:center; padding:0 3px;">0</span>
+                <span id="nav-unread-badge" style="display:none; position:absolute; top:2px; right:calc(50% - 26px); background:#ff3b30; color:#202124; font-size:0.6rem; font-weight:800; min-width:16px; height:16px; border-radius:8px; align-items:center; justify-content:center; padding:0 3px;">0</span>
             </button>
             <button class="nav-item" onclick="switchTab('shop', 'TRAVEL SHOP')">
                 <svg viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h6v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/></svg>
@@ -1717,19 +1775,19 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                 <button class="modal-close-btn" onclick="closeSettings()">✕</button>
             </div>
             <div class="modal-body">
-                <div style="font-size:0.78rem; font-weight:800; color:#fff; margin-bottom:8px;">💾 セーブデータ</div>
-                <div style="font-size:0.68rem; color:#94a3b8; margin-bottom:12px; line-height:1.5;">
+                <div style="font-size:0.78rem; font-weight:800; color:#202124; margin-bottom:8px;">💾 セーブデータ</div>
+                <div style="font-size:0.68rem; color:#5f6368; margin-bottom:12px; line-height:1.5;">
                     冒険記録をファイルとして書き出したり、他の端末からのデータを読み込んだりできます。
                 </div>
                 <button class="btn" style="margin-bottom:10px;" onclick="exportSaveData()">📤 セーブデータをエクスポート</button>
                 <button class="btn btn-secondary" style="margin-bottom:20px;" onclick="document.getElementById('import-file-input').click()">📥 セーブデータをインポート</button>
                 <input id="import-file-input" type="file" accept="application/json" style="display:none;" onchange="handleImportFileSelected(event)">
 
-                <div style="font-size:0.62rem; color:#64748b; margin-bottom:20px; line-height:1.5;">
+                <div style="font-size:0.62rem; color:#5f6368; margin-bottom:20px; line-height:1.5;">
                     ⚠️ インポートすると現在のデータは上書きされます。ログイン中の場合は、インポート後の内容がクラウド（Firebase）にも同期されます。
                 </div>
 
-                <div style="font-size:0.78rem; font-weight:800; color:#fff; margin-bottom:8px;">🗑️ データの初期化</div>
+                <div style="font-size:0.78rem; font-weight:800; color:#202124; margin-bottom:8px;">🗑️ データの初期化</div>
                 <button class="btn btn-secondary" style="color:#ff6b6b;" onclick="resetAllData()">すべての冒険記録を初期化</button>
             </div>
         </div>
@@ -1900,7 +1958,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
 
             const mails = appState.mailbox || [];
             if (mails.length === 0) {
-                list.innerHTML = '<div style="text-align:center; color:#64748b; font-size:0.8rem; padding:20px 0;">メールはありません</div>';
+                list.innerHTML = '<div style="text-align:center; color:#5f6368; font-size:0.8rem; padding:20px 0;">メールはありません</div>';
                 return;
             }
 
@@ -1911,7 +1969,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                     <div class="mail-title">${mail.title}</div>
                     <div class="mail-body">${mail.body}</div>
                     ${mail.coins ? `<div class="mail-coin">🪙 ${mail.coins} コイン</div>` : ''}
-                    <div style="font-size:0.62rem; color:#64748b; margin-bottom:8px;">${mail.date}</div>
+                    <div style="font-size:0.62rem; color:#5f6368; margin-bottom:8px;">${mail.date}</div>
                     <button ${mail.claimed ? 'disabled' : ''} onclick="claimMail('${mail.id}')">${mail.claimed ? '受け取り済み' : '受け取る'}</button>
                 `;
                 list.appendChild(div);
@@ -1955,19 +2013,19 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
         // カラーパレットから「フレーム」「テーマ」「マーカー」を自動生成し、
         // 手打ちミスを減らしつつ約100種類のラインナップを実現している。
         const COLOR_PALETTE = [
-            { key: "silver",    name: "シルバー",       icon: "🥈", hex: "#c7ccd6", tier: 1 },
+            { key: "silver",    name: "シルバー",       icon: "🥈", hex: "#5f6368", tier: 1 },
             { key: "sakura",    name: "サクラ",         icon: "🌸", hex: "#ff8fb1", tier: 1 },
             { key: "coral",     name: "コーラル",       icon: "🪸", hex: "#ff7f6b", tier: 1 },
             { key: "amber",     name: "アンバー",       icon: "🟠", hex: "#ffb703", tier: 1 },
             { key: "mustard",   name: "マスタード",     icon: "🟡", hex: "#e9c46a", tier: 1 },
             { key: "lime",      name: "ライム",         icon: "🟢", hex: "#a7d129", tier: 1 },
             { key: "mint",      name: "ミント",         icon: "🌿", hex: "#6fffe9", tier: 1 },
-            { key: "sky",       name: "スカイ",         icon: "🔵", hex: "#4da6ff", tier: 1 },
+            { key: "sky",       name: "スカイ",         icon: "🔵", hex: "#1a73e8", tier: 1 },
             { key: "lavender",  name: "ラベンダー",     icon: "💜", hex: "#b39ddb", tier: 1 },
             { key: "rosegold",  name: "ローズゴールド", icon: "🌹", hex: "#f7c5cc", tier: 1 },
             { key: "emerald",   name: "エメラルド",     icon: "💚", hex: "#00c896", tier: 2 },
             { key: "turquoise", name: "ターコイズ",     icon: "🩵", hex: "#1fc8db", tier: 2 },
-            { key: "cobalt",    name: "コバルト",       icon: "🔷", hex: "#2b6cff", tier: 2 },
+            { key: "cobalt",    name: "コバルト",       icon: "🔷", hex: "#1a73e8", tier: 2 },
             { key: "purple",    name: "パープル",       icon: "🟣", hex: "#9b59b6", tier: 2 },
             { key: "magenta",   name: "マゼンタ",       icon: "💗", hex: "#e84393", tier: 2 },
             { key: "olive",     name: "オリーブ",       icon: "🫒", hex: "#7d8c4a", tier: 2 },
@@ -1984,7 +2042,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             { key: "sunset",    name: "サンセット",     icon: "🌇", hex: "#ff6a3d", tier: 3 },
             { key: "midnight",  name: "ミッドナイト",   icon: "🌌", hex: "#1b1f3b", tier: 3 },
             { key: "aurora",    name: "オーロラ",       icon: "🌠", hex: "#7cf5d4", tier: 3 },
-            { key: "rainbow",   name: "レインボー",     icon: "🌈", hex: "#ff5ecb", tier: 4, gradient: "linear-gradient(90deg,#ff5ecb,#ffd166,#6fffe9,#4da6ff,#ff5ecb)" }
+            { key: "rainbow",   name: "レインボー",     icon: "🌈", hex: "#ff5ecb", tier: 4, gradient: "linear-gradient(90deg,#ff5ecb,#ffd166,#6fffe9,#1a73e8,#ff5ecb)" }
         ];
 
         const TIER_PRICE = { frame: [60, 100, 160, 280], theme: [90, 130, 190, 320], marker: [40, 70, 110, 200] };
@@ -2019,17 +2077,17 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
 
                 // 称号のグラデーション演出（色違いで13種）
                 { id: "effect_title_gold",     name: "称号：ゴールド輝き",   icon: "✨", price: 100, type: "title-gradient", gradient: "linear-gradient(90deg,#ffd166,#ffffff,#ffd166)", speed: "2.5s" },
-                { id: "effect_title_rainbow",  name: "称号：レインボー",     icon: "🌈", price: 220, type: "title-gradient", gradient: "linear-gradient(90deg,#ff5ecb,#ffd166,#6fffe9,#4da6ff,#ff5ecb)", speed: "3s" },
-                { id: "effect_title_neon",     name: "称号：ネオンシアン",   icon: "💠", price: 140, type: "title-gradient", gradient: "linear-gradient(90deg,#00e5ff,#ffffff,#00e5ff)", speed: "2s" },
+                { id: "effect_title_rainbow",  name: "称号：レインボー",     icon: "🌈", price: 220, type: "title-gradient", gradient: "linear-gradient(90deg,#ff5ecb,#ffd166,#6fffe9,#1a73e8,#ff5ecb)", speed: "3s" },
+                { id: "effect_title_neon",     name: "称号：ネオンシアン",   icon: "💠", price: 140, type: "title-gradient", gradient: "linear-gradient(90deg,#1a73e8,#ffffff,#1a73e8)", speed: "2s" },
                 { id: "effect_title_fire",     name: "称号：フレイム",       icon: "🔥", price: 160, type: "title-gradient", gradient: "linear-gradient(90deg,#ff3d00,#ffb703,#ff3d00)", speed: "1.8s" },
                 { id: "effect_title_ice",      name: "称号：フロスト",       icon: "❄️", price: 140, type: "title-gradient", gradient: "linear-gradient(90deg,#bfe9ff,#ffffff,#bfe9ff)", speed: "3.2s" },
                 { id: "effect_title_sakura",   name: "称号：サクラ舞い",     icon: "🌸", price: 130, type: "title-gradient", gradient: "linear-gradient(90deg,#ff8fb1,#ffffff,#ff8fb1)", speed: "3s" },
                 { id: "effect_title_jade",     name: "称号：翡翠の輝き",     icon: "🟢", price: 130, type: "title-gradient", gradient: "linear-gradient(90deg,#00c896,#ffffff,#00c896)", speed: "2.8s" },
                 { id: "effect_title_royal",    name: "称号：ロイヤルパープル", icon: "👑", price: 180, type: "title-gradient", gradient: "linear-gradient(90deg,#9b59b6,#ffffff,#9b59b6)", speed: "2.6s" },
                 { id: "effect_title_sunset",   name: "称号：サンセットグロー", icon: "🌇", price: 150, type: "title-gradient", gradient: "linear-gradient(90deg,#ff6a3d,#ffd166,#ff6a3d)", speed: "2.4s" },
-                { id: "effect_title_ocean",    name: "称号：オーシャンウェーブ", icon: "🌊", price: 150, type: "title-gradient", gradient: "linear-gradient(90deg,#2b6cff,#6fffe9,#2b6cff)", speed: "2.6s" },
-                { id: "effect_title_gothic",   name: "称号：ミッドナイトシルバー", icon: "🌙", price: 170, type: "title-gradient", gradient: "linear-gradient(90deg,#1b1f3b,#c7ccd6,#1b1f3b)", speed: "3.4s" },
-                { id: "effect_title_candy",    name: "称号：キャンディポップ", icon: "🍬", price: 140, type: "title-gradient", gradient: "linear-gradient(90deg,#ff5ecb,#fff,#4da6ff)", speed: "2.2s" },
+                { id: "effect_title_ocean",    name: "称号：オーシャンウェーブ", icon: "🌊", price: 150, type: "title-gradient", gradient: "linear-gradient(90deg,#1a73e8,#6fffe9,#1a73e8)", speed: "2.6s" },
+                { id: "effect_title_gothic",   name: "称号：ミッドナイトシルバー", icon: "🌙", price: 170, type: "title-gradient", gradient: "linear-gradient(90deg,#1b1f3b,#5f6368,#1b1f3b)", speed: "3.4s" },
+                { id: "effect_title_candy",    name: "称号：キャンディポップ", icon: "🍬", price: 140, type: "title-gradient", gradient: "linear-gradient(90deg,#ff5ecb,#fff,#1a73e8)", speed: "2.2s" },
                 { id: "effect_title_gold2",    name: "称号：シャンパンゴールド", icon: "🥂", price: 200, type: "title-gradient", gradient: "linear-gradient(90deg,#f7e7ce,#ffd166,#f7e7ce)", speed: "3s" },
                 { id: "effect_title_slow",     name: "称号：スローシマー",   icon: "🕯️", price: 110, type: "title-gradient", gradient: "linear-gradient(90deg,#ffd166,#ffffff,#ffd166)", speed: "5s" },
 
@@ -2413,7 +2471,8 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                 console.error(error);
                 if (window.__bootFailSafeId) clearTimeout(window.__bootFailSafeId);
                 statusText.innerText = "ERROR";
-                statusText.style.background = "#ff3333";
+                statusText.style.background = "#fce8e6";
+                statusText.style.color = "#c5221f";
                 alert("データファイル（Nihon.json / badges.json）の読み込みに失敗しました：\n" + (error && error.message ? error.message : error));
             }
         }
@@ -2559,7 +2618,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
 
                 L.marker([item.lat, item.lng], { icon: customIcon })
                     .addTo(markersGroup)
-                    .bindPopup(`<b style="color:#111216;">📍 足跡</b><br><span style="color:#333;">${item.cityName}</span><br><span style="color:#666; font-size:0.7em;">${item.date || ''}</span>`);
+                    .bindPopup(`<b style="color:#202124;">📍 足跡</b><br><span style="color:#333;">${item.cityName}</span><br><span style="color:#666; font-size:0.7em;">${item.date || ''}</span>`);
             });
         }
 
@@ -2575,7 +2634,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
 
             // GPS軌跡があれば、チェックイン地点の有無に関係なく最優先で表示する。
             if (historyTrail.length >= 2) {
-                L.polyline(historyTrail, { color: getComputedStyle(document.documentElement).getPropertyValue('--trail-color').trim() || '#4da6ff', weight: 4, opacity: 0.9, lineJoin: 'round', lineCap: 'round' }).addTo(polylineGroup);
+                L.polyline(historyTrail, { color: getComputedStyle(document.documentElement).getPropertyValue('--trail-color').trim() || '#1a73e8', weight: 4, opacity: 0.9, lineJoin: 'round', lineCap: 'round' }).addTo(polylineGroup);
                 if (statusEl) statusEl.innerText = `${selectedDateStr} のGPS軌跡`;
                 if (autoFit) map.fitBounds(L.latLngBounds(historyTrail), { padding: [30, 30] });
                 return;
@@ -2589,7 +2648,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                         localStorage.setItem('geo_nihon_my_trail_day_v1:' + requestedTrailDate, JSON.stringify({ version: 1, dateKey: requestedTrailDate, points, updatedAt: Date.now() }));
                         if (polylineGroup) {
                             polylineGroup.clearLayers();
-                            L.polyline(points, { color: getComputedStyle(document.documentElement).getPropertyValue('--trail-color').trim() || '#4da6ff', weight: 4, opacity: 0.9, lineJoin: 'round', lineCap: 'round' }).addTo(polylineGroup);
+                            L.polyline(points, { color: getComputedStyle(document.documentElement).getPropertyValue('--trail-color').trim() || '#1a73e8', weight: 4, opacity: 0.9, lineJoin: 'round', lineCap: 'round' }).addTo(polylineGroup);
                         }
                         if (statusEl) statusEl.innerText = `${requestedTrailDate} のGPS軌跡`;
                         if (autoFit) map.fitBounds(L.latLngBounds(points), { padding: [30, 30] });
@@ -2683,13 +2742,13 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
 
             const filteredCities = appState.unlockedCities.filter(item => item.date === selectedDateStr);
             if (filteredCities.length === 0) {
-                citiesList.innerHTML = '<li style="color:#64748b; font-size:0.8rem;">この日の解放エリアはありません。</li>';
+                citiesList.innerHTML = '<li style="color:#5f6368; font-size:0.8rem;">この日の解放エリアはありません。</li>';
             } else {
                 // 重複表示を防ぐため、同じ日に複数回立ち寄った都市も1行にまとめるか、時間軸として全て出すか。
                 // 今回はルート順を意識するため、通過順にすべて出力します。
                 filteredCities.forEach(c => {
                     const li = document.createElement('li');
-                    li.innerHTML = `🏁 <b style="color:#ffffff;">${c.cityName}</b>`;
+                    li.innerHTML = `🏁 <b style="color:#202124;">${c.cityName}</b>`;
                     citiesList.appendChild(li);
                 });
             }
@@ -2702,7 +2761,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             });
 
             if (filteredBadges.length === 0) {
-                badgesList.innerHTML = '<li style="color:#64748b; font-size:0.8rem;">新規解除の実績はありません。</li>';
+                badgesList.innerHTML = '<li style="color:#5f6368; font-size:0.8rem;">新規解除の実績はありません。</li>';
             } else {
                 filteredBadges.forEach(fb => {
                     const bDef = badgeDefinitions.find(b => b.id === fb.id);
@@ -2805,7 +2864,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                 if (!list || list.length === 0) return;
 
                 const header = document.createElement('div');
-                header.style.cssText = "grid-column: 1 / -1; font-weight:700; font-size:0.8rem; color:#94a3b8; margin:14px 0 4px; letter-spacing:0.03em;";
+                header.style.cssText = "grid-column: 1 / -1; font-weight:700; font-size:0.8rem; color:#5f6368; margin:14px 0 4px; letter-spacing:0.03em;";
                 const unlockedInCat = list.filter(isUnlocked).length;
                 header.innerText = `${BADGE_CATEGORY_LABELS[cat] || cat} (${unlockedInCat}/${list.length})`;
                 container.appendChild(header);
@@ -2820,7 +2879,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                     item.innerHTML = `
                         <div class="badge-icon">${badge.icon}</div>
                         <div class="badge-name">${badge.name}</div>
-                        <div style="font-size:0.6rem; color:#94a3b8; margin-top:4px;">${badge.desc}</div>
+                        <div style="font-size:0.6rem; color:#5f6368; margin-top:4px;">${badge.desc}</div>
                     `;
                     container.appendChild(item);
                 });
@@ -2829,7 +2888,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                     const remaining = list.length - unlockedInCat;
                     if (remaining > 0) {
                         const note = document.createElement('div');
-                        note.style.cssText = "grid-column: 1 / -1; text-align:center; font-size:0.75rem; color:#64748b; padding:10px;";
+                        note.style.cssText = "grid-column: 1 / -1; text-align:center; font-size:0.75rem; color:#5f6368; padding:10px;";
                         note.innerText = `あと${remaining}市区町村で全制覇（未解放のバッジは訪問すると表示されます）`;
                         container.appendChild(note);
                     }
@@ -3373,7 +3432,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             );
 
             if (filtered.length === 0) {
-                listEl.innerHTML = '<li style="color:#64748b;">「' + (searchInput ? searchInput.value : '') + '」に一致する都市はありません</li>';
+                listEl.innerHTML = '<li style="color:#5f6368;">「' + (searchInput ? searchInput.value : '') + '」に一致する都市はありません</li>';
                 return;
             }
 
@@ -3416,7 +3475,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             const nicknameEl = document.getElementById('profile-nickname-display');
             if (nicknameEl) {
                 const displayName = appState.nickname && appState.nickname.trim() ? appState.nickname : 'EXPLORER';
-                nicknameEl.innerHTML = `${displayName} <span style="font-size:0.7rem; color:#64748b;">✎</span>`;
+                nicknameEl.innerHTML = `${displayName} <span style="font-size:0.7rem; color:#5f6368;">✎</span>`;
             }
 
             const titleEl = document.getElementById('profile-title');
@@ -3634,7 +3693,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                 .slice(0, 15);
 
             if (events.length === 0) {
-                listEl.innerHTML = '<li style="color:#64748b;">まだ活動記録がありません。</li>';
+                listEl.innerHTML = '<li style="color:#5f6368;">まだ活動記録がありません。</li>';
                 return;
             }
 
@@ -4145,7 +4204,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                 listEl.innerHTML = '';
 
                 if (snapshot.empty) {
-                    listEl.innerHTML = '<li style="color:#64748b; font-size:0.75rem;">まだフレンドがいません。コードで追加してみましょう。</li>';
+                    listEl.innerHTML = '<li style="color:#5f6368; font-size:0.75rem;">まだフレンドがいません。コードで追加してみましょう。</li>';
                     clearAllFriendLocationWatchers();
                     clearAllUnreadMessageWatchers();
                     friendStatsCache = {};
@@ -4316,7 +4375,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                     });
                     const marker = L.marker([city.lat, city.lng], { icon })
                         .addTo(friendFootprintsLayer)
-                        .bindPopup(`<b style="color:#111216;">👥 ${f.nickname}</b><br><span style="color:#333;">${city.cityName}</span>`);
+                        .bindPopup(`<b style="color:#202124;">👥 ${f.nickname}</b><br><span style="color:#333;">${city.cityName}</span>`);
                     friendFootprintMarkerList.push(marker);
                 });
             });
@@ -4627,7 +4686,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             const icon = L.divIcon({
                 className: '',
                 html: `<div style="position:relative;">
-                            <div class="friend-map-marker" style="border-color:#4da6ff;">${avatarHtml}</div>
+                            <div class="friend-map-marker" style="border-color:#1a73e8;">${avatarHtml}</div>
                             <div class="my-speed-badge">${speedKmh.toFixed(0)}<span style="font-size:0.5rem;">km/h</span></div>
                        </div>`,
                 iconSize: [44, 44],
@@ -4865,7 +4924,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                 myTrailPolyline.setLatLngs(myTrailLatLngs);
             } else {
                 myTrailPolyline = L.polyline(myTrailLatLngs, {
-                    color: '#4da6ff',
+                    color: '#1a73e8',
                     weight: 3.5,
                     opacity: 0.85,
                     dashArray: '1, 8',
@@ -5029,7 +5088,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
         window.openFriendDetail = async function (friendUid, cachedData) {
             const modal = document.getElementById('friend-detail-modal');
             const body = document.getElementById('friend-detail-body');
-            body.innerHTML = '<div style="text-align:center; color:#64748b; padding:20px;">読み込み中...</div>';
+            body.innerHTML = '<div style="text-align:center; color:#5f6368; padding:20px;">読み込み中...</div>';
             modal.style.display = 'flex';
 
             let fData = cachedData;
@@ -5040,7 +5099,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                 console.warn(e);
             }
             if (!fData) {
-                body.innerHTML = '<div style="text-align:center; color:#64748b; padding:20px;">情報を取得できませんでした</div>';
+                body.innerHTML = '<div style="text-align:center; color:#5f6368; padding:20px;">情報を取得できませんでした</div>';
                 return;
             }
 
@@ -5053,9 +5112,9 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
             body.innerHTML = `
                 <div class="friend-detail-header">
                     <div class="friend-detail-avatar">${fData.avatarImageUrl ? `<img src="${fData.avatarImageUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : (fData.avatar || "👤")}</div>
-                    <div style="font-size:1.05rem; font-weight:800; color:#fff;">${fData.nickname || "旅人"}</div>
-                    <div style="font-size:0.75rem; color:#94a3b8; margin-top:4px;">${title}</div>
-                    <span style="display:inline-block; margin-top:8px; background: var(--accent-color, #fff); color:#111216; padding: 2px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 800;">LV. ${level}</span>
+                    <div style="font-size:1.05rem; font-weight:800; color:#202124;">${fData.nickname || "旅人"}</div>
+                    <div style="font-size:0.75rem; color:#5f6368; margin-top:4px;">${title}</div>
+                    <span style="display:inline-block; margin-top:8px; background: var(--accent-color, #fff); color:#202124; padding: 2px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 800;">LV. ${level}</span>
                 </div>
                 <div class="friend-detail-stats-grid">
                     <div class="friend-detail-stat"><div class="num">${cityCount}</div><div class="label">CITIES</div></div>
@@ -5109,7 +5168,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                     // 日付が変わったら区切り線を挿入
                     if (ts && dateLabel !== lastDateLabel) {
                         const divider = document.createElement('div');
-                        divider.style.cssText = 'text-align:center; font-size:0.62rem; color:#64748b; margin:8px 0 2px;';
+                        divider.style.cssText = 'text-align:center; font-size:0.62rem; color:#5f6368; margin:8px 0 2px;';
                         divider.innerText = dateLabel;
                         list.appendChild(divider);
                         lastDateLabel = dateLabel;
@@ -5128,7 +5187,7 @@ button:not(.btn):not(.checkin-btn), .btn-secondary { background:#fff !important;
                     bubble.innerText = m.text;
 
                     const timeLabel = document.createElement('div');
-                    timeLabel.style.cssText = 'font-size:0.6rem; color:#64748b; margin:2px 4px; display:flex; gap:5px; align-items:center;';
+                    timeLabel.style.cssText = 'font-size:0.6rem; color:#5f6368; margin:2px 4px; display:flex; gap:5px; align-items:center;';
                     const timeText = ts
                         ? `${String(ts.getHours()).padStart(2,'0')}:${String(ts.getMinutes()).padStart(2,'0')}:${String(ts.getSeconds()).padStart(2,'0')}`
                         : '';
